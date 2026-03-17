@@ -1,5 +1,7 @@
 # Claude Code Memory Starter Kit
 
+![Claude Code Memory Starter Kit](memory-starter-kit.png)
+
 **Give Claude a permanent memory for your project — so it never forgets what you built, why you built it, or where you left off.**
 
 ---
