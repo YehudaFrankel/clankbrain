@@ -1,8 +1,8 @@
-# Claude Code Memory Starter Kit
+# Claude Code Memory — Persistent Context for Claude Code
 
 ![Claude Code Memory Starter Kit](memory-starter-kit.png)
 
-[![v1.0.0](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/YehudaFrankel/Claude-Code-memory-starter-kit/releases) [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue?style=flat-square)](https://python.org/downloads) [![MIT License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![v1.0.0](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/YehudaFrankel/Claude-Code-memory-starter-kit/releases) [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue?style=flat-square)](https://python.org/downloads) [![MIT License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude-Code-orange?style=flat-square)](https://claude.ai/claude-code)
 
 **Claude forgets everything when you close the session. This kit fixes that permanently.**
 
@@ -185,6 +185,21 @@ This kit runs a drift detector (`check_memory.py`) automatically after every fil
 - **CSS classes added or removed** — caught before they cause confusion
 
 On the production codebase this was tested on, the first drift check found 21 undocumented functions. After a major feed feature was added across multiple sessions, drift detection caught ~50 new functions and ~100 CSS classes before they could cause any inconsistencies.
+
+**What drift output looks like** — when Claude sees this, it updates memory immediately before continuing:
+
+```
+DRIFT DETECTED
+  JS functions not in memory (3):
+    - submitForm
+    - resetPanel
+    - loadUserData
+  CSS classes not in memory (1):
+    - .card--highlighted
+Run 'Analyze Codebase' to update memory.
+```
+
+No drift → silent, zero interruption.
 
 Run it manually anytime:
 ```
