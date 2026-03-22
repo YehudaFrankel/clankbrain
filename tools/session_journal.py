@@ -11,6 +11,8 @@ Hook event: Stop
 """
 
 import re
+import os
+import glob as glob_module
 from pathlib import Path
 from datetime import datetime
 
@@ -56,6 +58,41 @@ def read_current_phase(status_path: Path) -> str:
     return ''
 
 
+def estimate_tokens(root: Path) -> tuple:
+    """Estimate token usage from session jsonl file size. Returns (tokens, pct, warning)."""
+    try:
+        project_dir = root / '.claude' / 'projects'
+        if not project_dir.exists():
+            # Try common Claude project dirs
+            home = Path.home()
+            project_dir = home / '.claude' / 'projects'
+        jsonl_files = list(project_dir.rglob('*.jsonl'))
+        if not jsonl_files:
+            return 0, 0, ''
+        latest = max(jsonl_files, key=lambda f: f.stat().st_mtime)
+        tokens = round(latest.stat().st_size / 4)
+        pct = round(tokens / 200000 * 100)
+        warn = ''
+        if pct >= 80:
+            warn = f' [!!! {pct}% context - compact soon]'
+        elif pct >= 60:
+            warn = f' [{pct}% context used]'
+        return tokens, pct, warn
+    except Exception:
+        return 0, 0, ''
+
+
+def read_edit_count(mem_dir: Path) -> int:
+    """Read session edit counter."""
+    counter_file = mem_dir / 'tasks' / 'session_edit_count.txt'
+    if counter_file.exists():
+        try:
+            return int(counter_file.read_text(encoding='utf-8').strip())
+        except Exception:
+            pass
+    return 0
+
+
 def main():
     mem_dir = find_memory_dir()
     draft_file   = mem_dir / 'tasks' / 'draft-lessons.md'
@@ -64,6 +101,8 @@ def main():
 
     edited_files = read_edited_files(draft_file)
     phase        = read_current_phase(status_file)
+    edit_count   = read_edit_count(mem_dir)
+    tokens, pct, warn = estimate_tokens(ROOT)
 
     # Skip if nothing happened
     if not edited_files and not phase:
@@ -71,8 +110,15 @@ def main():
 
     now       = datetime.now().strftime('%Y-%m-%d %H:%M')
     files_str = ', '.join(edited_files) if edited_files else 'no files edited'
+    edit_str  = f'{edit_count} file saves' if edit_count > 0 else '0 file saves'
+    token_str = f'~{tokens:,} tokens ({pct}%){warn}' if tokens > 0 else 'unknown'
 
-    entry = f'\n## [{now}]\n**Files:** {files_str}\n**What:** {phase}\n'
+    entry = (
+        f'\n## [{now}]\n'
+        f'**Files:** {files_str}\n'
+        f'**Edits:** {edit_str} | **Tokens:** {token_str}\n'
+        f'**What:** {phase}\n'
+    )
 
     # Create journal with header if missing
     if not journal_file.exists():
