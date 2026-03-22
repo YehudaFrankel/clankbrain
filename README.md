@@ -4,7 +4,9 @@
 
 [![v1.0.0](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/YehudaFrankel/Claude-Code-memory-starter-kit/releases) [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue?style=flat-square)](https://python.org/downloads) [![MIT License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude-Code-orange?style=flat-square)](https://claude.ai/claude-code)
 
-**Claude forgets everything when you close the session. This kit fixes that permanently.**
+**Claude starts from zero every session. This kit gives it a memory that compounds over time.**
+
+If you're already using CLAUDE.md — this is the structured system that goes on top of it. If you're not — this sets everything up automatically.
 
 ---
 
@@ -12,23 +14,35 @@
 
 Every time you open Claude Code, you start from zero.
 
-No memory of what you built. No record of why you made a decision. No knowledge of which bugs you already fixed. You spend the first 10 minutes re-explaining your project — every single session.
+No memory of what you built yesterday. No record of why you made a decision. No knowledge of which bugs you already fixed. You spend the first 10 minutes re-explaining your project — every single session.
 
-On a long project with a complex codebase, this compounds fast. Claude re-suggests things you already rejected. It breaks patterns you established three weeks ago. It asks questions you already answered.
+On a long project this compounds fast. Claude re-suggests approaches you already rejected. It breaks patterns you established weeks ago. It asks questions you already answered. It makes the same mistake twice.
 
-This kit eliminates all of that.
+You could manually log all of this yourself. Nobody does.
+
+This kit makes Claude do it automatically — every session, two commands, 10 seconds.
 
 ---
 
 ## How It Works
 
-Three plain-English commands run your entire memory system:
+Two commands run your entire memory system:
 
 ```
 Start Session   →  Claude reads everything and picks up where you left off
-End Session     →  Claude saves everything and confirms memory is clean
-Check Drift     →  Claude compares live code against its memory and fixes gaps
+End Session     →  Claude logs what happened and keeps memory current
 ```
+
+At End Session, Claude writes to four files that accumulate over time:
+
+| File | What gets logged |
+|------|-----------------|
+| `tasks/lessons.md` | Every correction you gave Claude |
+| `tasks/errors.md` | Every bug fixed, root cause, and solution |
+| `tasks/decisions.md` | Every architectural choice and why |
+| `tasks/todo.md` | Plans written before any code changes |
+
+By session 20, Claude knows your patterns. By session 50, it knows your codebase better than any fresh context ever could. The same mistake never happens twice.
 
 Memory travels with your project as markdown files. No cloud sync, no API keys, no dependencies beyond Python.
 
