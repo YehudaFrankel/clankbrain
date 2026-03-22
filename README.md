@@ -8,6 +8,8 @@
 
 If you're already using CLAUDE.md — this is the structured system that goes on top of it. If you're not — this sets everything up automatically.
 
+**[The Problem](#the-problem) · [How It Works](#how-it-works) · [Quick Start](#quick-start) · [Commands](#commands) · [Drift Detection](#drift-detection--the-key-feature) · [Lifecycle Hooks](#lifecycle-hooks) · [What Gets Created](#what-gets-created) · [Known Limitations](#known-limitations)**
+
 ---
 
 ## The Problem
@@ -368,6 +370,10 @@ Skip `setup.py` entirely — paste one of these directly into Claude Code:
 
 ---
 
-> Built across 91 real development sessions on a production codebase. The drift detector found 21 undocumented functions the first run. Skills were added after noticing the same prompts typed every day. Everything here came from actual use — nothing hypothetical.
+> Built across 96 real development sessions on a production codebase. The drift detector found 21 undocumented functions the first run. Skills were added after noticing the same prompts typed every day. Everything here came from actual use — nothing hypothetical.
 
-**[YehudaFrankel/Claude-Code-memory-starter-kit](https://github.com/YehudaFrankel/claude-recall)**
+---
+
+If claude-recall saved you from re-explaining your codebase one more time, **[⭐ star it on GitHub](https://github.com/YehudaFrankel/claude-recall)** — it helps others find it.
+
+**[YehudaFrankel/claude-recall](https://github.com/YehudaFrankel/claude-recall)**

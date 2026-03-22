@@ -23,9 +23,9 @@ RED     = (255, 95,  87)
 YELLOW  = (254, 188, 46)
 GGREEN  = (40,  200, 64)
 
-W, H     = 720, 430
-FS       = 13
-LH       = 21      # line height
+W, H     = 760, 450
+FS       = 15
+LH       = 23      # line height
 PX       = 22      # padding x
 PY       = 14      # padding y top (below bar)
 BAR      = 36      # title bar height
