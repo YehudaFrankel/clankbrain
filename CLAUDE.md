@@ -26,6 +26,7 @@ When the user types **"Start Session"**, do the following:
    - If NOT available → warn: "ACTION NEEDED: MCP server not connected. Check `.mcp.json` and re-open Claude Code."
    - If available or no MCP configured → silent, continue
 2. Run `python tools/check_memory.py` — check for JS/CSS drift; fix any found (update memory files + sync to bundle)
+2b. **Check open plans** — scan `.claude/memory/plans/` for any `.md` file (skip `_template.md`) with `Status: Draft` or `Status: On Hold`. If found, surface: *"Open plan: [name] — Status: [X]. N open questions."* Don't load the full file — just the status line.
 3. Read `STATUS.md` — find the current session number and last change
 4. Read `.claude/memory/lessons.md` — apply all lessons before touching anything
 5. Read `.claude/memory/decisions.md` — understand past architectural choices; don't re-debate settled decisions
@@ -149,6 +150,17 @@ When the user types **"Install Memory"**, do the following:
 3. **Fill any gaps** — if `js_functions.md`, `html_css_reference.md`, or `backend_reference.md` are missing entries found in step 1, add them now
 4. **Report** — "Memory installed. [N] JS functions, [N] CSS classes documented. Ready."
 
+### `Plan [feature]`
+When the user types **"Plan [feature]"**, **"I want to build X"**, **"design X"**, or **"plan mode"**, invoke the `plan` skill:
+- Opens or creates `.claude/memory/plans/[slug].md` from the template
+- Walks through: problem → research → options → decision → technical spec → open questions
+- After every update, reads and displays the **full plan file** — never a summary
+- Logs the decision to `decisions.md` the moment it's made
+- Flags open questions explicitly before any coding starts
+
+### `Show Plan`
+When the user types **"Show Plan"** or **"show me the plan"**, read and display the full contents of the most recently edited file in `.claude/memory/plans/` — no summary, full file.
+
 ### `End Session`
 When the user types **"End Session"**, do the following:
 > **Tip:** If this session ran long, type `/compact` first to summarize the conversation before ending. This keeps context clean and prevents the next session from starting with a bloated history.
@@ -161,9 +173,21 @@ When the user types **"End Session"**, do the following:
    - Phase or architecture change → update `project_status.md`
    - New rules or gotchas → update `user_preferences.md`
    - Update `currentDate` in `.claude/memory/MEMORY.md` to today's date
-4. Sync memory files to any project bundle (`.claude/memory/` in repo if present)
-5. Run drift check to confirm everything is clean
-6. Report: "Session N complete. Updated: [list]. Memory clean."
+4. **Scan plans/** — for each `.claude/memory/plans/*.md` (skip `_template.md`):
+   - If status moved to `Ready to Code` this session → confirm it's logged in `decisions.md`
+   - If status is `On Hold` → note in STATUS.md summary
+   - If status is `Draft` with open questions → list them in the End Session report
+5. Sync memory files to any project bundle (`.claude/memory/` in repo if present)
+6. Run drift check to confirm everything is clean
+7. Report: "Session N complete. Updated: [list]. Plans: [any open]. Memory clean."
+
+---
+
+## Plan Auto-Display Rule
+
+After **any edit** to a file in `.claude/memory/plans/` (except `_template.md`) — immediately read the file and display the **full contents**. Never show a diff or summary. The user should never need to ask "show me the plan."
+
+This applies to every plan update, every option added, every decision made, every open question resolved.
 
 ---
 

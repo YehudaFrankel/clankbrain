@@ -11,6 +11,7 @@
 - [Velocity Tracker](tasks/velocity.md) — Estimated vs actual sessions. Claude reads for self-calibrating estimates.
 - [Skill Scores](tasks/skill_scores.md) — Skill effectiveness log. /evolve reads to prune weak skills.
 - [Global Lessons](~/.claude/global-lessons.md) — Cross-project discoveries. Loaded at every session start across all projects.
+- [Plans](plans/) — Feature plans. Each plan: problem, options, decision, technical spec, open questions. Check status at Start Session.
 
 # currentDate
 <!-- Update this each session -->

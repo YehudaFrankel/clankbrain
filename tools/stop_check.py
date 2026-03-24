@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Claude Code Stop hook — warns if memory files have unsaved changes.
+Claude Code Stop hook — warns about unsaved memory and open plans.
 
-Shows a reminder ONLY when changes are detected — silent otherwise.
+Shows reminders ONLY when action is needed — silent otherwise.
 Output: JSON with systemMessage (shown in Claude UI) or nothing at all.
 Hook event: Stop (fires when Claude finishes responding)
 
@@ -11,9 +11,9 @@ No git required — works with any sync method or no sync at all.
 """
 
 import json
-import os
+import re
 from pathlib import Path
-import datetime
+
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
@@ -30,11 +30,9 @@ def find_memory_dir():
 def has_unsaved_changes(memory_dir):
     """
     Check for unsaved memory changes.
-
-    Strategy 1: git status (if git is available and memory is in a repo)
-    Strategy 2: compare file mtimes against STATUS.md (fallback for non-git users)
+    Strategy 1: git status (if available)
+    Strategy 2: mtime comparison against STATUS.md (fallback for non-git users)
     """
-    # Try git first
     try:
         import subprocess
         result = subprocess.run(
@@ -46,7 +44,6 @@ def has_unsaved_changes(memory_dir):
     except Exception:
         pass
 
-    # Fallback: check if any memory file is newer than STATUS.md
     status_file = ROOT / 'STATUS.md'
     if not status_file.exists():
         return False
@@ -61,15 +58,58 @@ def has_unsaved_changes(memory_dir):
     return False
 
 
+def get_open_plans(memory_dir):
+    """
+    Scan plans/ for Draft or On Hold plans that have unresolved open questions.
+    Returns list of (name, status, open_question_count).
+    """
+    plans_dir = memory_dir / 'plans'
+    if not plans_dir.exists():
+        return []
+
+    open_plans = []
+    for plan_file in sorted(plans_dir.glob('*.md')):
+        if plan_file.name.startswith('_'):
+            continue
+        try:
+            text = plan_file.read_text(encoding='utf-8')
+
+            # Check status
+            status_match = re.search(r'\*\*Status:\*\*\s*(.+)', text)
+            if not status_match:
+                continue
+            status = status_match.group(1).strip()
+            if status not in ('Draft', 'On Hold'):
+                continue
+
+            # Count unchecked open questions
+            open_q = len(re.findall(r'^- \[ \] .+', text, re.MULTILINE))
+            if open_q > 0:
+                name = plan_file.stem.replace('-', ' ').title()
+                open_plans.append((name, status, open_q))
+        except Exception:
+            continue
+
+    return open_plans
+
+
 def main():
     memory_dir = find_memory_dir()
     if not memory_dir.exists():
         return
 
+    messages = []
+
     if has_unsaved_changes(memory_dir):
-        print(json.dumps({
-            'systemMessage': 'Memory has unsaved changes. Type "End Session" to save.'
-        }))
+        messages.append('Memory has unsaved changes. Type "End Session" to save.')
+
+    open_plans = get_open_plans(memory_dir)
+    for name, status, count in open_plans:
+        q = 'question' if count == 1 else 'questions'
+        messages.append(f'Open plan: {name} ({status}) — {count} {q} unresolved.')
+
+    if messages:
+        print(json.dumps({'systemMessage': ' | '.join(messages)}))
 
 
 if __name__ == '__main__':
