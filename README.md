@@ -10,7 +10,9 @@ Claude Code is stateless. Every session starts from zero — no memory of yester
 
 Claude Recall is a living system on top of Claude Code. It doesn't just store context — it grows with your project, improves its own skills from failure data, and runs multi-step workflows without human checkpoints between each step.
 
-**[Quick Start](#quick-start) · [What Ships](#what-ships-out-of-the-box) · [Learning Loop](#skills-fix-their-own-mistakes) · [Autonomous](#workflows-run-themselves) · [Every Command](#every-command) · [Architecture](#architecture) · [Hooks](#lifecycle-hooks) · [Modes](#two-modes) · [File Tree](#what-gets-created) · [Results](#real-results) · [FAQ](#faq)**
+No API keys. No background service. No database. Plain markdown files that git already knows how to handle.
+
+**[Three Tiers](#three-tiers) · [Quick Start](#quick-start) · [What Ships](#what-ships-out-of-the-box) · [Learning Loop](#skills-fix-their-own-mistakes) · [Autonomous](#workflows-run-themselves) · [Every Command](#every-command) · [Architecture](#architecture) · [Hooks](#lifecycle-hooks) · [Modes](#two-modes) · [File Tree](#what-gets-created) · [Results](#real-results) · [FAQ](#faq)**
 
 ---
 
@@ -32,6 +34,21 @@ Wednesday: Start Session → lessons from Monday applied automatically → bette
 
 ---
 
+## Three Tiers
+
+Most Claude setups are Tier 1 — a CLAUDE.md file and nothing else. Claude Recall ships all three.
+
+**Tier 1 — Memory Persistence**
+Persistent context across sessions. Codebase knowledge, decisions, known bugs, rejected approaches. Syncs to git. Travels with the code. Applied at every `Start Session` before any code is touched.
+
+**Tier 2 — Skills That Self-Improve**
+Auto-triggered workflows from plain English. Each skill scores itself on every use (`skill_scores.md`). `/evolve` reads the scores and patches failing steps — the compound learning loop closes without manual intervention. Skills chain into multi-step workflows via `## Auto-Chain`.
+
+**Tier 3 — Autonomous Operation**
+Skill chaining, self-healing, drift detection, and auto end-session run without prompting. Claude works through multi-step tasks without human checkpoints between steps.
+
+---
+
 ## Quick Start
 
 **Requires:** Python 3.7+ · [Claude Code](https://claude.ai/claude-code)
@@ -49,7 +66,15 @@ Start Session    ←  reads memory, applies lessons, picks up where you left off
 End Session      ←  extracts lessons, syncs memory, done
 ```
 
-Setup asks about your stack, configures itself, and builds everything automatically. No databases, no API keys, no cloud services — plain text files and git.
+Setup asks about your stack, configures itself, and builds everything automatically.
+
+| | Heavy tools | Claude Recall |
+|---|---|---|
+| API key | required | none |
+| Background service | running | none — plain files |
+| Database | setup required | markdown + git |
+| Framework lock-in | yes | any project, any stack |
+| Setup time | 30–60 min | ~5 minutes |
 
 No terminal? Paste this into Claude Code chat instead:
 > Analyze this codebase and set up the Claude memory system. Scan all JS, CSS, and backend files. Create CLAUDE.md, STATUS.md, and .claude/memory/ pre-filled with what you find.
@@ -374,6 +399,12 @@ A searchable history of every session — what files were edited, what the curre
 
 **What does bootstrap.py do?**
 Scans your entire project on first run and generates `quick_index.md` — a grouped map of every source file by type (Java, JS, CSS, SQL, etc.). Gives Claude immediate codebase awareness without any manual documentation. Run it once on any new project.
+
+**Does this work with Anthropic's native Auto Memory?**
+Yes — they solve different problems. Anthropic's Auto Memory captures conversational context within a session. Claude Recall persists project knowledge across sessions: your codebase structure, architectural decisions, lessons from past mistakes, and custom workflows. Auto Memory forgets when the session closes. Claude Recall doesn't. Run both — they complement each other.
+
+**Why markdown files instead of a database?**
+Files you can read, diff, commit, and recover without any tooling. Memory stored in a database is opaque — you can't grep it, review it in a PR, or restore a version from last Tuesday. Markdown files travel with your repo, work on any machine with zero setup, and never require an API key or running service. The constraint is the feature.
 
 **What makes it different from other Claude memory tools?**
 Most memory tools are static — you document once and things go stale. Claude Recall is a living system: memory stays accurate via drift detection, skills improve via the compound learning loop, and sessions compound instead of reset. No other tool in this space ships the self-improving skills layer.
