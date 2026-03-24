@@ -435,6 +435,88 @@ h2 {
 .loop-node:last-child { border-top: 2px solid rgba(109,186,120,.35); }
 .loop-node:last-child .ln-cmd { color: var(--green); }
 
+/* ─── PLAN ANIMATION ─── */
+.plan-demo-wrap {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3.5rem; align-items: center; margin-top: 3rem;
+}
+.plan-demo-desc p { margin: 0 0 1.5rem; }
+.plan-demo-bullets { display: flex; flex-direction: column; gap: .55rem; }
+.plan-demo-bullets span {
+  font-size: .78rem; color: var(--muted); line-height: 1.6;
+}
+.plan-demo-bullets span em { color: var(--green); font-style: normal; margin-right: .4rem; }
+.plan-card {
+  background: var(--s1); border: 1px solid var(--border2);
+  border-left: 2px solid var(--amber); min-height: 300px;
+  font-size: .74rem; overflow: hidden;
+}
+.pc-prompt {
+  padding: .7rem 1rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .4rem;
+}
+.pc-gt { color: var(--amber); }
+.pc-cmd { color: var(--text); }
+.pc-caret {
+  display: inline-block; width: 6px; height: 12px;
+  background: var(--amber); vertical-align: text-bottom;
+  animation: blink .9s step-end infinite;
+}
+.pc-file { display: none; }
+.pc-file-hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .55rem 1rem; border-bottom: 1px solid var(--border);
+  background: var(--s2);
+}
+.pc-fname { color: var(--dim); font-size: .67rem; }
+.pc-status {
+  font-size: .61rem; padding: .12rem .45rem; border-radius: 2px;
+  letter-spacing: .04em; transition: background .5s, color .5s, border-color .5s;
+  border: 1px solid transparent;
+}
+.pc-status.draft { background: rgba(212,137,10,.12); color: var(--amber); border-color: rgba(212,137,10,.25); }
+.pc-status.ready { background: rgba(109,186,120,.12); color: var(--green); border-color: rgba(109,186,120,.25); }
+.pc-body { padding: .7rem 1rem 1rem; }
+.pc-section {
+  color: var(--amber); font-size: .65rem; letter-spacing: .06em;
+  margin: .65rem 0 .3rem;
+  opacity: 0; transform: translateY(3px);
+  transition: opacity .3s, transform .3s;
+}
+.pc-section.vis { opacity: 1; transform: translateY(0); }
+.pc-problem {
+  color: var(--muted); font-size: .71rem; line-height: 1.65;
+  opacity: 0; transform: translateY(3px);
+  transition: opacity .3s .05s, transform .3s .05s;
+}
+.pc-problem.vis { opacity: 1; transform: translateY(0); }
+.pc-opt {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .22rem .3rem; border-radius: 3px; margin-bottom: .18rem;
+  opacity: 0; transform: translateX(-5px);
+  transition: opacity .28s, transform .28s, background .4s;
+}
+.pc-opt.vis { opacity: 1; transform: translateX(0); }
+.pc-opt.sel { background: rgba(212,137,10,.07); }
+.pc-chk { color: var(--dim); width: 16px; flex-shrink: 0; transition: color .3s; }
+.pc-opt.sel .pc-chk { color: var(--amber); }
+.pc-oname { color: var(--text); flex: 1; }
+.pb { font-size: .6rem; padding: .1rem .3rem; border-radius: 2px; }
+.pb-lo  { background: rgba(90,72,48,.45);   color: var(--dim); }
+.pb-md  { background: rgba(212,137,10,.13); color: var(--amber); }
+.pb-hi  { background: rgba(109,186,120,.13);color: var(--green); }
+.pc-done {
+  margin-top: .8rem; padding: .45rem .7rem;
+  border-left: 2px solid var(--green);
+  background: rgba(109,186,120,.04);
+  color: var(--green); font-size: .71rem;
+  opacity: 0; transition: opacity .4s;
+}
+.pc-done.vis { opacity: 1; }
+@media (max-width: 900px) {
+  .plan-demo-wrap { grid-template-columns: 1fr; }
+}
+
 /* ─── SKILLS TABLE ─── */
 .skills-tbl {
   width: 100%; border-collapse: collapse;
@@ -876,6 +958,44 @@ footer {
   </div>
 </section>
 
+<!-- PLAN MODE DEMO -->
+<section id="plan-mode-demo" style="background:#0d0e12;">
+  <div class="wrap-lg">
+    <div class="sec-label">plan mode</div>
+    <h2>Planning that structures itself.<br><span class="h2-amber">One word. Full plan.</span></h2>
+
+    <div class="plan-demo-wrap reveal">
+      <div class="plan-demo-desc">
+        <p class="sec-desc" style="margin-top:0;">
+          Say <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">plan [feature]</code> and Claude opens a structured plan file, researches your codebase, drafts options with ratings, and tracks the decision live.
+          The full plan auto-displays after every update — you'll never need to ask "show me the plan" again.
+        </p>
+        <div class="plan-demo-bullets">
+          <span><em>›</em> Options rated: build cost · user friction · payoff</span>
+          <span><em>›</em> Decision logged to decisions.md the moment it's made</span>
+          <span><em>›</em> Full plan displayed after every update — automatically</span>
+          <span><em>›</em> Stop hook surfaces open plans with unresolved questions</span>
+          <span><em>›</em> Chains to search-first when status becomes Ready to Code</span>
+        </div>
+      </div>
+
+      <div class="plan-card" id="plan-anim">
+        <div class="pc-prompt">
+          <span class="pc-gt">›</span>
+          <span class="pc-cmd" id="pc-cmd"></span><span class="pc-caret" id="pc-caret"></span>
+        </div>
+        <div class="pc-file" id="pc-file">
+          <div class="pc-file-hdr">
+            <span class="pc-fname">plans/email-throttle.md</span>
+            <span class="pc-status draft" id="pc-status">Draft</span>
+          </div>
+          <div class="pc-body" id="pc-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- AGENTIC TIER -->
 <section id="tiers">
   <div class="wrap">
@@ -1239,6 +1359,97 @@ function runTerminal() {
   setTimeout(typeNext, 900);
 }
 
+// ─── PLAN ANIMATION ───
+function initPlanAnim() {
+  const card    = document.getElementById('plan-anim');
+  const cmdEl   = document.getElementById('pc-cmd');
+  const caretEl = document.getElementById('pc-caret');
+  const fileEl  = document.getElementById('pc-file');
+  const statusEl= document.getElementById('pc-status');
+  const bodyEl  = document.getElementById('pc-body');
+  if (!card) return;
+
+  let tids = [];
+  function at(fn, ms) { tids.push(setTimeout(fn, ms)); }
+
+  function badge(level) {
+    const cls = level === 'Low' ? 'pb-lo' : level === 'Med' ? 'pb-md' : 'pb-hi';
+    return `<span class="pb ${cls}">${level}</span>`;
+  }
+
+  function addEl(tag, cls, html, parent) {
+    const el = document.createElement(tag);
+    el.className = cls;
+    if (html) el.innerHTML = html;
+    (parent || bodyEl).appendChild(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('vis')));
+    return el;
+  }
+
+  function typeCmd(text, cb) {
+    let i = 0;
+    cmdEl.textContent = '';
+    caretEl.style.display = 'inline-block';
+    (function next() {
+      if (i < text.length) {
+        cmdEl.textContent += text[i++];
+        tids.push(setTimeout(next, 50 + Math.random() * 40));
+      } else {
+        caretEl.style.display = 'none';
+        cb && cb();
+      }
+    })();
+  }
+
+  function reset() {
+    tids.forEach(clearTimeout); tids = [];
+    cmdEl.textContent = '';
+    caretEl.style.display = 'inline-block';
+    fileEl.style.display = 'none';
+    statusEl.className = 'pc-status draft';
+    statusEl.textContent = 'Draft';
+    bodyEl.innerHTML = '';
+  }
+
+  function run() {
+    reset();
+    at(() => typeCmd('plan email-throttle', () => {
+      at(() => { fileEl.style.display = 'block'; }, 350);
+
+      at(() => addEl('div', 'pc-section', '## Problem'), 750);
+      at(() => addEl('div', 'pc-problem', 'Rate-limited emails fail silently. Users see nothing.'), 1050);
+
+      at(() => addEl('div', 'pc-section', '## Options'), 2000);
+      at(() => addEl('div', 'pc-opt', `<span class="pc-chk">[ ]</span><span class="pc-oname">A — Silent retry</span>${badge('Low')}${badge('Low')}`), 2400);
+      at(() => {
+        const el = addEl('div', 'pc-opt', `<span class="pc-chk">[ ]</span><span class="pc-oname">B — User toast</span>${badge('Low')}${badge('Med')}`);
+        el.id = 'pc-opt-b';
+      }, 3100);
+      at(() => addEl('div', 'pc-opt', `<span class="pc-chk">[ ]</span><span class="pc-oname">C — Full queue</span>${badge('High')}${badge('High')}`), 3800);
+
+      at(() => {
+        const b = document.getElementById('pc-opt-b');
+        if (b) { b.classList.add('sel'); b.querySelector('.pc-chk').textContent = '[✓]'; }
+      }, 5300);
+
+      at(() => {
+        statusEl.classList.remove('draft');
+        statusEl.classList.add('ready');
+        statusEl.textContent = 'Ready to Code';
+      }, 6800);
+
+      at(() => addEl('div', 'pc-done', 'Plan complete. Say "Start coding" when ready.'), 7600);
+
+      at(run, 11800);
+    }), 500);
+  }
+
+  const planObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { run(); planObs.unobserve(e.target); } });
+  }, { threshold: 0.25 });
+  planObs.observe(card);
+}
+
 // ─── SCROLL REVEAL ───
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
@@ -1261,6 +1472,7 @@ function copyCmd(btn, text) {
 
 // ─── RUN ───
 runTerminal();
+initPlanAnim();
 </script>
 </body>
 </html>
