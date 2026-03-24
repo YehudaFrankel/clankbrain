@@ -214,55 +214,55 @@ section { border-top: 1px solid var(--border); position: relative; overflow: hid
 .wrap-sm { max-width: 800px; margin: 0 auto; padding: 5rem 2rem; position: relative; z-index: 1; }
 .wrap-lg { max-width: 1120px; margin: 0 auto; padding: 5rem 2rem; position: relative; z-index: 1; }
 
-/* ── Section alternation — clear visible contrast ── */
-/* Warm (amber/memory): install, living, skills, stats, faq */
-#install, #living, #skills, #stats, #faq {
+/* ── Section color families ── */
+/* Warm amber (memory/results): install, stats, faq */
+#install, #stats, #faq {
   background: #1c1508;
 }
-/* Dark neutral (structural): loop, tiers, commands */
-#loop, #tiers, #commands {
-  background: #0f0e0c;
+/* Green-dark (living/autonomous): living, hooks */
+#living, #hooks {
+  background: #0b1210;
 }
-/* Dark green-tinted (autonomous): hooks only */
-#hooks {
-  background: #0b1410;
+/* Cool near-black (structural/mechanical): loop, skills, tiers, commands */
+#loop, #skills, #tiers, #commands {
+  background: #0d0e12;
 }
 
-/* Living — dot grid on warm surface */
+/* Living — green dot grid on green-dark surface */
 #living {
   background:
-    radial-gradient(circle, rgba(212,137,10,.22) 1px, transparent 1px),
-    #1c1508;
+    radial-gradient(circle, rgba(109,186,120,.18) 1px, transparent 1px),
+    #0b1210;
   background-size: 30px 30px, auto;
 }
 
-/* Loop — subtle amber top glow on near-black */
+/* Loop — amber top bloom on cool dark */
 #loop {
   background:
-    radial-gradient(ellipse at 50% -10%, rgba(212,137,10,.14) 0%, transparent 50%),
-    #0f0e0c;
+    radial-gradient(ellipse at 50% -10%, rgba(212,137,10,.18) 0%, transparent 55%),
+    #0d0e12;
 }
 
-/* Hooks — green grid on dark green base */
+/* Hooks — green grid on deep green-dark */
 #hooks {
   background:
-    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(109,186,120,.07) 60px, rgba(109,186,120,.07) 61px),
-    repeating-linear-gradient(0deg,  transparent, transparent 60px, rgba(109,186,120,.06) 60px, rgba(109,186,120,.06) 61px),
-    #0b1410;
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(109,186,120,.08) 60px, rgba(109,186,120,.08) 61px),
+    repeating-linear-gradient(0deg,  transparent, transparent 60px, rgba(109,186,120,.07) 60px, rgba(109,186,120,.07) 61px),
+    #091410;
 }
 
-/* Stats — CRT green glow on warm surface */
+/* Stats — strong green bottom glow on warm surface */
 #stats {
   background:
-    radial-gradient(ellipse at 50% 120%, rgba(109,186,120,.22) 0%, rgba(109,186,120,.06) 40%, transparent 65%),
+    radial-gradient(ellipse at 50% 120%, rgba(109,186,120,.28) 0%, rgba(109,186,120,.08) 45%, transparent 68%),
     #1c1508;
 }
 
-/* Tiers — amber left edge glow on near-black */
+/* Tiers — amber left edge glow on cool dark */
 #tiers {
   background:
-    radial-gradient(ellipse at -5% 50%, rgba(212,137,10,.18) 0%, transparent 50%),
-    #0f0e0c;
+    radial-gradient(ellipse at -5% 50%, rgba(212,137,10,.2) 0%, transparent 52%),
+    #0d0e12;
 }
 
 .sec-label {
