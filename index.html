@@ -316,7 +316,8 @@ tr:last-child td { border-bottom: none; }
   <div class="nav-right">
     <a class="nav-link" href="#install">Install</a>
     <a class="nav-link" href="#loop">Loop</a>
-    <a class="nav-link" href="#autonomous">Autonomous</a>
+    <a class="nav-link" href="#skills">Skills</a>
+    <a class="nav-link" href="#hooks">Hooks</a>
     <a class="nav-link" href="#commands">Commands</a>
     <a class="gh-btn" href="https://github.com/YehudaFrankel/claude-recall" target="_blank">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -582,51 +583,172 @@ tr:last-child td { border-bottom: none; }
   </div>
 </section>
 
+<!-- Skills showcase -->
+<section id="skills" style="border-top:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">What Ships</div>
+    <h2>10 skills. All automatic.</h2>
+    <p class="section-sub">Every skill fires from plain English — you never invoke them by name. Generate Skills creates more, tailored to your exact stack.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:3rem;">
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🐛</span> fix-bug</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"fix the bug where..."</span></p>
+        <p>Root cause first, fix second. Logs the fix to lessons.md so it never happens again.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🔎</span> code-review</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"review this file"</span></p>
+        <p>Dead code, missing error handling, convention violations — reports file and line number.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🔒</span> security-check</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"check for security issues"</span></p>
+        <p>SQL injection, missing auth, exposed sensitive data across all layers.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">✨</span> new-feature</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"add a new..."</span></p>
+        <p>Searches existing patterns before building — no duplicate code, no re-inventing what's already there.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">✅</span> verification-loop</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"verify this works", "before I ship"</span></p>
+        <p>Compile + smoke test + self-check after every change. Chains automatically from fix-bug.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🔍</span> search-first</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"add new endpoint/feature"</span></p>
+        <p>Research before coding — finds existing implementations so you never build what's already there.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">📝</span> /learn</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"/learn", "End Session"</span></p>
+        <p>Extracts lessons, scores every skill that fired (Y/N), logs velocity. Auto-runs at End Session.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">⚡</span> /evolve</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"/evolve"</span></p>
+        <p>Patches failing skills using the exact failure data from skill_scores.md. Clusters patterns into new skills.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🗜</span> strategic-compact</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"should I compact?"</span></p>
+        <p>Guides safe context compaction — reinjects memory first so nothing is lost through /compact.</p>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">☕</span> java-reviewer</div>
+        <p style="margin-bottom:.5rem;">Triggered by: <span style="font-family:var(--mono);font-size:.78rem;color:#c4b5fd">"review this java"</span></p>
+        <p>Deep Java review against your stack's specific patterns — goes further than the general code-review skill.</p>
+      </div>
+    </div>
+    <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;max-width:600px;">
+      <span style="font-size:1.4rem;">🛠</span>
+      <div>
+        <strong style="font-size:.95rem;">Generate Skills</strong>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:.2rem;">Type <code style="font-family:var(--mono);color:#c4b5fd">Generate Skills</code> and Claude auto-creates additional skills tailored to your exact stack, file names, and patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Hooks -->
+<section id="hooks" style="border-top:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Lifecycle Hooks</div>
+    <h2>Four hooks. Zero configuration.</h2>
+    <p class="section-sub">These run automatically at key moments — no commands, no setup beyond the initial install.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;">
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🌅</span> SessionStart</div>
+        <p>Fires when Claude Code opens. Injects STATUS.md and MEMORY.md into context before your first message. Claude starts warm — no need to type Start Session.</p>
+        <div class="code-snip"><span class="t-dim">session_start.py</span><br><span class="t-ok">→ memory loaded before msg 1</span></div>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">📂</span> PostToolUse</div>
+        <p>Fires after every Edit or Write. Runs the drift detector immediately — catches undocumented changes right when they happen, not just at End Session.</p>
+        <div class="code-snip"><span class="t-dim">check_memory.py --silent</span><br><span class="t-ok">→ drift caught in real time</span></div>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🗜</span> PreCompact</div>
+        <p>Fires before Claude compacts the conversation. Reinjects memory into the compacted context. Run /learn first, then /compact freely — nothing is ever lost.</p>
+        <div class="code-snip"><span class="t-dim">precompact.py</span><br><span class="t-ok">→ memory survives /compact</span></div>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;">
+        <div class="auto-card-title"><span class="auto-icon">🛑</span> Stop</div>
+        <p>Fires after every response. Captures session journal automatically. Warns about unsaved memory. After 9pm with unsaved changes — auto-pushes to git.</p>
+        <div class="code-snip"><span class="t-dim">session_journal.py</span><br><span class="t-dim">stop_check.py</span><br><span class="t-ok">→ nothing ever lost</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modes -->
+<section id="modes" style="border-top:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Two Modes</div>
+    <h2>Start light. Upgrade when ready.</h2>
+    <p class="section-sub">Setup asks which mode you want. You can always upgrade from Lite to Full later.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:700px;">
+      <div class="auto-card" style="opacity:1;transform:none;border-color:rgba(139,92,246,.3);">
+        <div class="auto-card-title"><span class="auto-icon">⚡</span> Lite</div>
+        <p>One notes file. Manual drift checks. Best for quick experiments and small solo projects.</p>
+        <div style="font-size:.8rem;color:var(--dim);font-family:var(--mono);margin-top:.5rem;">1 memory file · manual drift</div>
+      </div>
+      <div class="auto-card" style="opacity:1;transform:none;border-color:var(--accent);">
+        <div class="auto-card-title"><span class="auto-icon">🚀</span> Full</div>
+        <p>5 separate memory files. Automated drift detection after every edit. Session journal. Best for real projects.</p>
+        <div style="font-size:.8rem;color:var(--accent);font-family:var(--mono);margin-top:.5rem;">5 memory files · auto drift · journal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Commands -->
 <section id="commands" style="border-top:1px solid var(--border);">
   <div class="section-inner">
     <div class="section-label">Commands</div>
-    <h2>Two you use every day.</h2>
-    <p class="section-sub">The rest fire automatically when you describe a situation.</p>
+    <h2>Every command, explained.</h2>
+    <p class="section-sub">Two you use every day. The rest when you need them.</p>
     <div class="cmd-groups">
       <div>
         <div class="cmd-group-title">Daily</div>
         <table>
           <tr><th>Command</th><th>What it does</th></tr>
-          <tr><td>Start Session</td><td>Reads memory, applies lessons, picks up where you left off</td></tr>
-          <tr><td>End Session</td><td>Runs /learn, updates STATUS.md, syncs memory</td></tr>
-          <tr><td>/learn</td><td>Extracts lessons, scores skills, logs velocity</td></tr>
-          <tr><td>/evolve</td><td>Patches failing skills, clusters patterns into new ones</td></tr>
+          <tr><td>Start Session</td><td>Reads memory, applies lessons, runs drift check, picks up where you left off</td></tr>
+          <tr><td>End Session</td><td>Runs /learn, updates STATUS.md, syncs all memory files</td></tr>
+          <tr><td>/learn</td><td>Extracts lessons, scores skills (Y/N), logs velocity</td></tr>
+          <tr><td>/evolve</td><td>Patches failing skills, clusters repeated patterns into new skills</td></tr>
+          <tr><td>Should I compact?</td><td>Safe context compaction — memory reinjects first, nothing lost</td></tr>
         </table>
       </div>
       <div>
-        <div class="cmd-group-title">Auto-triggered</div>
-        <table>
-          <tr><th>What you say</th><th>What Claude does</th></tr>
-          <tr><td>fix the bug where...</td><td>Root cause first, fix second, log to lessons</td></tr>
-          <tr><td>review this file</td><td>Dead code, error handling, convention violations</td></tr>
-          <tr><td>check for security issues</td><td>SQL injection, missing auth, exposed data</td></tr>
-          <tr><td>refactor this</td><td>Plan first, change second — no surprise rewrites</td></tr>
-        </table>
-      </div>
-      <div>
-        <div class="cmd-group-title">Setup</div>
+        <div class="cmd-group-title">Analysis</div>
         <table>
           <tr><th>Command</th><th>What it does</th></tr>
-          <tr><td>Setup Memory</td><td>First-time setup</td></tr>
-          <tr><td>Install Memory</td><td>New machine — copies memory to Claude's path</td></tr>
-          <tr><td>Generate Skills</td><td>Auto-creates skills for your specific stack</td></tr>
-          <tr><td>Update Kit</td><td>Pull latest — memory and skills never touched</td></tr>
+          <tr><td>Check Drift</td><td>Manually scan live code vs memory — find undocumented functions</td></tr>
+          <tr><td>Analyze Codebase</td><td>Full scan of all JS, CSS, backend — documents every function and endpoint</td></tr>
+          <tr><td>Code Health</td><td>console.log leftovers, hardcoded values, dead code, missing error handling</td></tr>
         </table>
       </div>
       <div>
-        <div class="cmd-group-title">Planning</div>
+        <div class="cmd-group-title">Setup & recovery</div>
         <table>
           <tr><th>Command</th><th>What it does</th></tr>
-          <tr><td>Estimate: [task]</td><td>Complexity, files, risks — before any code</td></tr>
-          <tr><td>Debug Session</td><td>Reproduce → isolate → fix → verify → log</td></tr>
-          <tr><td>Code Health</td><td>Debug leftovers, hardcoded values, dead code</td></tr>
-          <tr><td>Handoff</td><td>Generates HANDOFF.md — state, tasks, decisions</td></tr>
+          <tr><td>Setup Memory</td><td>First-time setup — creates all memory files</td></tr>
+          <tr><td>Install Memory</td><td>New machine — copies memory to Claude's system path</td></tr>
+          <tr><td>Generate Skills</td><td>Auto-creates skills tailored to your exact stack and file structure</td></tr>
+          <tr><td>Update Kit</td><td>Latest updates safely — only commands block updated, memory and skills never touched</td></tr>
+          <tr><td>Analyze Codebase</td><td>Full scan — documents every function, class, and endpoint found</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="cmd-group-title">Planning & debug</div>
+        <table>
+          <tr><th>Command</th><th>What it does</th></tr>
+          <tr><td>Estimate: [task]</td><td>Complexity, files, risks, written plan — before any code</td></tr>
+          <tr><td>Debug Session</td><td>Reproduce → isolate → hypothesize → fix → verify → log</td></tr>
+          <tr><td>Handoff</td><td>HANDOFF.md with current state, next 3 tasks, key decisions, how to start</td></tr>
+          <tr><td>Code Health</td><td>console.log leftovers, hardcoded values, dead code — reports file + line</td></tr>
         </table>
       </div>
     </div>

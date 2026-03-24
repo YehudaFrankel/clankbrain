@@ -10,6 +10,8 @@ Claude Code is stateless. Every session starts from zero — no memory of yester
 
 Claude Recall is a living system on top of Claude Code. It doesn't just store context — it grows with your project, improves its own skills from failure data, and runs multi-step workflows without human checkpoints between each step.
 
+**[Quick Start](#quick-start) · [What Ships](#what-ships-out-of-the-box) · [Learning Loop](#skills-fix-their-own-mistakes) · [Autonomous](#workflows-run-themselves) · [Every Command](#every-command) · [Architecture](#architecture) · [Hooks](#lifecycle-hooks) · [Modes](#two-modes) · [File Tree](#what-gets-created) · [Results](#real-results) · [FAQ](#faq)**
+
 ---
 
 ## Before and After
@@ -38,7 +40,7 @@ Wednesday: Start Session → lessons from Monday applied automatically → bette
 # 1. Clone once
 git clone https://github.com/YehudaFrankel/claude-recall.git
 
-# 2. Run setup in your project (takes ~2 minutes)
+# 2. Run setup in your project (~2 minutes)
 cd your-project
 python /path/to/claude-recall/setup.py
 
@@ -49,32 +51,100 @@ End Session      ←  extracts lessons, syncs memory, done
 
 Setup asks about your stack, configures itself, and builds everything automatically. No databases, no API keys, no cloud services — plain text files and git.
 
+No terminal? Paste this into Claude Code chat instead:
+> Analyze this codebase and set up the Claude memory system. Scan all JS, CSS, and backend files. Create CLAUDE.md, STATUS.md, and .claude/memory/ pre-filled with what you find.
+
+---
+
+## Your Daily Routine
+
+```
+Morning:   "Start Session"
+           → reads all memory, applies lessons from past sessions,
+             runs drift check, picks up exactly where you left off
+
+[work on your project — describe what you need in plain English]
+
+Evening:   "End Session"
+           → runs /learn, logs what changed, saves everything to memory
+```
+
+Two commands. Everything else is automatic.
+
+---
+
+## What Ships Out of the Box
+
+### Skills — fire automatically from plain English
+
+| Skill | What triggers it | What it does |
+|-------|-----------------|-------------|
+| `fix-bug` | "fix the bug where..." | Root cause first, fix second, logs so it never happens again |
+| `code-review` | "review this file" | Dead code, missing error handling, convention violations |
+| `security-check` | "check for security issues" | SQL injection, missing auth, exposed sensitive data |
+| `new-feature` | "add a new..." | Searches existing patterns first, then builds — no duplicate code |
+| `verification-loop` | "verify this works", "before I ship" | Compile + smoke test + self-check after every change |
+| `search-first` | "add new endpoint/feature" | Research before coding — finds existing implementations |
+| `strategic-compact` | "should I compact?" | Safe context compaction without losing memory |
+| `learn` | `/learn`, "End Session" | Extracts lessons, scores skills, logs velocity |
+| `evolve` | `/evolve` | Patches failing skills, clusters patterns into new skills |
+| `java-reviewer` | "review this java" | Deep Java review against your stack's specific patterns |
+
+Type `Generate Skills` and Claude creates additional skills tailored to your exact stack and file structure.
+
+### Tools — run silently in the background
+
+| Tool | When it runs | What it does |
+|------|-------------|-------------|
+| `check_memory.py` | After every file edit | Drift detector — catches undocumented functions and CSS changes immediately |
+| `session_journal.py` | After every response | Auto-captures what you worked on — searchable forever, no /learn needed |
+| `stop_check.py` | After every response | Warns about unsaved memory; auto-pushes to git after 9pm |
+| `bootstrap.py` | On first setup | Scans your entire codebase and generates a quick index — immediate codebase awareness |
+| `session_start.py` | When Claude Code opens | Injects memory into context before your first message — Claude starts warm |
+| `precompact.py` | Before `/compact` | Reinjects memory into the compacted context — nothing lost through compaction |
+
 ---
 
 ## Skills Fix Their Own Mistakes
 
-When a built-in skill (like `fix-bug`) gets something wrong and you correct it, that correction gets logged. Run `/evolve` every few sessions and it rewrites the exact failing step using your failure data.
+When a built-in skill gets something wrong and you correct it, that correction gets logged. Run `/evolve` every few sessions and it rewrites the exact failing step using your failure data.
 
-This is the **compound learning loop** — skills score themselves on every use, `/evolve` patches the ones that failed, and next session they're better. Automatically, without you touching them.
+This is the **compound learning loop** — an agentic feedback cycle where skills score themselves, failures get logged with precision, and `/evolve` closes the loop by patching the right step:
 
 ```
 session work
      ↓
-/learn  →  lessons.md + decisions.md + skill_scores.md (Y/N per skill)
-                    ↓
-             /evolve  →  reads Y scores → patches the failing step
-                      →  clusters repeated lessons into new skills
-                    ↓
-             better skills next session
+/learn  →  lessons.md       (what was learned this session)
+        →  decisions.md     (what was settled — never re-debated)
+        →  skill_scores.md  (Y = needed correction, N = worked first time)
+        →  velocity.md      (estimated vs actual — self-calibrating estimates)
+                ↓
+         /evolve  →  finds skills where Correction = Y, Improvement = pending
+                  →  reads "What Failed" column → patches the exact step
+                  →  clusters repeated lessons into new reusable skills
+                  →  logs every change to skill_improvements.md
+                ↓
+         better skills next session — automatically
 ```
 
 Run `/learn` before `End Session`. Run `/evolve` every 3–5 sessions. The same mistake is architecturally impossible after `/evolve` runs.
+
+### What gets smarter over time
+
+| File | What it tracks | Effect |
+|------|---------------|--------|
+| `lessons.md` | Every pattern + fix extracted by /learn | Applied before any code is touched each session |
+| `decisions.md` | Settled architectural choices | Claude never re-debates what's already decided |
+| `skill_scores.md` | Binary pass/fail per skill per session | /evolve uses this to patch failing steps |
+| `regret.md` | Approaches tried and rejected | Never re-proposed — saves re-litigating bad ideas |
+| `velocity.md` | Estimated vs actual sessions per task | After 20+ entries, estimates reflect real track record |
+| `global-lessons.md` | Lessons that apply across all projects | Loaded at Start Session across every project you use |
 
 ---
 
 ## It Stays Accurate Without Effort
 
-Most memory tools go stale — you document once, code moves on. Claude Recall runs a **drift detector** (`check_memory.py`) after every file edit. It compares live code against Claude's memory and flags undocumented changes immediately:
+Most memory tools go stale — you document once, code moves on. Claude Recall runs `check_memory.py` after every file edit. It compares live code against Claude's memory and flags undocumented changes:
 
 ```
 DRIFT DETECTED
@@ -88,20 +158,23 @@ DRIFT DETECTED
 
 Silent when clean. No manual updates needed.
 
+**Starting fresh on an existing project?** Run `bootstrap.py` once — it scans your entire codebase and generates `quick_index.md`, a grouped map of every source file by type. Gives Claude immediate awareness of a project it's never seen before, without any manual documentation.
+
 ---
 
 ## Workflows Run Themselves
 
-Claude acts, not just answers. Three autonomous behaviors ship out of the box:
+Three autonomous behaviors ship out of the box — no commands needed:
 
-**Skill chaining** — add `## Auto-Chain` to any skill and it triggers the next step on pass or fail. No human prompts between steps:
+**Skill chaining** — add `## Auto-Chain` to any skill and it triggers the next step automatically:
 ```
 fix-bug → verification-loop → smoke-test
                ↓ if fail
            debug-topic → smoke-test
 ```
+No human steps between. Claude reads the chain and runs it. Build your own chains by adding one section to any skill file.
 
-**Self-healing** — when a verify step fails, Claude attempts the minimal fix and retries once before escalating to you. Define the recovery in a `## Recovery` section in any skill.
+**Self-healing** — when a verify step fails, Claude attempts the minimal fix and retries once before escalating. Add a `## Recovery` section to define what "minimal fix" means for that skill.
 
 **Auto end session** — the stop hook monitors every response. After 9pm with unsaved memory changes, it auto-commits and pushes to git. Memory is never lost even if you forget `End Session`.
 
@@ -109,46 +182,48 @@ fix-bug → verification-loop → smoke-test
 
 ## It Works on Any Machine
 
-Memory is stored as plain markdown files in your project, synced to git. Pull your project on a new machine, type `Install Memory`, and Claude is fully up to speed — every lesson, every decision, every skill improvement carried over.
+Memory is stored as plain markdown files, synced to git. Pull your project on a new machine and Claude is fully up to speed:
 
 ```bash
-# New machine setup
 git pull
-Install Memory    ←  inside Claude Code
-Start Session     ←  Claude knows everything
+Install Memory    ←  inside Claude Code — copies memory to Claude's system path
+Start Session     ←  Claude knows everything: all lessons, decisions, skills
 ```
 
 ---
 
-## Commands
+## Every Command
 
-### Every day
+### Daily
 | Command | What it does |
 |---------|-------------|
-| `Start Session` | Reads memory, applies all lessons, picks up where you left off |
-| `End Session` | Runs `/learn`, updates STATUS.md, syncs memory |
-| `/learn` | Extracts lessons, scores skills (Y/N), logs velocity — run before End Session |
+| `Start Session` | Reads memory, applies lessons, runs drift check, picks up where you left off |
+| `End Session` | Runs /learn, updates STATUS.md, syncs all memory files |
+| `/learn` | Extracts lessons, scores skills (Y/N), logs velocity — auto-runs at End Session |
 | `/evolve` | Patches failing skills, clusters repeated patterns into new reusable skills |
 | `Should I compact?` | Guides safe context compaction without losing memory |
 
-### Auto-triggered — just describe the situation
-| What you say | What Claude does |
-|-------------|-----------------|
-| `"fix the bug where..."` | Root cause first, fix second, logged so it never happens again |
-| `"review this file"` | Dead code, missing error handling, convention violations |
-| `"check for security issues"` | SQL injection, missing auth, exposed data |
-| `"is this ready for prod"` | Catches hardcoded dev values, runs deploy checklist |
-| `"refactor this"` | Plan first, change second — no surprise rewrites |
+### Analysis
+| Command | What it does |
+|---------|-------------|
+| `Check Drift` | Manually run the drift detector — find undocumented functions and stale entries |
+| `Analyze Codebase` | Full scan of all JS, CSS, and backend — documents every function, class, and endpoint |
+| `Code Health` | Finds leftover `console.log`, hardcoded values, dead code, missing error handling — reports file + line |
 
 ### Setup and recovery
 | Command | What it does |
 |---------|-------------|
-| `Setup Memory` | First-time setup |
-| `Install Memory` | New machine — copies memory to Claude's system path |
-| `Generate Skills` | Auto-creates skills tailored to your stack |
-| `Update Kit` | Pull latest updates safely — memory and skills never touched |
-| `Estimate: [task]` | Complexity, files, risks, written plan — before any code |
-| `Handoff` | Generates `HANDOFF.md` — state, next tasks, key decisions |
+| `Setup Memory` | First-time setup — creates all memory files for your project |
+| `Install Memory` | New machine — copies memory files to Claude's system path |
+| `Generate Skills` | Auto-creates skills tailored to your actual stack, file names, and patterns |
+| `Update Kit` | Pulls latest kit safely — only the kit commands block in CLAUDE.md is ever touched; your memory, skills, and code are never modified |
+
+### Planning
+| Command | What it does |
+|---------|-------------|
+| `Estimate: [task]` | Complexity rating, list of files that will change, risk flags, written plan — before any code |
+| `Debug Session` | Structured diagnosis: reproduce → isolate → hypothesize → fix → verify → log to regret.md |
+| `Handoff` | Generates `HANDOFF.md` — current state, next 3 tasks, key decisions, known bugs, how to start |
 
 ---
 
@@ -157,13 +232,67 @@ Start Session     ←  Claude knows everything
 Three tiers — most memory tools ship only the first.
 
 **Tier 1 — Memory**
-Persistent context across sessions. Codebase knowledge, decisions made, known bugs, rejected approaches. Syncs to git. Travels with the code. Applied at every `Start Session` before any code is touched.
+Persistent context across sessions. Codebase knowledge, decisions, known bugs, rejected approaches. Syncs to git. Travels with the code. Applied at every `Start Session` before any code is touched.
 
 **Tier 2 — Skills**
-Auto-triggered workflows from natural language. Each skill scores itself on every use (`skill_scores.md`). `/evolve` reads the scores and patches failing steps — the compound learning loop closes without manual intervention.
+Auto-triggered workflows from natural language. Each skill scores itself on every use (`skill_scores.md`). `/evolve` reads the scores and patches failing steps — the compound learning loop closes without manual intervention. Skills can chain into multi-step workflows via `## Auto-Chain`.
 
 **Tier 3 — Autonomous**
-Skill chaining, self-healing, drift detection, and auto end session run without prompting. Claude works through multi-step tasks without human checkpoints between each step. Agentic score on a real production codebase: **8.5/10** — the remaining 1.5 is intentional (you still initiate sessions and approve plans).
+Skill chaining, self-healing, drift detection, and auto end session run without prompting. Claude works through multi-step tasks without human checkpoints. Agentic score on a real production codebase: **8.5/10** — the remaining 1.5 is intentional (you initiate sessions and approve plans; full autonomy without human initiation is an agent, not an assistant).
+
+---
+
+## Lifecycle Hooks
+
+Four hooks run automatically — no commands needed, no configuration required.
+
+| Hook | When it fires | What it does |
+|------|--------------|-------------|
+| `SessionStart` | Every time Claude Code opens | Runs `session_start.py` — injects STATUS.md and MEMORY.md into context before your first message. Claude starts warm without typing `Start Session`. |
+| `PostToolUse` | After every Edit or Write | Runs `check_memory.py --silent` — catches drift immediately after every file change, not just at End Session. |
+| `PreCompact` | Before Claude compacts the conversation | Runs `precompact.py` — reinjects memory files into the compacted context. Run `/learn` first to capture session patterns, then `/compact` freely. |
+| `Stop` | After every response | Runs `session_journal.py` (auto-captures session summary) then `stop_check.py` (warns about unsaved memory; auto-pushes after 9pm). |
+
+All hooks are Python scripts in `tools/` — cross-platform, no dependencies beyond Python.
+
+---
+
+## Two Modes
+
+Setup offers two modes based on your project size:
+
+| | Full | Lite |
+|---|---|---|
+| Memory files | 5 separate files (js_functions, html_css, backend, project_status, user_preferences) | 1 notes file |
+| Drift detection | Automated — runs after every edit | Manual — run `Check Drift` yourself |
+| Session journal | Auto-captured on every Stop | Not included |
+| Best for | Multi-file projects, teams, long-running codebases | Quick experiments, small solo projects |
+| Upgrade later? | — | Yes — one command |
+
+You can always upgrade from Lite to Full later by running `Setup Memory` again.
+
+---
+
+## Update Kit
+
+`Update Kit` pulls the latest version safely. It shows you exactly what will change and asks for confirmation before applying anything.
+
+**What it never touches:**
+- Your memory files (`.claude/memory/`)
+- Your skills (`.claude/skills/`)
+- Your code
+- Everything below `## What This Project Is` in CLAUDE.md — your project-specific content
+
+**What it updates:**
+- The kit commands block in CLAUDE.md (Start Session, End Session, etc.)
+- The `tools/` scripts (bug fixes, new features)
+- Kit-level settings in `settings.json`
+
+```bash
+Update Kit                                    ←  pull from default GitHub repo
+Update Kit from https://github.com/user/repo  ←  pull from a fork or branch
+python update.py                              ←  same thing, from terminal
+```
 
 ---
 
@@ -173,30 +302,41 @@ Skill chaining, self-healing, drift detection, and auto end session run without 
 your-project/
 ├── CLAUDE.md                        ← Claude's instructions for this project
 ├── STATUS.md                        ← Full session log — date + what changed
+├── update.py                        ← Safe kit updater
 ├── tools/
-│   ├── check_memory.py              ← Drift detector — runs after every edit
-│   ├── session_journal.py           ← Auto-captures session summary on every Stop
-│   └── stop_check.py               ← Auto-pushes memory after 9pm if unsaved
+│   ├── check_memory.py              ← Drift detector — PostToolUse hook
+│   ├── session_start.py             ← Memory injector — SessionStart hook
+│   ├── precompact.py                ← Memory preserver — PreCompact hook
+│   ├── session_journal.py           ← Session auto-capture — Stop hook
+│   ├── stop_check.py               ← Unsaved changes + auto-push — Stop hook
+│   └── bootstrap.py                ← Codebase indexer — run once on new projects
 └── .claude/
-    ├── settings.json                ← Hooks: drift · session start · compact · stop
+    ├── settings.json                ← 4 hooks configured
     ├── memory/
     │   ├── MEMORY.md                ← Index — auto-loaded every session
-    │   ├── lessons.md               ← Every lesson extracted by /learn
+    │   ├── lessons.md               ← Lessons from /learn — applied each session
     │   ├── decisions.md             ← Settled decisions — never re-debated
+    │   ├── project_status.md        ← What's built, what's in progress
     │   ├── js_functions.md          ← Every JS function with description
+    │   ├── html_css_reference.md    ← Every HTML section and CSS class
     │   ├── backend_reference.md     ← Every API endpoint and DB pattern
+    │   ├── user_preferences.md      ← How you like Claude to work — tone, rules, style
     │   └── tasks/
     │       ├── skill_scores.md      ← Skill report card — /evolve reads this
     │       ├── skill_improvements.md← What /evolve patched and why
     │       ├── regret.md            ← Rejected approaches — never re-proposed
     │       └── velocity.md          ← Estimated vs actual — self-calibrating
     └── skills/
-        ├── learn/                   ← /learn — extract lessons + score skills
-        ├── evolve/                  ← /evolve — patch failing skills
+        ├── learn/
+        ├── evolve/
         ├── fix-bug/
         ├── code-review/
+        ├── security-check/
+        ├── new-feature/
         ├── verification-loop/
-        └── strategic-compact/
+        ├── strategic-compact/
+        ├── search-first/
+        └── java-reviewer/
 ```
 
 Commit `.claude/memory/` and `.claude/skills/` to your repo. Memory and skills travel with the code.
@@ -209,27 +349,46 @@ Tested across **112 real development sessions** on a production codebase — leg
 
 - Sessions crashed mid-task — `Start Session` recovered every time, zero re-explanation needed
 - Skills patched themselves via `/evolve` — the same skill failure never happened twice
-- A Resin compiler bug discovered, fixed, and logged permanently — never cost another debugging session
+- A compiler bug was discovered, fixed, and logged permanently — it has never cost another debugging session
 - 21 undocumented functions caught on the first drift detection run
+- `velocity.md` reached 30+ entries — estimates now reflect actual track record instead of guessing
 
 ---
 
-## Common Questions
+## FAQ
 
 **Do I need to understand how it all works to use it?**
-No. `Start Session` and `End Session` are the whole interface. Everything else runs automatically or responds to plain English.
+No. `Start Session` and `End Session` are the whole daily interface. Everything else runs automatically or responds to plain English descriptions.
 
 **Does it work with any language or framework?**
-Yes. Setup asks about your stack and configures drift detection, skills, and memory for what you're actually using.
+Yes. Setup asks about your stack and configures drift detection, skills, and memory for what you're actually using. Java, Python, Node, Go, Ruby — any language with source files.
+
+**What is user_preferences.md for?**
+It's where Claude learns how you personally like to work — your communication style, things you never want it to do, coding conventions specific to you. It loads at every Start Session. Add anything to it: "always ask before refactoring", "never use semicolons", "I prefer short responses".
+
+**What is global-lessons.md for?**
+Lessons that aren't project-specific — things that apply to everything you build. Stored at `~/.claude/global-lessons.md` and loaded at Start Session on every project. Example: "always check .env before debugging auth issues."
+
+**What does session_journal.md give me?**
+A searchable history of every session — what files were edited, what the current phase was, timestamped automatically. You never manually write to it. Search it anytime: `Grep for "auth"` in session_journal.md to find every session where you worked on auth.
+
+**What does bootstrap.py do?**
+Scans your entire project on first run and generates `quick_index.md` — a grouped map of every source file by type (Java, JS, CSS, SQL, etc.). Gives Claude immediate codebase awareness without any manual documentation. Run it once on any new project.
 
 **What makes it different from other Claude memory tools?**
-Most memory tools are static — you document once and things go stale. Claude Recall is a living system: memory stays accurate via drift detection, skills improve via the compound learning loop, and sessions compound instead of reset. The architecture is described in detail on the [website](https://yehudafrankel.github.io/claude-recall).
+Most memory tools are static — you document once and things go stale. Claude Recall is a living system: memory stays accurate via drift detection, skills improve via the compound learning loop, and sessions compound instead of reset. No other tool in this space ships the self-improving skills layer.
 
 **What if I'm on a new computer?**
-Pull your project, open Claude Code, type `Install Memory`. Claude is fully up to speed in seconds.
+Pull your project, open Claude Code, type `Install Memory`. Claude is fully up to speed in seconds — all lessons, decisions, and skill improvements carried over.
+
+**Does Update Kit overwrite my customizations?**
+Never. It only updates the kit commands block in CLAUDE.md and the tools/ scripts. Your memory files, skills, code, and everything below `## What This Project Is` in CLAUDE.md are never touched.
 
 **Can I customize the skills?**
-Yes — every skill is a plain markdown file. Edit them directly, or type `Generate Skills` and Claude creates new ones tailored to your specific stack and patterns.
+Yes — every skill is a plain markdown file in `.claude/skills/`. Edit directly, or type `Generate Skills` and Claude creates new ones for your stack. Add `## Auto-Chain` to any skill to connect it into a workflow.
+
+**What's the difference between Full and Lite mode?**
+Full mode has 5 separate memory files and automated drift detection — best for multi-file projects. Lite mode has one notes file and manual drift checks — best for quick experiments. You can upgrade from Lite to Full at any time.
 
 ---
 
