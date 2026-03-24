@@ -214,15 +214,21 @@ section { border-top: 1px solid var(--border); position: relative; overflow: hid
 .wrap-sm { max-width: 800px; margin: 0 auto; padding: 5rem 2rem; position: relative; z-index: 1; }
 .wrap-lg { max-width: 1120px; margin: 0 auto; padding: 5rem 2rem; position: relative; z-index: 1; }
 
-/* ── Section alternation — real visible contrast ── */
-#install, #loop, #tiers, #commands {
-  background: #23190a;
-}
-#living, #skills, #hooks, #stats, #faq {
+/* ── Section alternation — clear visible contrast ── */
+/* Warm (amber/memory): install, living, skills, stats, faq */
+#install, #living, #skills, #stats, #faq {
   background: #1c1508;
 }
+/* Dark neutral (structural): loop, tiers, commands */
+#loop, #tiers, #commands {
+  background: #0f0e0c;
+}
+/* Dark green-tinted (autonomous): hooks only */
+#hooks {
+  background: #0b1410;
+}
 
-/* Living — dot grid overlay on top of base */
+/* Living — dot grid on warm surface */
 #living {
   background:
     radial-gradient(circle, rgba(212,137,10,.22) 1px, transparent 1px),
@@ -230,26 +236,33 @@ section { border-top: 1px solid var(--border); position: relative; overflow: hid
   background-size: 30px 30px, auto;
 }
 
-/* Loop — amber top glow on the alternating surface */
+/* Loop — subtle amber top glow on near-black */
 #loop {
   background:
-    radial-gradient(ellipse at 50% -10%, rgba(212,137,10,.18) 0%, transparent 55%),
-    #23190a;
+    radial-gradient(ellipse at 50% -10%, rgba(212,137,10,.14) 0%, transparent 50%),
+    #0f0e0c;
 }
 
-/* Hooks — green grid on top (autonomous section = green feel) */
+/* Hooks — green grid on dark green base */
 #hooks {
   background:
-    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(109,186,120,.06) 60px, rgba(109,186,120,.06) 61px),
-    repeating-linear-gradient(0deg,  transparent, transparent 60px, rgba(109,186,120,.05) 60px, rgba(109,186,120,.05) 61px),
-    #1c1508;
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(109,186,120,.07) 60px, rgba(109,186,120,.07) 61px),
+    repeating-linear-gradient(0deg,  transparent, transparent 60px, rgba(109,186,120,.06) 60px, rgba(109,186,120,.06) 61px),
+    #0b1410;
 }
 
-/* Stats — strong CRT green glow from bottom center */
+/* Stats — CRT green glow on warm surface */
 #stats {
   background:
     radial-gradient(ellipse at 50% 120%, rgba(109,186,120,.22) 0%, rgba(109,186,120,.06) 40%, transparent 65%),
     #1c1508;
+}
+
+/* Tiers — amber left edge glow on near-black */
+#tiers {
+  background:
+    radial-gradient(ellipse at -5% 50%, rgba(212,137,10,.18) 0%, transparent 50%),
+    #0f0e0c;
 }
 
 .sec-label {
