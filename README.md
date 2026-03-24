@@ -417,6 +417,9 @@ Yes — they solve different problems. Anthropic's Auto Memory captures conversa
 **Why markdown files instead of a database?**
 Files you can read, diff, commit, and recover without any tooling. Memory stored in a database is opaque — you can't grep it, review it in a PR, or restore a version from last Tuesday. Markdown files travel with your repo, work on any machine with zero setup, and never require an API key or running service. The constraint is the feature.
 
+**Does a big CLAUDE.md actually help?**
+No — and the research backs this up. Large monolithic CLAUDE.md files increase token use by ~20% with only a 5% improvement in output quality, and sometimes a negative effect when the content is AI-generated. Claude Recall is built the opposite way: CLAUDE.md stays lean (commands and gotchas only), and project knowledge lives in separate `.claude/memory/` files that load selectively based on what's relevant. That's what the research actually recommends. The CLAUDE.md template that ships with the kit enforces this — the project-specific section is designed to stay under 50 lines.
+
 **What makes it different from other Claude memory tools?**
 Most memory tools are static — you document once and things go stale. Claude Recall is a living system: memory stays accurate via drift detection, skills improve via the compound learning loop, and sessions compound instead of reset. No other tool in this space ships the self-improving skills layer.
 

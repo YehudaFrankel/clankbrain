@@ -1,5 +1,9 @@
 # [Project Name] — Claude Code Project Context
 
+> **CLAUDE.md rule:** Only document what Claude would genuinely get wrong without being told — commands, project-specific conventions, non-obvious gotchas. High-level principles ("plan first", "simplicity first") are noise: Claude already knows them and they bloat token use for no gain. Project knowledge (functions, decisions, past bugs) belongs in `.claude/memory/` files. The kit commands above are structured instructions Claude needs — keep them. The project-specific sections below should stay **under 50 lines of actual content**.
+
+---
+
 ## Session Commands
 
 ### `Setup Memory`
@@ -250,106 +254,7 @@ Run `/learn` before `End Session`. Run `/evolve` when lessons accumulate (every 
 
 ---
 
-## Mid-Session: Context Getting Long?
-
-If the session is getting long and responses feel slower or repetitive, run `/compact` proactively — don't wait for a crash.
-
-**Safe compact checklist:**
-1. Run `/learn` first — capture session patterns before compacting
-2. Confirm memory files are up to date (Auto-Save Rule)
-3. Run `/compact` — the PreCompact hook re-injects memory automatically
-4. Continue working — full context is available within 1–2 messages
-
-Alternatively say: **"Should I compact?"** and Claude will evaluate and guide you through it.
-
----
-
-## If Your Session Crashes
-
-Claude Code sessions can die unexpectedly — API errors, large images pasted into chat, context overflow. This kit is built to make that a low-damage event.
-
-**What's always safe:**
-- All memory files (`js_functions.md`, `backend_reference.md`, etc.) are on disk — a crashed session never touches them
-- `STATUS.md` holds the last known session number and what changed
-- `Start Session` rebuilds full context in seconds — just open a new session and type it
-
-**What you could lose:**
-- Any code changes made *after* the last Auto-Save Rule update and *before* the crash
-
-**How to minimize that:**
-- Follow the Auto-Save Rule above — update memory immediately after every code change, don't batch it
-- Run `/compact` mid-session on long days — it summarizes the conversation and frees context before problems start
-- If you see responses getting slow or shallow, that's a sign context is filling up — `/compact` before it crashes
-
-**If a session dies mid-task:**
-1. Open a new session
-2. Type `Start Session` — Claude reads memory and picks up where you left off
-3. Check `STATUS.md` to confirm what was last saved
-4. Re-do any changes that happened after the last memory update (drift check will catch missing functions)
-
----
-
-## Workflow
-
-### Session Start
-1. Read `tasks/lessons.md` — apply all lessons before touching anything
-2. Read `tasks/decisions.md` — know the architectural choices already made
-3. Read `tasks/errors.md` — know which bugs have already been solved
-4. Read `tasks/todo.md` — understand current state
-5. If any of these don't exist, create them before starting
-
----
-
-### 1. Plan First
-- Before starting any non-trivial task, run `Estimate: [task]` — flag complexity and risks upfront
-- Enter plan mode for any non-trivial task (3+ steps)
-- Write plan to `tasks/todo.md` before implementing
-- If something goes wrong, STOP and re-plan — never push through
-
-### 2. Subagent Strategy
-- Use subagents to keep main context clean
-- One task per subagent
-- Throw more compute at hard problems
-
-### 3. Self-Improvement Loop
-- After any correction: update `tasks/lessons.md`
-- Format: `[date] | what went wrong | rule to prevent it`
-- Review lessons at every session start
-
-### 4. Verification Standard
-- Never mark complete without proving it works
-- Run tests, check logs, diff behavior
-- Ask: "Would a staff engineer approve this?"
-
-### 5. Demand Elegance
-- For non-trivial changes: is there a more elegant solution?
-- If a fix feels hacky: rebuild it properly
-- Don't over-engineer simple things
-
-### 6. Autonomous Bug Fixing
-- When given a bug: just fix it
-- Go to logs, find root cause, resolve it
-- No hand-holding needed
-
----
-
-### Core Principles
-- **Simplicity First** — touch minimal code
-- **No Laziness** — root causes only, no temp fixes
-- **Never Assume** — verify paths, APIs, variables before using
-- **Ask Once** — one question upfront if unclear, never interrupt mid-task
-
----
-
-### Task Management
-1. **Estimate** → flag complexity and risks before starting
-2. **Plan** → `tasks/todo.md`
-3. **Verify** → confirm before implementing
-4. **Track** → mark complete as you go
-5. **Explain** → high-level summary each step
-6. **Learn** → `tasks/lessons.md` after corrections
-7. **Decide** → `tasks/decisions.md` after architectural choices
-8. **Log errors** → `tasks/errors.md` after every bug fix
+> **Context tip:** Long session? Run `/learn` then `/compact` — the PreCompact hook reinjects memory automatically. If a session crashes, type `Start Session` in a new session — picks up where you left off.
 
 ---
 

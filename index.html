@@ -1187,6 +1187,14 @@ footer {
 
     <div class="faq-list reveal">
       <details>
+        <summary>Does a big CLAUDE.md actually help?</summary>
+        <div class="faq-body">
+          No — and the research backs this up. Large monolithic CLAUDE.md files increase token use by ~20% with only a 5% improvement in output quality, and sometimes a <em>negative</em> effect when the content is AI-generated.<br><br>
+          claude-recall is built the opposite way: <code>CLAUDE.md</code> stays lean — commands and project-specific gotchas only. Project knowledge lives in separate <code>.claude/memory/</code> files that load selectively based on what's relevant to the current task. That's what the research actually recommends.<br><br>
+          The template that ships with the kit enforces this. The project-specific section is designed to stay under 50 lines. High-level principles ("plan first", "simplicity first") are omitted entirely — Claude already knows them.
+        </div>
+      </details>
+      <details>
         <summary>What Claude plan do I need?</summary>
         <div class="faq-body">
           Any paid plan that includes Claude Code. The kit itself has no plan requirements — it's plain markdown files and Python scripts that run locally.
