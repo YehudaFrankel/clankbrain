@@ -120,15 +120,17 @@ Type `Generate Skills` and Claude creates additional skills tailored to your exa
 
 ### Tools — run silently in the background
 
-| Tool | When it runs | What it does |
-|------|-------------|-------------|
-| `check_memory.py` | After every file edit | Drift detector — catches undocumented functions and CSS changes immediately |
-| `session_journal.py` | After every response | Auto-captures what you worked on — searchable forever, no /learn needed |
-| `stop_check.py` | After every response | Reminds you to save memory when unsaved changes detected; surfaces open plans with unresolved questions |
-| `bootstrap.py` | On first setup | Scans your entire codebase and generates a quick index — immediate codebase awareness |
-| `complexity_scan.py` | First `Start Session` on a new project | Detects stack, DB, tests, API surface — scores complexity Low/Medium/High and recommends which skills to use. Auto-refreshes after 30 days. |
-| `session_start.py` | When Claude Code opens | Injects memory into context before your first message — Claude starts warm |
-| `precompact.py` | Before `/compact` | Reinjects memory into the compacted context — nothing lost through compaction |
+One file, `tools/memory.py`, runs all lifecycle behaviors via subcommands:
+
+| Subcommand | When it runs | What it does |
+|------------|-------------|-------------|
+| `--check-drift` | After every file edit | Drift detector — catches undocumented functions and CSS changes immediately |
+| `--journal` | After every response | Auto-captures what you worked on — searchable forever, no /learn needed |
+| `--stop-check` | After every response | Reminds you to save memory when unsaved changes detected; surfaces open plans with unresolved questions |
+| `--bootstrap` | On first setup | Scans your entire codebase and generates a quick index — immediate codebase awareness |
+| `--complexity-scan` | First `Start Session` on a new project | Detects stack, DB, tests, API surface — scores complexity Low/Medium/High and recommends which skills to use. Auto-refreshes after 30 days. |
+| `--session-start` | When Claude Code opens | Injects memory into context before your first message — Claude starts warm |
+| `--precompact` | Before `/compact` | Reinjects memory into the compacted context — nothing lost through compaction |
 
 ---
 
@@ -171,7 +173,7 @@ Run `/learn` before `End Session`. Run `/evolve` every 3–5 sessions. The same 
 
 ## It Stays Accurate Without Effort
 
-Most memory tools go stale — you document once, code moves on. Claude Recall runs `check_memory.py` after every file edit. It compares live code against Claude's memory and flags undocumented changes:
+Most memory tools go stale — you document once, code moves on. Claude Recall runs `memory.py --check-drift` after every file edit. It auto-detects all JS and CSS files, compares live code against Claude's memory, and flags undocumented changes:
 
 ```
 DRIFT DETECTED
@@ -185,7 +187,7 @@ DRIFT DETECTED
 
 Silent when clean. No manual updates needed.
 
-**Starting fresh on an existing project?** Run `bootstrap.py` once — it scans your entire codebase and generates `quick_index.md`, a grouped map of every source file by type. Gives Claude immediate awareness of a project it's never seen before, without any manual documentation.
+**Starting fresh on an existing project?** Run `python tools/memory.py --bootstrap` once — it scans your entire codebase and generates `quick_index.md`, a grouped map of every source file by type. Gives Claude immediate awareness of a project it's never seen before, without any manual documentation.
 
 ---
 
@@ -273,16 +275,15 @@ Skill chaining, self-healing, drift detection, and auto end session run without 
 
 ## Lifecycle Hooks
 
-Four hooks run automatically — no commands needed, no configuration required.
+Three hooks run automatically — no commands needed, no configuration required. All call `tools/memory.py` with different subcommands.
 
 | Hook | When it fires | What it does |
 |------|--------------|-------------|
-| `SessionStart` | Every time Claude Code opens | Runs `session_start.py` — injects STATUS.md and MEMORY.md into context before your first message. Claude starts warm without typing `Start Session`. |
-| `PostToolUse` | After every Edit or Write | Runs `check_memory.py --silent` — catches drift immediately after every file change, not just at End Session. |
-| `PreCompact` | Before Claude compacts the conversation | Runs `precompact.py` — reinjects memory files into the compacted context. Run `/learn` first to capture session patterns, then `/compact` freely. |
-| `Stop` | After every response | Runs `session_journal.py` (auto-captures session summary) then `stop_check.py` (reminds you to save memory; surfaces open plans with unresolved questions). |
+| `PostToolUse` | After every Edit or Write | `memory.py --check-drift --silent` — catches drift immediately after every file change, not just at End Session. |
+| `Stop` (journal) | After every response | `memory.py --journal` — auto-captures session summary. Searchable forever, no `/learn` needed. |
+| `Stop` (reminder) | After every response | `memory.py --stop-check` — reminds you to save memory; surfaces open plans with unresolved questions. |
 
-All hooks are Python scripts in `tools/` — cross-platform, no dependencies beyond Python.
+All hooks call a single script — `tools/memory.py` — cross-platform, no dependencies beyond Python 3.7+.
 
 ---
 
@@ -426,8 +427,8 @@ Lessons that aren't project-specific — things that apply to everything you bui
 **What does session_journal.md give me?**
 A searchable history of every session — what files were edited, what the current phase was, timestamped automatically. You never manually write to it. Search it anytime: `Grep for "auth"` in session_journal.md to find every session where you worked on auth.
 
-**What does bootstrap.py do?**
-Scans your entire project on first run and generates `quick_index.md` — a grouped map of every source file by type (Java, JS, CSS, SQL, etc.). Gives Claude immediate codebase awareness without any manual documentation. Run it once on any new project.
+**What does `--bootstrap` do?**
+`python tools/memory.py --bootstrap` scans your entire project and generates `quick_index.md` — a grouped map of every source file by type (Java, JS, CSS, SQL, etc.). Gives Claude immediate codebase awareness without any manual documentation. Run it once on any new project.
 
 **Does this work with Anthropic's native Auto Memory?**
 Yes — they solve different problems. Anthropic's Auto Memory captures conversational context within a session. Claude Recall persists project knowledge across sessions: your codebase structure, architectural decisions, lessons from past mistakes, and custom workflows. Auto Memory forgets when the session closes. Claude Recall doesn't. Run both — they complement each other.
