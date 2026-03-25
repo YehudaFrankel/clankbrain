@@ -13,6 +13,8 @@ Usage:
   python tools/memory.py --bootstrap                  # One-time codebase indexer
   python tools/memory.py --complexity-scan            # Project complexity scanner
   python tools/memory.py --complexity-scan --silent   # Silent scan (Start Session)
+  python tools/memory.py --search "query"             # Search all memory .md files
+  python tools/memory.py --search "query" --top 10   # Return top N files (default 5)
 """
 
 import json
@@ -849,6 +851,95 @@ def cmd_complexity_scan():
         print(f'Profile: {profile_path}')
 
 
+# ─── SEARCH ───────────────────────────────────────────────────────────────────
+# Full-text search across all .md files in .claude/memory/.
+# Usage: python tools/memory.py --search "query" [--top N]
+
+def cmd_search():
+    argv = sys.argv[1:]
+
+    # Parse --search <query> and optional --top <n>
+    query = None
+    top_n = 5
+    i = 0
+    while i < len(argv):
+        if argv[i] == '--search' and i + 1 < len(argv):
+            query = argv[i + 1]
+            i += 2
+        elif argv[i] == '--top' and i + 1 < len(argv):
+            try:
+                top_n = int(argv[i + 1])
+            except ValueError:
+                pass
+            i += 2
+        else:
+            i += 1
+
+    if not query:
+        print('Usage: python tools/memory.py --search "query" [--top N]')
+        sys.exit(1)
+
+    memory_dir = find_memory_dir()
+    if not memory_dir.exists():
+        print('No memory directory found.')
+        sys.exit(1)
+
+    query_lower = query.lower()
+    tokens = [t for t in query_lower.split() if t]
+
+    results = []
+    for md_file in sorted(memory_dir.rglob('*.md')):
+        try:
+            text = md_file.read_text(encoding='utf-8', errors='ignore')
+        except Exception:
+            continue
+
+        text_lower = text.lower()
+        lines = text.splitlines()
+
+        # Score
+        if query_lower in text_lower:
+            score = 10
+        elif all(t in text_lower for t in tokens):
+            score = 5
+        else:
+            score = sum(1 for t in tokens if t in text_lower)
+
+        if score == 0:
+            continue
+
+        # Collect matching lines with ±2 context, deduplicated by line index
+        match_blocks = []
+        covered = set()
+        for idx, line in enumerate(lines):
+            if any(t in line.lower() for t in tokens):
+                start = max(0, idx - 2)
+                end = min(len(lines), idx + 3)
+                block_indices = range(start, end)
+                if not covered.intersection(block_indices):
+                    covered.update(block_indices)
+                    match_blocks.append(lines[start:end])
+
+        if match_blocks:
+            rel = md_file.relative_to(memory_dir)
+            results.append((score, rel, match_blocks))
+
+    if not results:
+        print(f'No results for: "{query}"')
+        return
+
+    results.sort(key=lambda x: -x[0])
+    results = results[:top_n]
+
+    print(f'Search: "{query}" -- {len(results)} file(s) matched\n')
+    for score, rel, blocks in results:
+        print(f'-- {rel}  (score {score})')
+        for block in blocks:
+            for line in block:
+                print(f'  {line}')
+            print()
+
+
 # ─── DISPATCH ─────────────────────────────────────────────────────────────────
 
 def main():
@@ -866,6 +957,8 @@ def main():
         cmd_bootstrap()
     elif '--complexity-scan' in ARGS:
         cmd_complexity_scan()
+    elif '--search' in ARGS:
+        cmd_search()
     else:
         print(__doc__)
         sys.exit(1)

@@ -61,6 +61,14 @@ When the user types **"Check Drift"**, do the following:
 2. Report what's MISSING (in code, not in memory), what's STALE (in memory, not in code), or "OK — no drift detected"
 3. Fix any drift found — update memory files, sync to bundle
 
+### `Search Memory`
+When the user types **"Search Memory: [topic]"**, do the following:
+1. Run `python tools/memory.py --search "[topic]"` (or add `--top 10` for broader results)
+2. Report all matched files with context lines — surface any relevant lessons, decisions, or rejected approaches
+3. If results are thin, suggest related terms the user could try
+
+> CLI: `python tools/memory.py --search "auth flow"`
+
 ### `Generate Skills`
 When the user types **"Generate Skills"**, do the following:
 
