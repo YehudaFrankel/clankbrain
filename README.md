@@ -137,10 +137,6 @@ Two commands. Everything else is automatic.
 | Skill | What triggers it | What it does |
 |-------|-----------------|-------------|
 | `plan` | "plan [feature]", "I want to build X" | Structured planning — options with ratings, decision logged live, full plan auto-displayed after every update |
-| `fix-bug` | "fix the bug where..." | Root cause first, fix second, logs so it never happens again |
-| `code-review` | "review this file" | Dead code, missing error handling, convention violations |
-| `security-check` | "check for security issues" | SQL injection, missing auth, exposed sensitive data |
-| `new-feature` | "add a new..." | Searches existing patterns first, then builds — no duplicate code |
 | `verification-loop` | "verify this works", "before I ship" | Compile + smoke test + self-check after every change |
 | `search-first` | "add new endpoint/feature" | Research before coding — finds existing implementations |
 | `strategic-compact` | "should I compact?" | Safe context compaction without losing memory |
@@ -148,7 +144,7 @@ Two commands. Everything else is automatic.
 | `evolve` | `/evolve` | Patches failing skills, clusters patterns into new skills |
 | `java-reviewer` | "review this java" | Deep Java review against your stack's specific patterns |
 
-Type `Generate Skills` and Claude creates additional skills tailored to your exact stack and file structure.
+Type `Generate Skills` and Claude creates additional skills tailored to your exact stack and file structure — fix-bug, code-review, security-check, new-feature, and more, configured for your actual file names and patterns.
 
 ### Tools — run silently in the background
 
@@ -380,14 +376,10 @@ your-project/
         ├── plan/                    ← Structured planning mode
         ├── learn/
         ├── evolve/
-        ├── fix-bug/
-        ├── code-review/
-        ├── security-check/
-        ├── new-feature/
         ├── verification-loop/
         ├── strategic-compact/
         ├── search-first/
-        └── java-reviewer/
+        └── java-reviewer/          ← stack-specific; Generate Skills adds more
 ```
 
 Commit `.claude/memory/` and `.claude/skills/` to your repo. Memory and skills travel with the code.

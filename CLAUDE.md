@@ -30,10 +30,10 @@ When the user types **"Start Session"**, do the following:
    - If NOT available → warn: "ACTION NEEDED: MCP server not connected. Check `.mcp.json` and re-open Claude Code."
    - If available or no MCP configured → silent, continue
 1d. **Check complexity profile** — look for `.claude/memory/complexity_profile.md`:
-   - **Missing** → run `python tools/complexity_scan.py --silent` (or `python3`). Surface the output line: *"Project scan: [output]. See `.claude/memory/complexity_profile.md` for full skill recommendations."*
+   - **Missing** → run `python tools/memory.py --complexity-scan --silent` (or `python3`). Surface the output line: *"Project scan: [output]. See `.claude/memory/complexity_profile.md` for full skill recommendations."*
    - **Exists, < 30 days old** → silent, continue
    - **Exists, 30+ days old** → note once: *"Complexity profile is 30+ days old. Run `python tools/complexity_scan.py` to refresh."*
-2. Run `python tools/check_memory.py` — check for JS/CSS drift; fix any found (update memory files + sync to bundle)
+2. Run `python tools/memory.py --check-drift` — check for JS/CSS drift; fix any found (update memory files + sync to bundle)
 2b. **Check open plans** — scan `.claude/memory/plans/` for any `.md` file (skip `_template.md`) with `Status: Draft` or `Status: On Hold`. If found, surface: *"Open plan: [name] — Status: [X]. N open questions."* Don't load the full file — just the status line.
 3. Read `STATUS.md` — find the current session number and last change
 4. Read `.claude/memory/lessons.md` — apply all lessons before touching anything
@@ -52,12 +52,12 @@ When the user types **"Analyze Codebase"**, do the following:
    - `js_functions.md` — new functions found
    - `html_css_reference.md` — new CSS classes found
    - `backend_reference.md` — new endpoints found
-5. **Update `tools/check_memory.py`** — if it exists, make sure JS_FILES and CSS_FILES include all discovered files
+5. **Update `tools/memory.py`** — if it exists, make sure JS_FILES and CSS_FILES in the drift-check section include all discovered files
 6. **Report** — "Analyzed: [N] JS functions, [N] CSS classes, [N] endpoints. Memory updated."
 
 ### `Check Drift`
 When the user types **"Check Drift"**, do the following:
-1. Run `python tools/check_memory.py` (or `python3`) — if the script doesn't exist, manually scan JS files and compare against `js_functions.md`
+1. Run `python tools/memory.py --check-drift` (or `python3`) — if the script doesn't exist, manually scan JS files and compare against `js_functions.md`
 2. Report what's MISSING (in code, not in memory), what's STALE (in memory, not in code), or "OK — no drift detected"
 3. Fix any drift found — update memory files, sync to bundle
 

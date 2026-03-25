@@ -7,3 +7,6 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local dev config (machine-specific paths)
+.claude/launch.json
