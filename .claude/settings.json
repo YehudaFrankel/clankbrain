@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python tools/check_memory.py --silent"
+            "command": "python tools/memory.py --check-drift --silent"
           }
         ]
       }
@@ -27,13 +27,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python tools/session_journal.py",
+            "command": "python tools/memory.py --journal",
             "timeout": 10,
             "statusMessage": "Capturing session journal..."
           },
           {
             "type": "command",
-            "command": "python tools/stop_check.py",
+            "command": "python tools/memory.py --stop-check",
             "timeout": 5
           }
         ]
