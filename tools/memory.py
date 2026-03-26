@@ -11,6 +11,7 @@ Usage:
   python tools/memory.py --stop-check                 # Stop hook (unsaved + plans)
   python tools/memory.py --journal                    # Stop hook (session journal)
   python tools/memory.py --capture-correction         # UserPromptSubmit hook (correction detection)
+  python tools/memory.py --process-corrections        # Stop hook (queue → lessons.md, auto-persist)
   python tools/memory.py --bootstrap                  # One-time codebase indexer
   python tools/memory.py --complexity-scan            # Project complexity scanner
   python tools/memory.py --complexity-scan --silent   # Silent scan (Start Session)
@@ -62,6 +63,14 @@ def cmd_session_start():
         excerpt = '\n'.join(lines[-30:]) if len(lines) > 30 else text
         parts.append('\n\n# Current Status\n')
         parts.append(excerpt)
+
+    queue_file = memory_dir / 'tasks' / 'corrections_queue.md'
+    if queue_file.exists():
+        q = queue_file.read_text(encoding='utf-8', errors='ignore')
+        pending = re.findall(r'## \d{4}-\d{2}-\d{2} \d{2}:\d{2}\n\*\*Prompt:\*\* ".+?"', q)
+        if pending:
+            parts.append(f'\n\n# Pending Corrections ({len(pending)} — apply this session, will persist at Stop)\n')
+            parts.append('\n'.join(pending))
 
     if not parts:
         return
@@ -129,6 +138,40 @@ def cmd_capture_correction():
     entry = f'\n## {timestamp}\n**Prompt:** "{prompt}"\n'
     with open(queue_file, 'a', encoding='utf-8') as f:
         f.write(entry)
+
+
+# ─── PROCESS CORRECTIONS ──────────────────────────────────────────────────────
+# Moves corrections_queue.md entries → lessons.md rows. Runs at Stop.
+# Hook: Stop
+
+def cmd_process_corrections():
+    memory_dir = find_memory_dir()
+    queue_file = memory_dir / 'tasks' / 'corrections_queue.md'
+
+    if not queue_file.exists():
+        return
+
+    content = queue_file.read_text(encoding='utf-8', errors='ignore')
+    entries = re.findall(
+        r'## (\d{4}-\d{2}-\d{2}) \d{2}:\d{2}\n\*\*Prompt:\*\* "(.+?)"',
+        content, re.DOTALL
+    )
+
+    if not entries:
+        return
+
+    lessons_file = memory_dir / 'tasks' / 'lessons.md'
+    with open(lessons_file, 'a', encoding='utf-8') as f:
+        for date, prompt_text in entries:
+            rule = prompt_text[:120] + ('...' if len(prompt_text) > 120 else '')
+            f.write(f'| {date} | Auto-captured correction | {rule} |\n')
+
+    queue_file.write_text(
+        '# Corrections Queue\n\n'
+        '<!-- Auto-captured by UserPromptSubmit hook. -->\n'
+        '<!-- Claude reads and clears this during /learn. -->\n',
+        encoding='utf-8'
+    )
 
 
 # ─── CHECK DRIFT ─────────────────────────────────────────────────────────────
@@ -1004,6 +1047,8 @@ def main():
         cmd_session_start()
     elif '--capture-correction' in ARGS:
         cmd_capture_correction()
+    elif '--process-corrections' in ARGS:
+        cmd_process_corrections()
     elif '--check-drift' in ARGS:
         cmd_check_drift()
     elif '--precompact' in ARGS:

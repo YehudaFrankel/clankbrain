@@ -1314,6 +1314,7 @@ type: reference
     "Stop": [
       {
         "hooks": [
+          { "type": "command", "command": "python tools/memory.py --process-corrections" },
           { "type": "command", "command": "python tools/memory.py --journal", "timeout": 10, "statusMessage": "Capturing session journal..." },
           { "type": "command", "command": "python tools/memory.py --stop-check", "timeout": 5 }
         ]
