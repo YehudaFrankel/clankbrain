@@ -840,7 +840,7 @@ footer {
 <div class="hero-section">
 <div class="hero">
   <div>
-    <div class="hero-eyebrow"><span class="dot"></span>persistent memory for Claude Code · open source · MIT</div>
+    <div class="hero-eyebrow"><span class="dot"></span>persistent memory for Claude Code · open source · MIT · built on official Claude Code APIs</div>
     <h1>
       Claude forgets.<br>
       Your <span class="h1-amber">engineering</span><br>
@@ -926,6 +926,8 @@ footer {
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">any project, any stack</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">30–60 min setup</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">~5 minutes</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">unofficial / proprietary internals</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">official Anthropic hooks + skills APIs</div>
     </div>
   </div>
 </section>
@@ -1249,6 +1251,7 @@ footer {
       Lifecycle hooks fire on session events — no prompting required.
       <em>The environment monitors itself, pushes memory, and runs health checks
       while you work.</em>
+      All hook events below are Anthropic-official — wired via <code style="font-size:.8em;color:var(--amber);background:var(--s2);padding:.1rem .3rem;">settings.json</code>, no unofficial workarounds.
     </p>
 
     <div class="hooks-list reveal">
@@ -1364,6 +1367,19 @@ footer {
     <h2>FAQ</h2>
 
     <div class="faq-list reveal">
+      <details>
+        <summary>Does this use official Claude Code features or unofficial workarounds?</summary>
+        <div class="faq-body">
+          Everything is built on Anthropic's official APIs — no workarounds, no reverse engineering.<br><br>
+          <strong>Official mechanisms used:</strong><br>
+          · <code>CLAUDE.md</code> with <code>@rules/</code> imports — Anthropic's documented persistent context system<br>
+          · <code>.claude/rules/</code> directory — now a first-class Anthropic feature with path-scoping support<br>
+          · <code>.claude/skills/&lt;name&gt;/SKILL.md</code> — exact official skills path<br>
+          · <code>~/.claude/CLAUDE.md</code> for global lessons — Anthropic's documented cross-project use case<br>
+          · <code>settings.json</code> hooks — all 5 hook events used (SessionStart, UserPromptSubmit, PostToolUse, PreCompact, Stop) are official Anthropic event names<br><br>
+          The learning loop (lessons.md, decisions.md, /learn, /evolve) is built on top of those official mechanisms — that layer is what the kit adds.
+        </div>
+      </details>
       <details>
         <summary>Does a big CLAUDE.md actually help?</summary>
         <div class="faq-body">
