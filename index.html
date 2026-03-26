@@ -910,7 +910,7 @@ footer {
     </div>
 
     <div style="margin-top:2rem; font-size:.78rem; color:var(--muted); line-height:1.8; padding: 1rem 1.25rem; border-left: 2px solid var(--amber);" class="reveal">
-      <span style="color:var(--text)">New machine?</span> Clone your memory repo, run <span style="color:var(--amber)">Install Memory</span> — Claude scans the codebase and rebuilds all knowledge files from scratch.
+      <span style="color:var(--text)">New machine?</span> Run <span style="color:var(--amber)">Install Memory</span> — Claude scans the codebase and rebuilds all knowledge files from scratch.
     </div>
 
     <div style="margin-top:2.5rem; display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border2); font-size:.76rem;" class="reveal">
@@ -1189,14 +1189,14 @@ footer {
           <div class="tr-name">Memory Persistence</div>
         </div>
         <div class="tr-body">
-          <div style="font-size:.78rem; color:var(--muted); margin-bottom:.6rem;">Disk-backed memory survives session crashes. Git-synced across machines. Auto-loads at every session start.</div>
+          <div style="font-size:.78rem; color:var(--muted); margin-bottom:.6rem;">Disk-backed memory survives crashes and machine switches. Auto-loads at every session start.</div>
           <div class="tr-items">
             <div class="tr-item active">MEMORY.md</div>
             <div class="tr-item active">project_status.md</div>
             <div class="tr-item active">js_functions.md</div>
             <div class="tr-item active">backend_reference.md</div>
             <div class="tr-item active">drift detection</div>
-            <div class="tr-item active">git sync</div>
+            <div class="tr-item active">disk-backed</div>
           </div>
         </div>
       </div>
@@ -1318,7 +1318,7 @@ footer {
         <span class="tdim">────────────────────────────────────────</span><br>
         <span class="tmut">// compare to: rwieruch/the-road-to-claude (no loop), </span><br>
         <span class="tmut">// anthropics/claude-code-examples (no persistence)</span><br>
-        <span class="tmut">// nothing else ships git-sync + compound learning loop</span><br>
+        <span class="tmut">// nothing else ships persistent memory + compound learning loop</span><br>
       </div>
     </div>
   </div>
@@ -1350,7 +1350,7 @@ footer {
       <div class="cmd-row"><div class="cr-cmd">Code Health</div><div class="cr-desc">Scan for debug leftovers, hardcoded values, missing error handling, dead code, large files</div></div>
       <div class="cmd-row"><div class="cr-cmd">Handoff</div><div class="cr-desc">Generate HANDOFF.md — current state, next tasks, settled decisions, gotchas, how to start</div></div>
       <div class="cmd-row"><div class="cr-cmd">Estimate: [task]</div><div class="cr-desc">Complexity + files that change + risks — <em>writes plan to todo.md on confirm</em></div></div>
-      <div class="cmd-row"><div class="cr-cmd">Push Memory</div><div class="cr-desc">Manually push memory to GitHub — useful mid-session before a risky change</div></div>
+      <div class="cmd-row"><div class="cr-cmd">Push Memory</div><div class="cr-desc">Manually save memory — useful mid-session before a risky change. Also pushes to git if you have sync configured.</div></div>
       <div class="cmd-row"><div class="cr-cmd">Update Kit</div><div class="cr-desc">Pull latest from GitHub — shows exactly what will change, <em>asks before applying</em></div></div>
       <div class="cmd-row"><div class="cr-cmd">Update Kit from [URL]</div><div class="cr-desc">Pull from a fork or branch — <em>your memory files are never touched</em></div></div>
     </div>
@@ -1482,9 +1482,9 @@ footer {
         <summary>How is this different from other Claude memory repos?</summary>
         <div class="faq-body">
           Most repos save a snapshot — a CLAUDE.md file you maintain by hand.
-          claude-recall ships: disk-backed memory that survives crashes, git sync across machines,
+          claude-recall ships: disk-backed memory that survives crashes,
           a compound learning loop (/learn → skill_scores → /evolve), autonomous hooks that fire without prompting,
-          and skill chaining. <em>At time of writing, nothing else ships git-synced living memory + compound learning together.</em>
+          and skill chaining. <em>At time of writing, nothing else ships persistent living memory + compound learning together.</em>
         </div>
       </details>
     </div>
@@ -1512,12 +1512,12 @@ const lines = [
   { text: 'Start Session', speed: 80, pause: 400 },
 ];
 const outputs = [
-  { delay: 0,    html: '<span class="tmut">// pulling memory from GitHub...</span>' },
-  { delay: 600,  html: '<span class="tok">✓ MEMORY.md loaded (session 112)</span>' },
+  { delay: 0,    html: '<span class="tmut">// loading memory from disk...</span>' },
+  { delay: 600,  html: '<span class="tok">✓ MEMORY.md loaded (session 128)</span>' },
   { delay: 1000, html: '<span class="tok">✓ lessons.md — 34 patterns applied</span>' },
-  { delay: 1400, html: '<span class="tok">✓ decisions.md — 12 settled decisions</span>' },
+  { delay: 1400, html: '<span class="tok">✓ decisions.md — 15 settled decisions</span>' },
   { delay: 1900, html: '<span class="tmut">// last session: skill chaining + autonomous hooks</span>' },
-  { delay: 2500, html: '<span class="twarn">→ 112 sessions · zero re-explanations needed</span>' },
+  { delay: 2500, html: '<span class="twarn">→ 128 sessions · zero re-explanations needed</span>' },
   { delay: 3200, html: '<span class="tgap"></span><span class="tp">yf@recall ~ $</span> <span class="cursor"></span>' },
 ];
 
