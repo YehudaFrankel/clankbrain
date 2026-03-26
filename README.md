@@ -12,7 +12,7 @@ Claude Recall is a living system on top of Claude Code. It doesn't just store co
 
 No API keys. No background service. No database. Plain markdown files that git already knows how to handle.
 
-**[Three Tiers](#three-tiers) · [Quick Start](#quick-start) · [What Ships](#what-ships-out-of-the-box) · [Learning Loop](#skills-fix-their-own-mistakes) · [Autonomous](#workflows-run-themselves) · [Every Command](#every-command) · [Architecture](#architecture) · [Hooks](#lifecycle-hooks) · [Modes](#two-modes) · [File Tree](#what-gets-created) · [Results](#real-results) · [FAQ](#faq)**
+**[Three Tiers](#three-tiers) · [Quick Start](#quick-start) · [What Ships](#what-ships-out-of-the-box) · [Optional Skills](#optional-skills----install-when-you-need-them) · [Learning Loop](#skills-fix-their-own-mistakes) · [Autonomous](#workflows-run-themselves) · [Every Command](#every-command) · [Architecture](#architecture) · [Hooks](#lifecycle-hooks) · [Modes](#two-modes) · [File Tree](#what-gets-created) · [Results](#real-results) · [FAQ](#faq)**
 
 ---
 
@@ -145,6 +145,16 @@ Two commands. Everything else is automatic.
 | `java-reviewer` | "review this java" | Deep Java review against your stack's specific patterns |
 
 Type `Generate Skills` and Claude creates additional skills tailored to your exact stack and file structure — fix-bug, code-review, security-check, new-feature, and more, configured for your actual file names and patterns.
+
+### Optional Skills — install when you need them
+
+Skills that ship in the kit but aren't wired up by default. Add any of them with a single command.
+
+| Skill | Install command | What it does |
+|-------|----------------|-------------|
+| `map-codebase` | `Install the map-codebase skill` | Analyzes your codebase and builds a `code-map.md` organized by feature flow — entry point → JS → endpoint → logic → DB for every major flow. Includes a line-number reference for large files. Run once to bootstrap navigation; re-run after major structural changes. |
+
+**How to install:** Tell Claude `Install the map-codebase skill` and it copies the skill file into your project's `.claude/skills/` folder and optionally wires the output into `CLAUDE.md` as a persistent reference.
 
 ### Tools — run silently in the background
 
