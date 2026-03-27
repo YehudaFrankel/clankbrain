@@ -277,11 +277,12 @@ section { border-top: 1px solid var(--border); position: relative; overflow: hid
   background: #0d0e12;
 }
 
-/* Skills — almost fully dark center, hex visible at outer edges only */
+/* Skills — warm dark, amber toolbox feel */
 #skills {
   background:
-    radial-gradient(ellipse at 50% 50%, rgba(13,14,18,.98) 50%, rgba(13,14,18,.85) 70%, rgba(13,14,18,.4) 88%, transparent 100%),
-    #0d0e12;
+    radial-gradient(ellipse at 50% 50%, rgba(17,14,8,.97) 45%, rgba(17,14,8,.80) 68%, rgba(17,14,8,.3) 88%, transparent 100%),
+    radial-gradient(ellipse at 10% 100%, rgba(212,137,10,.18) 0%, transparent 50%),
+    #110e08;
 }
 
 /* Living — green dot grid on green-dark surface */
@@ -1214,7 +1215,8 @@ footer {
 </section>
 
 <!-- PLAN MODE DEMO -->
-<section id="plan-mode-demo" style="background:#0d0e12;">
+<section id="plan-mode-demo" style="background: radial-gradient(ellipse at 95% 5%, rgba(99,102,241,.18) 0%, rgba(59,130,246,.08) 35%, transparent 60%), #08091a;">
+<canvas id="planScanBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.6;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">plan mode</div>
     <h2>Planning that structures itself.<br><span class="h2-amber">One word. Full plan.</span></h2>
@@ -2175,6 +2177,77 @@ function copyCmd(btn, text) {
   }, { threshold: 0.05 });
   window.addEventListener('resize', resize);
   obs.observe(canvas.parentElement);
+})();
+
+// ─── PLAN MODE DIAGONAL SCAN (#plan-mode-demo) ───
+(function() {
+  var canvas = document.getElementById('planScanBg');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H;
+  var CYCLE = 6000; // ms per sweep
+  var BLUE = '99,102,241';
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  function draw(ts) {
+    ctx.clearRect(0, 0, W, H);
+    var progress = (ts % CYCLE) / CYCLE; // 0 → 1
+    var ease = progress < 0.5 ? 2*progress*progress : -1+(4-2*progress)*progress;
+
+    // faint diagonal dot grid
+    ctx.fillStyle = 'rgba(' + BLUE + ',0.04)';
+    var gap = 36;
+    for (var x = 0; x < W + gap; x += gap) {
+      for (var y = 0; y < H + gap; y += gap) {
+        ctx.beginPath();
+        ctx.arc(x, y, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // diagonal scan beam — moves top-left to bottom-right
+    var span = W + H;
+    var pos  = ease * span;          // position along diagonal
+    var bx   = pos > H ? pos - H : 0;
+    var by   = pos > H ? 0 : H - pos;
+    var ex   = pos < W ? 0 : pos - W;
+    var ey   = pos < W ? H - (pos - 0) : H;
+
+    // clamp
+    bx = Math.max(0, Math.min(W, bx));
+    by = Math.max(0, Math.min(H, by));
+    ex = Math.max(0, Math.min(W, ex));
+    ey = Math.max(0, Math.min(H, ey));
+
+    // glow beam
+    var alpha = 0.18 * Math.sin(progress * Math.PI);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(' + BLUE + ',' + alpha.toFixed(3) + ')';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+
+    // soft wide glow
+    ctx.strokeStyle = 'rgba(' + BLUE + ',' + (alpha * 0.3).toFixed(3) + ')';
+    ctx.lineWidth = 18;
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+    ctx.restore();
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(draw);
 })();
 
 // ─── RADAR + GRID ANIMATION (#stats) ───
