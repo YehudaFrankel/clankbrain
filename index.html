@@ -151,7 +151,12 @@ h1 {
   color: var(--text); margin-bottom: 1.2rem;
 }
 .h1-dim { color: var(--muted); }
-.h1-amber { color: var(--amber); }
+.h1-amber {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--amber2) 50%, var(--orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 .hero-sub {
   font-size: .925rem; color: var(--muted); line-height: 1.8;
@@ -169,7 +174,7 @@ h1 {
 .btn-primary {
   background: var(--amber); color: #1c1508; font-weight: 600;
 }
-.btn-primary:hover { background: var(--amber2); transform: translateY(-1px); }
+.btn-primary:hover { background: var(--amber2); transform: translateY(-1px); box-shadow: 0 0 18px rgba(212,137,10,.45), 0 0 40px rgba(212,137,10,.18); }
 .btn-ghost {
   color: var(--muted); border: 1px solid var(--border2);
 }
@@ -179,7 +184,7 @@ h1 {
 .term {
   background: var(--s1); border: 1px solid var(--border2);
   overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(212,137,10,.04) inset;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 60px rgba(212,137,10,.08), 0 0 0 1px rgba(212,137,10,.06) inset;
 }
 .term-bar {
   display: flex; align-items: center; gap: .45rem;
@@ -387,7 +392,15 @@ h2 {
   gap: 1px; background: var(--border); margin-top: 2.5rem;
 }
 .istep {
-  background: var(--s1); padding: 1.6rem 1.75rem;
+  background: rgba(38,27,10,.55); padding: 1.6rem 1.75rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212,137,10,.1);
+  transition: border-color .2s, box-shadow .2s;
+}
+.istep:hover {
+  border-color: rgba(212,137,10,.28);
+  box-shadow: 0 0 20px rgba(212,137,10,.05) inset;
 }
 .istep-n { font-size: .65rem; color: var(--amber); margin-bottom: .6rem; letter-spacing: .08em; }
 .istep-title { font-size: .88rem; color: var(--text); margin-bottom: .35rem; }
@@ -399,8 +412,16 @@ h2 {
   gap: 1px; background: var(--border); margin-top: 2.5rem;
 }
 .living-cell {
-  background: var(--s1); padding: 2rem 1.75rem;
+  background: rgba(38,27,10,.55); padding: 2rem 1.75rem;
   position: relative; overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212,137,10,.12);
+  transition: border-color .25s, box-shadow .25s;
+}
+.living-cell:hover {
+  border-color: rgba(109,186,120,.3);
+  box-shadow: 0 0 30px rgba(109,186,120,.06) inset, 0 8px 32px rgba(0,0,0,.3);
 }
 .living-cell::before {
   content: '';
@@ -447,9 +468,12 @@ h2 {
 }
 .plan-demo-bullets span em { color: var(--green); font-style: normal; margin-right: .4rem; }
 .plan-card {
-  background: var(--s1); border: 1px solid var(--border2);
-  border-left: 2px solid var(--amber); min-height: 300px;
-  font-size: .74rem; overflow: hidden;
+  background: linear-gradient(var(--s1), var(--s1)) padding-box,
+              linear-gradient(135deg, rgba(212,137,10,.5) 0%, rgba(212,137,10,.1) 50%, transparent 100%) border-box;
+  border: 1px solid transparent;
+  border-left: 2px solid var(--amber);
+  min-height: 300px; font-size: .74rem; overflow: hidden;
+  box-shadow: 0 0 40px rgba(212,137,10,.06), 0 16px 48px rgba(0,0,0,.4);
 }
 .pc-prompt {
   padding: .7rem 1rem; border-bottom: 1px solid var(--border);
@@ -523,9 +547,12 @@ h2 {
   gap: 3.5rem; align-items: center; margin-top: 3rem;
 }
 .map-card {
-  background: var(--s1); border: 1px solid var(--border2);
-  border-left: 2px solid var(--amber); min-height: 330px;
-  font-size: .74rem; overflow: hidden;
+  background: linear-gradient(var(--s1), var(--s1)) padding-box,
+              linear-gradient(135deg, rgba(212,137,10,.5) 0%, rgba(212,137,10,.1) 50%, transparent 100%) border-box;
+  border: 1px solid transparent;
+  border-left: 2px solid var(--amber);
+  min-height: 330px; font-size: .74rem; overflow: hidden;
+  box-shadow: 0 0 40px rgba(212,137,10,.06), 0 16px 48px rgba(0,0,0,.4);
 }
 .mc-prompt {
   padding: .7rem 1rem; border-bottom: 1px solid var(--border);
@@ -603,7 +630,13 @@ h2 {
 .tier-rows { display: flex; flex-direction: column; gap: 1px; background: var(--border); margin-top: 2.5rem; }
 .tier-row {
   display: grid; grid-template-columns: 200px 1fr;
-  background: var(--s1);
+  background: rgba(38,27,10,.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background .2s;
+}
+.tier-row:hover {
+  background: rgba(38,27,10,.75);
 }
 .tr-label {
   padding: 1.5rem 1.75rem; border-right: 1px solid var(--border);
@@ -641,8 +674,15 @@ h2 {
 .hook-row {
   display: grid; grid-template-columns: 170px 1fr 1fr;
   background: var(--s1);
+  border-left: 2px solid transparent;
+  transition: background .15s, border-color .15s, box-shadow .15s;
 }
 .hook-row:first-child { border-top: none; }
+.hook-row:not(:first-child):hover {
+  background: rgba(11,18,16,.9);
+  border-left-color: var(--green);
+  box-shadow: inset 2px 0 14px rgba(109,186,120,.07);
+}
 .hk-event { padding: 1rem 1.25rem; border-right: 1px solid var(--border); font-size: .78rem; color: var(--green); display: flex; align-items: center; }
 .hk-file  { padding: 1rem 1.25rem; border-right: 1px solid var(--border); font-size: .76rem; color: var(--muted); display: flex; align-items: center; }
 .hk-does  { padding: 1rem 1.25rem; font-size: .76rem; color: var(--text); display: flex; align-items: center; }
@@ -651,9 +691,14 @@ h2 {
 .cmds-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1px; background: var(--border); }
 .cmd-row {
   display: grid; grid-template-columns: 220px 1fr;
-  background: var(--s1); transition: background .1s;
+  background: var(--s1); transition: background .15s, box-shadow .15s;
+  border-left: 2px solid transparent;
 }
-.cmd-row:hover { background: var(--s2); }
+.cmd-row:hover {
+  background: var(--s2);
+  border-left-color: var(--amber);
+  box-shadow: inset 2px 0 12px rgba(212,137,10,.06);
+}
 .cr-cmd  { padding: 1rem 1.25rem; border-right: 1px solid var(--border); font-size: .8rem; color: var(--amber); display: flex; align-items: center; }
 .cr-desc { padding: 1rem 1.25rem; font-size: .78rem; color: var(--muted); display: flex; align-items: center; }
 .cr-desc em { color: var(--text); font-style: normal; }
@@ -838,6 +883,7 @@ footer {
 
 <!-- HERO -->
 <div class="hero-section">
+<canvas id="particleBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.55;"></canvas>
 <div class="hero">
   <div>
     <div class="hero-eyebrow"><span class="dot"></span>persistent memory for Claude Code · open source · MIT · built on official Claude Code APIs</div>
@@ -1360,12 +1406,12 @@ footer {
       <div class="stats-body">
         <span class="st-cmd">cat</span> <span style="color:var(--text)">stats.md</span><br>
         <span class="tdim">────────────────────────────────────────</span><br>
-        <span class="st-key">sessions logged         </span><span class="st-val">128</span><br>
-        <span class="st-key">skills in active use    </span><span class="st-val">23+</span><br>
-        <span class="st-key">sessions, zero data lost</span><span class="st-val">128</span><br>
-        <span class="st-key">memory files tracked    </span><span class="st-val">20+</span><br>
-        <span class="st-key">decisions preserved     </span><span class="st-val">15+</span><br>
-        <span class="st-key">rejected approaches logged</span><span class="st-val">12</span><br>
+        <span class="st-key">sessions logged         </span><span class="st-val" data-count="128">128</span><br>
+        <span class="st-key">skills in active use    </span><span class="st-val" data-count="23" data-suffix="+">23+</span><br>
+        <span class="st-key">sessions, zero data lost</span><span class="st-val" data-count="128">128</span><br>
+        <span class="st-key">memory files tracked    </span><span class="st-val" data-count="20" data-suffix="+">20+</span><br>
+        <span class="st-key">decisions preserved     </span><span class="st-val" data-count="15" data-suffix="+">15+</span><br>
+        <span class="st-key">rejected approaches logged</span><span class="st-val" data-count="12">12</span><br>
         <span class="st-key">dependencies            </span><span class="st-val">zero</span><br>
         <span class="st-key">context reset cost      </span><span class="st-val">zero — memory persists</span><br>
         <span class="st-key">setup time              </span><span class="st-val">~5 minutes</span><br>
@@ -1838,6 +1884,99 @@ function copyCmd(btn, text) {
 runTerminal();
 initPlanAnim();
 initMapAnim();
+
+// ─── PARTICLE BACKGROUND ───
+(function() {
+  var canvas = document.getElementById('particleBg');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, particles = [];
+  var COUNT = 55;
+  var AMBER = 'rgba(212,137,10,';
+  var CONNECT_DIST = 130;
+
+  function resize() {
+    var section = canvas.parentElement;
+    W = canvas.width  = section.offsetWidth;
+    H = canvas.height = section.offsetHeight;
+  }
+
+  function Particle() {
+    this.x  = Math.random() * W;
+    this.y  = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.35;
+    this.vy = (Math.random() - 0.5) * 0.35;
+    this.r  = Math.random() * 1.4 + 0.4;
+    this.a  = Math.random() * 0.5 + 0.15;
+  }
+
+  function init() {
+    particles = [];
+    for (var i = 0; i < COUNT; i++) particles.push(new Particle());
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = AMBER + p.a + ')';
+      ctx.fill();
+
+      for (var j = i + 1; j < particles.length; j++) {
+        var q = particles[j];
+        var dx = p.x - q.x, dy = p.y - q.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          var alpha = (1 - dist / CONNECT_DIST) * 0.18;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = AMBER + alpha + ')';
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', function() { resize(); init(); });
+  resize(); init(); draw();
+})();
+
+// ─── COUNTER ANIMATION ───
+(function() {
+  function animCount(el) {
+    var target = parseFloat(el.getAttribute('data-count'));
+    var isInt  = el.getAttribute('data-count').indexOf('.') === -1;
+    var suffix = el.getAttribute('data-suffix') || '';
+    var dur    = 1800;
+    var start  = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      var val  = target * ease;
+      el.textContent = (isInt ? Math.round(val) : val.toFixed(1)) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  var cio = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { animCount(e.target); cio.unobserve(e.target); }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-count]').forEach(function(el) { cio.observe(el); });
+})();
 </script>
 </body>
 </html>
