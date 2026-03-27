@@ -53,6 +53,22 @@ nav {
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
+nav::after {
+  content: '';
+  position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(212,137,10,.6) 20%,
+    rgba(245,166,35,.9) 50%,
+    rgba(212,137,10,.6) 80%,
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: nav-shimmer 4s ease-in-out infinite;
+}
+@keyframes nav-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 .nav-logo {
   display: flex; align-items: center; gap: .65rem;
@@ -980,6 +996,7 @@ footer {
 
 <!-- LIVING SYSTEM -->
 <section id="living">
+<canvas id="neuralBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.35;"></canvas>
   <div class="wrap">
     <div class="sec-label">why it's different</div>
     <h2>Not a config file.<br><span style="color:var(--green)">A living environment.</span></h2>
@@ -1091,6 +1108,7 @@ footer {
 
 <!-- SKILLS -->
 <section id="skills">
+<canvas id="hexBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.22;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">agentic toolkit</div>
     <h2>7 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
@@ -1224,6 +1242,7 @@ footer {
 
 <!-- AGENTIC TIER -->
 <section id="tiers">
+<canvas id="matrixBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.13;"></canvas>
   <div class="wrap">
     <div class="sec-label">architecture</div>
     <h2>Three tiers.<br><span class="h2-amber">Most tools ship one.</span></h2>
@@ -1426,6 +1445,7 @@ footer {
 
 <!-- COMMANDS -->
 <section id="commands">
+<canvas id="scanBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.18;"></canvas>
   <div class="wrap">
     <div class="sec-label">every command</div>
     <h2>Type these in <span class="h2-amber">Claude Code</span></h2>
@@ -1879,6 +1899,234 @@ function copyCmd(btn, text) {
     setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
   });
 }
+
+// ─── MATRIX RAIN (#tiers) ───
+(function() {
+  var canvas = document.getElementById('matrixBg');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var CHARS = '01>${}[]|</>return;const var if(){}'.split('');
+  var cols, drops, W, H;
+  var AMBER = '#d4890a';
+  var FONT = 11;
+
+  function resize() {
+    W = canvas.width  = canvas.parentElement.offsetWidth;
+    H = canvas.height = canvas.parentElement.offsetHeight;
+    cols  = Math.floor(W / FONT);
+    drops = Array.from({length: cols}, function() { return Math.random() * -60 | 0; });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(13,14,18,.18)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = AMBER;
+    ctx.font = FONT + 'px monospace';
+    for (var i = 0; i < drops.length; i++) {
+      var ch = CHARS[Math.random() * CHARS.length | 0];
+      ctx.globalAlpha = 0.12 + Math.random() * 0.25;
+      ctx.fillText(ch, i * FONT, drops[i] * FONT);
+      ctx.globalAlpha = 1;
+      if (drops[i] * FONT > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+
+  var raf;
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { resize(); raf = setInterval(draw, 60); }
+      else { clearInterval(raf); }
+    });
+  }, { threshold: 0.05 });
+  window.addEventListener('resize', resize);
+  obs.observe(canvas.parentElement);
+})();
+
+// ─── HEX GRID (#skills) ───
+(function() {
+  var canvas = document.getElementById('hexBg');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, hexes = [], t = 0;
+
+  function resize() {
+    W = canvas.width  = canvas.parentElement.offsetWidth;
+    H = canvas.height = canvas.parentElement.offsetHeight;
+    hexes = [];
+    var R = 28, dx = R * 1.75, dy = R * 1.52;
+    for (var row = -1; row < H / dy + 2; row++) {
+      for (var col = -1; col < W / dx + 2; col++) {
+        var x = col * dx + (row % 2 ? dx / 2 : 0);
+        var y = row * dy;
+        hexes.push({ x: x, y: y, r: R, phase: Math.random() * Math.PI * 2, speed: 0.003 + Math.random() * 0.004 });
+      }
+    }
+  }
+
+  function hex(x, y, r) {
+    ctx.beginPath();
+    for (var i = 0; i < 6; i++) {
+      var a = Math.PI / 180 * (60 * i - 30);
+      i === 0 ? ctx.moveTo(x + r * Math.cos(a), y + r * Math.sin(a))
+              : ctx.lineTo(x + r * Math.cos(a), y + r * Math.sin(a));
+    }
+    ctx.closePath();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.012;
+    for (var i = 0; i < hexes.length; i++) {
+      var h = hexes[i];
+      var pulse = (Math.sin(t * h.speed * 300 + h.phase) + 1) / 2;
+      hex(h.x, h.y, h.r - 1);
+      ctx.strokeStyle = 'rgba(212,137,10,' + (0.04 + pulse * 0.18) + ')';
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    }
+  }
+
+  var raf;
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { resize(); (function loop() { draw(); raf = requestAnimationFrame(loop); })(); }
+      else { cancelAnimationFrame(raf); }
+    });
+  }, { threshold: 0.05 });
+  window.addEventListener('resize', resize);
+  obs.observe(canvas.parentElement);
+})();
+
+// ─── NEURAL PULSE (#living) ───
+(function() {
+  var canvas = document.getElementById('neuralBg');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, nodes = [], pulses = [], t = 0;
+  var N = 18;
+
+  function resize() {
+    W = canvas.width  = canvas.parentElement.offsetWidth;
+    H = canvas.height = canvas.parentElement.offsetHeight;
+    nodes = [];
+    for (var i = 0; i < N; i++) {
+      nodes.push({ x: Math.random() * W, y: Math.random() * H,
+                   vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.018;
+
+    // move nodes
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    }
+
+    // edges
+    for (var i = 0; i < nodes.length; i++) {
+      for (var j = i + 1; j < nodes.length; j++) {
+        var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+        var d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 180) {
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = 'rgba(109,186,120,' + ((1 - d/180) * 0.2) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // nodes
+    for (var i = 0; i < nodes.length; i++) {
+      var pulse = (Math.sin(t + i * 0.7) + 1) / 2;
+      ctx.beginPath();
+      ctx.arc(nodes[i].x, nodes[i].y, 1.5 + pulse * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(109,186,120,' + (0.3 + pulse * 0.5) + ')';
+      ctx.fill();
+    }
+  }
+
+  var raf;
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { resize(); (function loop() { draw(); raf = requestAnimationFrame(loop); })(); }
+      else { cancelAnimationFrame(raf); }
+    });
+  }, { threshold: 0.05 });
+  window.addEventListener('resize', resize);
+  obs.observe(canvas.parentElement);
+})();
+
+// ─── SCAN GRID (#commands) ───
+(function() {
+  var canvas = document.getElementById('scanBg');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, scanY = 0, t = 0;
+  var GRID = 40;
+
+  function resize() {
+    W = canvas.width  = canvas.parentElement.offsetWidth;
+    H = canvas.height = canvas.parentElement.offsetHeight;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.4;
+    scanY = (scanY + 0.6) % H;
+
+    // static grid
+    ctx.lineWidth = 0.5;
+    for (var x = 0; x < W; x += GRID) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H);
+      ctx.strokeStyle = 'rgba(212,137,10,.04)'; ctx.stroke();
+    }
+    for (var y = 0; y < H; y += GRID) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y);
+      ctx.strokeStyle = 'rgba(212,137,10,.04)'; ctx.stroke();
+    }
+
+    // glowing intersections near scan
+    for (var x = 0; x < W; x += GRID) {
+      for (var y = 0; y < H; y += GRID) {
+        var dy = Math.abs(y - scanY);
+        if (dy < 60) {
+          var a = (1 - dy / 60) * 0.55;
+          ctx.beginPath();
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(212,137,10,' + a + ')';
+          ctx.fill();
+        }
+      }
+    }
+
+    // scan beam
+    var grad = ctx.createLinearGradient(0, scanY - 30, 0, scanY + 30);
+    grad.addColorStop(0, 'rgba(212,137,10,0)');
+    grad.addColorStop(0.5, 'rgba(212,137,10,.12)');
+    grad.addColorStop(1, 'rgba(212,137,10,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, scanY - 30, W, 60);
+  }
+
+  var raf;
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { resize(); (function loop() { draw(); raf = requestAnimationFrame(loop); })(); }
+      else { cancelAnimationFrame(raf); }
+    });
+  }, { threshold: 0.05 });
+  window.addEventListener('resize', resize);
+  obs.observe(canvas.parentElement);
+})();
 
 // ─── RUN ───
 runTerminal();
