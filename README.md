@@ -315,13 +315,18 @@ Skill chaining, self-healing, drift detection, and auto end session run without 
 
 ## Lifecycle Hooks
 
-Three hooks run automatically — no commands needed, no configuration required. All call `tools/memory.py` with different subcommands.
+Seven hooks run automatically — no commands needed, no configuration required. All call `tools/memory.py` with different subcommands.
 
 | Hook | When it fires | What it does |
 |------|--------------|-------------|
-| `PostToolUse` | After every Edit or Write | `memory.py --check-drift --silent` — catches drift immediately after every file change, not just at End Session. |
+| `SessionStart` | When a session begins | `memory.py --session-start` — loads MEMORY.md + status into context; surfaces interruption state if last session crashed. |
+| `UserPromptSubmit` | Before every prompt | `memory.py --capture-correction` — detects correction language and queues it for `/learn`. |
+| `PostToolUse` | After every Edit or Write | `memory.py --check-drift --silent` — catches drift immediately after every file change (runs async, no delay). |
+| `PreCompact` | Before context compaction | `memory.py --precompact` — surfaces memory checklist before context is compressed. |
+| `PostCompact` | After context compaction | `memory.py --postcompact` — re-injects MEMORY.md so session resumes warm, not cold. |
 | `Stop` (journal) | After every response | `memory.py --journal` — auto-captures session summary. Searchable forever, no `/learn` needed. |
 | `Stop` (reminder) | After every response | `memory.py --stop-check` — reminds you to save memory; surfaces open plans with unresolved questions. |
+| `StopFailure` | When session ends via API error | `memory.py --stop-failure` — writes interruption state; surfaced automatically on next session start. |
 
 All hooks call a single script — `tools/memory.py` — cross-platform, no dependencies beyond Python 3.7+.
 
@@ -367,7 +372,7 @@ your-project/
 │       ├── --bootstrap              ← Run once: full codebase index on new projects
 │       └── --search "query"         ← Search all memory files with scored results
 └── .claude/
-    ├── settings.json                ← 3 hooks configured
+    ├── settings.json                ← 7 hooks configured
     ├── memory/
     │   ├── MEMORY.md                ← Index — auto-loaded every session
     │   ├── lessons.md               ← Lessons from /learn — applied each session
