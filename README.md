@@ -512,7 +512,22 @@ Files you can read, diff, commit, and recover without any tooling. Memory stored
 No — and the research backs this up. Large monolithic CLAUDE.md files increase token use by ~20% with only a 5% improvement in output quality, and sometimes a negative effect when the content is AI-generated. Engram is built the opposite way: CLAUDE.md stays lean (commands and gotchas only), and project knowledge lives in separate `.claude/memory/` files that load selectively based on what's relevant. That's what the research actually recommends. The CLAUDE.md template that ships with the kit enforces this — the project-specific section is designed to stay under 50 lines.
 
 **Is this safe for business use?**
-Memory stays on your machine by default — nothing is pushed anywhere. Kit updates flow one way only: from engram to your machine. No user data is ever sent to engram. For regulated industries (healthcare, finance, legal), pair with an Anthropic enterprise plan (required for any Claude Code use with sensitive data) and keep memory local. For cross-machine sync, push `.claude/memory/` to your own private repo — that's opt-in and your data stays in your own infrastructure.
+
+**What engram does with your data:** Nothing. Memory files stay on your machine. Kit updates are pulled from engram — nothing goes the other direction. No telemetry, no analytics, no servers.
+
+**What Claude Code does with your data:** Sends your prompts to Anthropic. This is separate from engram and true of any Claude Code use. It is the real data consideration for businesses — not this kit. For sensitive workloads, use an Anthropic enterprise plan with a signed BAA.
+
+**GDPR:** Engram itself processes no personal data. Memory files are stored locally and contain code patterns, decisions, and lessons — not personal data. If personal data accidentally ends up in a memory file, you own that file entirely and can delete or edit it. For stricter requirements, keep memory local and off git entirely.
+
+**HIPAA:** Not compliant out of the box. The blocker is Claude Code sending prompts to Anthropic, not engram. Pair with an Anthropic enterprise BAA and keep memory local.
+
+**SOC 2:** Not applicable — engram is a local developer tool, not a service. There are no engram servers to audit.
+
+**Access control (if syncing):** Your private repo controls access. Set it to private and manage collaborators as you would any sensitive codebase. For teams, treat the memory repo like the main repo — same access policies.
+
+**What not to put in memory:** Never put passwords, API keys, customer PII, or regulated data in memory files. Memory is for code patterns, decisions, architecture, and lessons — not data. If something sensitive accidentally lands in a file, delete the entry and purge it from git history with `git filter-repo`.
+
+**For regulated industries:** Keep memory local (skip sync). Use Anthropic enterprise for a BAA. Use self-hosted git if sync is needed. Engram adds nothing to your compliance surface beyond what Claude Code already requires.
 
 **What makes it different from other Claude memory tools?**
 Most memory tools are static — you document once and things go stale. Engram is a living system: memory stays accurate via drift detection, skills improve via the compound learning loop, and sessions compound instead of reset. No other tool in this space ships the self-improving skills layer.

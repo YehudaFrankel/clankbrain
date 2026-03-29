@@ -1585,17 +1585,32 @@ footer {
 
         <div style="border-left:2px solid var(--amber); padding-left:1.25rem;">
           <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">What's actually in memory.</div>
-          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Lessons from past sessions. Architectural decisions. Rejected approaches. Function names. Project status. No passwords, credentials, or customer data — and you can see everything that's there.</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Lessons from past sessions. Architectural decisions. Rejected approaches. Function names. Project status. <strong style="color:var(--text);">Never put passwords, API keys, customer PII, or regulated data in memory files</strong> — memory is for code patterns and decisions, not data.</div>
         </div>
 
         <div style="border-left:2px solid var(--amber); padding-left:1.25rem;">
           <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">Self-hosted option.</div>
-          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Replace GitHub with GitLab, Bitbucket, or any on-prem git server. <code>sync.py</code> works with any git remote — just swap the URL.</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Replace GitHub with GitLab, Bitbucket, or any on-prem git server. <code>sync.py</code> works with any git remote — just swap the URL. Full control, no third-party dependency.</div>
         </div>
 
         <div style="border-left:2px solid var(--amber); padding-left:1.25rem;">
-          <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">Regulated industries.</div>
-          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Keep memory local (skip sync). Engram adds nothing to your data surface. Claude Code itself sends prompts to Anthropic — for HIPAA/finance, that requires an Anthropic enterprise plan regardless of this kit.</div>
+          <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">Access control.</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Your private repo, your permissions. Manage collaborators as you would any sensitive codebase. For teams, treat the memory repo like the main repo — same access policies apply.</div>
+        </div>
+
+        <div style="border-left:2px solid var(--amber); padding-left:1.25rem;">
+          <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">GDPR.</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Engram processes no personal data. Memory files are local and contain code patterns, not personal data. You own and control every file. For stricter requirements, keep memory local and off git entirely.</div>
+        </div>
+
+        <div style="border-left:2px solid var(--amber); padding-left:1.25rem;">
+          <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">SOC 2.</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Not applicable — engram is a local developer tool, not a service. There are no engram servers to audit. Your compliance surface is your machine, your repo, and Anthropic (for Claude Code prompts).</div>
+        </div>
+
+        <div style="border-left:2px solid var(--amber); padding-left:1.25rem; grid-column: 1 / -1; background: rgba(212,137,10,.04); padding: 1rem 1.25rem; border-left: 2px solid var(--amber);">
+          <div style="font-size:.8rem; color:var(--text); font-weight:600; margin-bottom:.4rem;">The real data consideration: Claude Code, not engram.</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.7;">Engram's memory files are local. The actual data flow to consider is <strong style="color:var(--text);">Claude Code itself sending your prompts to Anthropic</strong> — that is true of any Claude Code use, regardless of this kit. For HIPAA, finance, or legal workloads, that is what requires an Anthropic enterprise plan with a signed BAA. Engram adds nothing to that surface.</div>
         </div>
 
       </div>
