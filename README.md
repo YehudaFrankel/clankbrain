@@ -10,7 +10,7 @@ Claude Code is stateless. Every session starts from zero — no memory of yester
 
 Engram is a living system on top of Claude Code. It doesn't just store context — it grows with your project, improves its own skills from failure data, and runs multi-step workflows without human checkpoints between each step.
 
-No API keys. No background service. No database. Plain markdown files that git already knows how to handle.
+No API keys. No background service. No database. Memory stays on your machine by default — nothing is pushed anywhere. Plain markdown files that git already knows how to handle.
 
 **[Three Tiers](#three-tiers) · [Quick Start](#quick-start) · [What Ships](#what-ships-out-of-the-box) · [Optional Skills](#optional-skills----install-when-you-need-them) · [Learning Loop](#skills-fix-their-own-mistakes) · [Autonomous](#workflows-run-themselves) · [Every Command](#every-command) · [Architecture](#architecture) · [Hooks](#lifecycle-hooks) · [Modes](#two-modes) · [File Tree](#what-gets-created) · [Results](#real-results) · [FAQ](#faq)**
 
@@ -73,6 +73,7 @@ Setup asks about your stack, configures itself, and builds everything automatica
 | API key | required | none |
 | Background service | running | none — plain files |
 | Database | setup required | markdown + git |
+| Data leaves machine | yes | never — local by default |
 | Framework lock-in | yes | any project, any stack |
 | Setup time | 30–60 min | ~5 minutes |
 
@@ -447,6 +448,9 @@ Files you can read, diff, commit, and recover without any tooling. Memory stored
 
 **Does a big CLAUDE.md actually help?**
 No — and the research backs this up. Large monolithic CLAUDE.md files increase token use by ~20% with only a 5% improvement in output quality, and sometimes a negative effect when the content is AI-generated. Engram is built the opposite way: CLAUDE.md stays lean (commands and gotchas only), and project knowledge lives in separate `.claude/memory/` files that load selectively based on what's relevant. That's what the research actually recommends. The CLAUDE.md template that ships with the kit enforces this — the project-specific section is designed to stay under 50 lines.
+
+**Is this safe for business use?**
+Memory stays on your machine by default — nothing is pushed anywhere. Kit updates flow one way only: from engram to your machine. No user data is ever sent to engram. For regulated industries (healthcare, finance, legal), pair with an Anthropic enterprise plan (required for any Claude Code use with sensitive data) and keep memory local. For cross-machine sync, push `.claude/memory/` to your own private repo — that's opt-in and your data stays in your own infrastructure.
 
 **What makes it different from other Claude memory tools?**
 Most memory tools are static — you document once and things go stale. Engram is a living system: memory stays accurate via drift detection, skills improve via the compound learning loop, and sessions compound instead of reset. No other tool in this space ships the self-improving skills layer.

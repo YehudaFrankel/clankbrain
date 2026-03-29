@@ -17,3 +17,7 @@ You can expect a response within 48 hours. If the vulnerability is confirmed it 
 ## Security Model
 
 engram runs entirely locally — no data leaves your machine, no cloud services, no API keys required. The attack surface is limited to the Python scripts in the `tools/` directory and the setup/update scripts.
+
+**Data flow is one-way:** kit updates are pulled from GitHub to your machine. Nothing is ever pushed back to engram. Memory files stay on disk by default — cross-machine sync is opt-in and goes to your own private repo, not engram's.
+
+**For business use:** engram is safe for general development work. For regulated industries, pair with an Anthropic enterprise plan and keep memory local (no git sync).

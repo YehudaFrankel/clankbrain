@@ -193,9 +193,10 @@ When the user types **"End Session"**, do the following:
    - If status moved to `Ready to Code` this session → confirm it's logged in `decisions.md`
    - If status is `On Hold` → note in STATUS.md summary
    - If status is `Draft` with open questions → list them in the End Session report
-5. Sync memory files to any project bundle (`.claude/memory/` in repo if present)
-6. Run drift check to confirm everything is clean
-7. Report: "Session N complete. Updated: [list]. Plans: [any open]. Memory clean."
+5. Run drift check to confirm everything is clean
+6. Report: "Session N complete. Updated: [list]. Plans: [any open]. Memory clean."
+
+> **Memory stays local by default.** Nothing is pushed anywhere. To sync across machines, see `Advanced: Cross-Machine Sync` below.
 
 ---
 
@@ -275,6 +276,25 @@ Run `/learn` before `End Session`. Run `/evolve` when lessons accumulate (every 
 ---
 
 > **Context tip:** Long session? Run `/learn` then `/compact` — the PreCompact hook reinjects memory automatically. If a session crashes, type `Start Session` in a new session — picks up where you left off.
+
+---
+
+## Advanced: Cross-Machine Sync (opt-in)
+
+Memory is local by default. If you want memory to follow you across machines, push `.claude/memory/` to your own private repo:
+
+```bash
+# one-time setup
+cd your-project
+git init   # if not already a git repo
+echo ".claude/memory/" >> .gitignore   # remove this line to track memory
+git add .claude/memory/ && git commit -m "init memory" && git push
+
+# after each End Session
+git add .claude/memory/ && git commit -m "session update" && git push
+```
+
+Kit code always flows **one way only: engram → your machine.** Nothing is ever pushed back to engram.
 
 ---
 
