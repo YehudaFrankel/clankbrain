@@ -77,20 +77,20 @@ Do not move to the next edit until the current one is verified.
 
 ## Step 4 — Confirm Actual Scope
 
-After all edits are done, run:
+After all edits are done, if the project is a git repo run:
 ```
 git diff --stat
 ```
-Report the actual lines changed vs what the plan stated. If they diverge significantly, explain why.
+Report actual lines changed vs what the plan stated. If not a git repo, count changed lines manually from what was edited and report the count.
 
 ---
 
 ## Undo Command
 
 If the user says **"undo"** at any point after an edit:
-1. Run the exact `git restore` command from the Rollback section — no confirmation needed
-2. Verify the file is back to its pre-edit state by reading the relevant lines
-3. Report: "Reverted. [file] restored to pre-edit state."
+- **Git repo:** run `git restore path/to/file.ext` — no confirmation needed
+- **No git:** restore from the Before block in the plan — re-apply the exact Before content using Edit
+- Either way: read back the relevant lines and confirm the file is restored, then report: "Reverted. [file] restored to pre-edit state."
 
 ---
 
