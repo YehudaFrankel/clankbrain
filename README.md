@@ -414,7 +414,7 @@ Skill chaining, self-healing, drift detection, and auto end session run without 
 
 ## Lifecycle Hooks
 
-Seven hooks run automatically — no commands needed, no configuration required. All call `tools/memory.py` with different subcommands.
+Eight hooks run automatically — no commands needed, no configuration required. All call `tools/memory.py` with different subcommands.
 
 | Hook | When it fires | What it does |
 |------|--------------|-------------|
