@@ -370,6 +370,10 @@ When the user types **"Sync Status"**, do the following:
 
 ---
 
+@rules/plan-before-edit.md
+
+---
+
 ## Verification Checklist
 <!-- Manual smoke tests to run after a session's changes -->
 - [ ]
