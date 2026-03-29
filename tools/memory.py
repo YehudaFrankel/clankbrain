@@ -1129,6 +1129,33 @@ def cmd_search():
             print()
 
 
+# ─── VERIFY EDIT ──────────────────────────────────────────────────────────────
+# Fires after every Edit/Write — reminds Claude to read back the changed lines
+# and confirm they match the plan's After block.
+# Hook: PostToolUse (Edit|Write)
+
+def cmd_verify_edit():
+    file_info = ''
+    try:
+        raw = sys.stdin.read()
+        if raw:
+            payload = json.loads(raw)
+            tool_input = payload.get('tool_input', {})
+            fp = tool_input.get('file_path', '')
+            if fp:
+                name = fp.replace('\\', '/').split('/')[-1]
+                file_info = f' ({name})'
+    except Exception:
+        pass
+    msg = (
+        f'Code was edited{file_info}. '
+        'Step 3 of plan-before-edit: read back the changed lines and confirm '
+        'they match your plan After block. '
+        'Report \u2713 Verified:[file]:[lines] or flag any mismatch immediately before continuing.'
+    )
+    print(json.dumps({'callback': msg}))
+
+
 # ─── DISPATCH ─────────────────────────────────────────────────────────────────
 
 def main():
@@ -1156,6 +1183,8 @@ def main():
         cmd_complexity_scan()
     elif '--search' in ARGS:
         cmd_search()
+    elif '--verify-edit' in ARGS:
+        cmd_verify_edit()
     else:
         print(__doc__)
         sys.exit(1)

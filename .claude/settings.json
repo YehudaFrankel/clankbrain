@@ -43,6 +43,17 @@
             "async": true
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python tools/memory.py --verify-edit",
+            "timeout": 5,
+            "statusMessage": "Checking edit against plan…"
+          }
+        ]
       }
     ],
     "InstructionsLoaded": [
