@@ -92,6 +92,13 @@ Run every applicable section. Report every issue with file + line number. Report
 - [ ] `with` used for file/connection handling
 - [ ] No bare `except:` — always catch specific exceptions
 
+### Production Survival *(always on — AI-generated code fails here most)*
+- [ ] **Silent error swallowing** — `catch` blocks that return null, log nothing, and send no alert. Failures must surface. `return null` in a catch is a red flag.
+- [ ] **Race conditions** — concurrent writes to shared state, unguarded async flows, double-submission on payment/booking/signup. Check: can two requests hit this at the same time?
+- [ ] **Naive retry logic** — retries with no backoff (fixed `for i < 3` loop). Under load this hammers a degraded API. Requires: exponential backoff + jitter + max delay cap.
+- [ ] **Missing idempotency** — charge/webhook/insert that can run twice and cause a double-charge or duplicate record. Check: is there a uniqueness guard, a processed flag, or an idempotency key?
+- [ ] **State assumptions** — code that assumes clean initial state (empty arrays, zero counters, fresh DB). Production has 3 years of dirty edge cases. Check: what happens if this runs on an existing record?
+
 ### Code Quality
 - [ ] No duplicate logic that already exists elsewhere — reuse helpers
 - [ ] No hardcoded values that should be constants or config
