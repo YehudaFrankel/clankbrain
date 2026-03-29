@@ -37,21 +37,22 @@ FONTB = load_font(FONT_SIZE)
 # ── Scene definition ──────────────────────────────────────────────────────────
 # Each scene = list of (color, text) lines + hold duration in frames (×40ms)
 SCENES = [
-    # Scene 0 — npx install
+    # Scene 0 — install options
     {
         "hold": 60,
         "lines": [
             (MUTED,  "  clankbrain — memory for Claude Code"),
             (MUTED,  ""),
+            (CYAN,   "  Option 1 — npx (Node 14+)"),
             (GREEN,  "  $ npx clankbrain"),
             (MUTED,  ""),
-            (WHITE,  "  Fetching setup.py from GitHub...  done."),
+            (CYAN,   "  Option 2 — git clone"),
+            (GREEN,  "  $ git clone https://github.com/YehudaFrankel/clankbrain.git"),
+            (GREEN,  "  $ cd clankbrain && python setup.py"),
             (MUTED,  ""),
-            (CYAN,   "  Choose mode:"),
-            (WHITE,  "    1) Full  — memory + skills + autonomous workflows"),
-            (WHITE,  "    2) Lite  — memory only, zero Python"),
+            (WHITE,  "  Fetching setup.py...  done."),
             (MUTED,  ""),
-            (AMBER,  "  > 1"),
+            (AMBER,  "  > Choose mode:  1) Full   2) Lite"),
         ],
     },
     # Scene 1 — setup complete
