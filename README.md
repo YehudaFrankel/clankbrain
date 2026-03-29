@@ -608,4 +608,4 @@ Lite mode is zero-Python: `CLAUDE.md` + `@rules/` files (static conventions) + o
 
 **Requires:** Python 3.7+ · [Claude Code](https://claude.ai/claude-code) · No other dependencies
 
-If Clankbrain saved you from re-explaining your project one more time, **[⭐ star it on GitHub](https://github.com/YehudaFrankel/clankbrain)** — it helps others find it.
+If Clankbrain saved you from re-explaining your project one more time, **[⭐ star it on GitHub](https://github.com/YehudaFrankel/clankbrain)** — it helps others find it. Using it on a real project? **[Share what you're building →](https://github.com/YehudaFrankel/clankbrain/discussions)**
