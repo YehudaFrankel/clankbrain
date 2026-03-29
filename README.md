@@ -479,6 +479,30 @@ Tested across **112 real development sessions** on a production codebase — leg
 
 ---
 
+## This System Is Only As Good As You Are
+
+Clankbrain is a system, not a plugin. It compounds with use — but only if you use it.
+
+**What the kit does automatically:**
+- Drift detection runs after every file edit
+- Session journal captures what happened
+- Stop hook reminds you when memory has unsaved changes
+- PreCompact hook protects memory through context resets
+
+**What requires you:**
+- Running `End Session` consistently — skipping it means lessons don't get extracted
+- Running `/learn` — the skill scores that power `/evolve` only exist if you log them
+- Running `/evolve` every few sessions — skills don't patch themselves without it
+- Keeping memory files honest — garbage in, garbage out
+
+**The compound learning loop only compounds if you close it.**
+
+A developer who runs `Start Session` / `End Session` every session and `/evolve` every few weeks will have a Claude that gets measurably better at their specific codebase over time. Someone who uses it sporadically gets marginal gains.
+
+The habit is the product. The kit is just what makes the habit stick.
+
+---
+
 ## FAQ
 
 **What Claude plan do I need?**
