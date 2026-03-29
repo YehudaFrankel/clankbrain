@@ -1001,8 +1001,15 @@ footer {
       </div>
     </div>
 
-    <div style="margin-top:.75rem; font-size:.72rem; color:var(--muted); padding: .6rem 1rem; border-left: 2px solid var(--border2);" class="reveal">
-      No Node? &nbsp;<span style="color:var(--amber); font-family:monospace;">python -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/setup.py').read().decode())"</span>
+    <div style="margin-top:.75rem; font-size:.72rem; color:var(--muted); padding: .6rem 1rem;" class="reveal">
+      <details style="cursor:pointer;">
+        <summary style="color:var(--muted); list-style:none;">No Node.js? Other install options ▸</summary>
+        <div style="margin-top:.5rem; padding:.6rem 1rem; border-left: 2px solid var(--border2);">
+          <div style="margin-bottom:.4rem; color:var(--muted);">Python:</div>
+          <span style="color:var(--amber); font-family:monospace; word-break:break-all;">python -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/setup.py').read().decode())"</span>
+          <div style="margin-top:.6rem; color:var(--muted);">Manual: download and run <span style="color:var(--amber); font-family:monospace;">setup.py</span> from the repo.</div>
+        </div>
+      </details>
     </div>
 
     <div class="install-steps reveal">

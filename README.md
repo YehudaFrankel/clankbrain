@@ -62,10 +62,16 @@ Start Session    ←  reads memory, applies lessons, picks up where you left off
 End Session      ←  extracts lessons, saves memory locally, done
 ```
 
-No Node? Use Python directly:
+<details>
+<summary>No Node.js? Other install options</summary>
+
+**Python (no Node required):**
 ```bash
 python -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/setup.py').read().decode())"
 ```
+
+**Manual:** Download and run `setup.py` directly from the repo.
+</details>
 
 Setup asks about your stack, configures itself, and builds everything automatically.
 
