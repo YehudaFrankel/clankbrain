@@ -89,6 +89,8 @@ Setup asks about your stack, configures itself, and builds everything automatica
 | Database | setup required | markdown + git |
 | Data leaves machine | yes | never — local by default |
 | Framework lock-in | yes | any project, any stack |
+| Config needed | varies | project name + tech stack |
+| GitHub account needed | sometimes | no — sync is optional |
 | Setup time | 30–60 min | ~5 minutes |
 
 No terminal? Paste this into Claude Code chat instead:
@@ -263,9 +265,11 @@ No human steps between. Claude reads the chain and runs it. Build your own chain
 
 ---
 
-## Cross-Machine Sync (opt-in)
+## Cross-Machine Sync (opt-in, not required)
 
-Memory stays on your machine by default. Nothing leaves unless you set this up.
+**Default setup needs no GitHub account, no repo, no configuration beyond your project name.**
+
+Memory lives in `.claude/memory/` on your machine. Nothing leaves unless you explicitly set this up. Skip this entire section if you work on one machine.
 
 If you work across multiple machines — or want a backup — you can sync memory to your own private GitHub repo. Three commands, two minutes.
 
