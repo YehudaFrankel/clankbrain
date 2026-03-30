@@ -76,6 +76,20 @@ When the user types **"Search Memory: [topic]"**, do the following:
 
 > CLI: `python tools/memory.py --search "auth flow"`
 
+### `Progress Report`
+When the user types **"Progress Report"**, do the following:
+1. Run `python tools/memory.py --progress-report` (or `python3`)
+2. Show the output — sessions logged, lessons accumulated, known errors, skill accuracy, velocity data points, last 3 sessions
+3. If no sessions logged yet — explain: "Run /learn after a session to start building this report."
+
+### `Generate Guards`
+When the user types **"Generate Guards"**, invoke the `generate-guards` skill:
+1. Read `.claude/rules/guard-patterns.md` to see existing guards
+2. Mine `error-lookup.md`, `regret.md`, and `lessons.md` for patterns that could be caught by grep
+3. Propose 3-5 project-specific guards in the correct format — each with ID, check description, grep strategy, file scope, and why
+4. Wait for confirmation before writing anything to `guard-patterns.md`
+5. After confirmed: append to `guard-patterns.md` and suggest running `Guard Check` immediately
+
 ### `Generate Skills`
 When the user types **"Generate Skills"**, do the following:
 

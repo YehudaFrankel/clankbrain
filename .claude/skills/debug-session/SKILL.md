@@ -79,5 +79,6 @@ Then check: is this a pattern that belongs in `regret.md` (rejected approach) or
 "Bug fixed. Root cause: [X]. Fix: [Y]. Logged to error-lookup.md. [N] minutes this costs next time: 0."
 
 ## Auto-Chain
-- **On verify failure:** loop back to Step 4 with updated hypotheses — do not escalate until 2 hypotheses have been ruled out
-- **After Step 7:** if this is the second time the same type of bug appeared → suggest adding a guard to `guard-patterns.md`
+- **After Step 5 (fix applied):** automatically invoke `verification-loop` — do not wait for user to ask. Run it immediately.
+- **On verification failure:** loop back to Step 4 with updated hypotheses — do not escalate until 2 hypotheses have been ruled out
+- **After Step 7:** if this is the second time the same type of bug appeared → add a guard to `guard-patterns.md`; if 3+ bugs share a pattern, say `Generate Guards` to build project-specific guards from the full error history

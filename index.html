@@ -1177,7 +1177,7 @@ footer {
 <canvas id="hexBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.15;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">agentic toolkit</div>
-    <h2>9 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
+    <h2>10 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
     <p class="sec-desc">
       Skills live in <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">.claude/skills/</code> as markdown files.
       Chain them with <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">## Auto-Chain</code>.
@@ -1201,7 +1201,8 @@ footer {
         <tr><td class="td-cmd">strategic-compact</td><td class="td-trig">should I compact, context getting long</td><td class="td-desc">Evaluate whether to compact and guide through safe compaction that preserves all memory</td></tr>
         <tr><td class="td-cmd">java-reviewer</td><td class="td-trig">review this java, java review</td><td class="td-desc">Deep Java review against your stack's specific patterns — goes beyond generic code review</td></tr>
         <tr><td class="td-cmd">mode</td><td class="td-trig">mode develop, mode review, mode safe, mode deploy</td><td class="td-desc">Restrict Claude's tool access to what a task actually needs — develop (full), review (read-only), safe (no writes), deploy (shell only)</td></tr>
-        <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so the same bug never takes time twice</td></tr>
+        <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so the same bug never takes time twice. <em>Auto-chains to verification-loop after the fix.</em></td></tr>
+        <tr><td class="td-cmd">generate-guards</td><td class="td-trig">generate guards, add guards, what guards should I add</td><td class="td-desc">Mines your error-lookup.md, regret.md, and lessons.md to propose project-specific guards — converts your actual mistake history into automated prevention. Generic guards catch common patterns; these catch yours.</td></tr>
       </tbody>
     </table>
 
@@ -1261,6 +1262,9 @@ footer {
         </div>
         <div style="font-size:.8rem; line-height:1.8;">
           <span style="color:var(--amber)">--mine-patterns</span> <span style="color:var(--muted)">— clusters lessons.md by keyword frequency, surfaces recurring mistakes across sessions</span>
+        </div>
+        <div style="font-size:.8rem; line-height:1.8;">
+          <span style="color:var(--amber)">--progress-report</span> <span style="color:var(--muted)">— shows compounding metrics: sessions logged, lessons, known errors, skill accuracy, velocity data points, last 3 sessions</span>
         </div>
       </div>
       <div style="font-size:.75rem; color:var(--dim); margin-top:.9rem; line-height:1.6;">
@@ -1601,6 +1605,56 @@ footer {
   </div>
 </section>
 
+<!-- PROGRESS REPORT -->
+<section id="progress-report" style="background:#0d0e12; border-top:1px solid var(--border);">
+  <div class="wrap-lg">
+    <div class="sec-label">proof layer</div>
+    <h2>See the compounding.<br><span class="h2-amber">After 5 sessions, type this.</span></h2>
+    <p class="sec-desc">
+      Type <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">Progress Report</code> and get a dashboard built entirely from your own session history. Not synthetic. Not estimated. Your actual numbers.
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; margin-top:2rem;" class="reveal">
+      <div style="background:var(--s2); border:1px solid var(--border2); padding:1.5rem; font-family:var(--mono); font-size:.78rem; line-height:1.9;">
+        <div style="color:var(--dim); margin-bottom:.75rem; font-size:.68rem; letter-spacing:.06em;">// OUTPUT AFTER 8 SESSIONS</div>
+        <div style="color:var(--green);">=== Clankbrain Progress Report ===</div>
+        <br>
+        <div><span style="color:var(--text);">  Sessions logged</span>         <span style="color:var(--amber);">8</span></div>
+        <div><span style="color:var(--text);">  Lessons accumulated</span>     <span style="color:var(--amber);">14</span>  <span style="color:var(--dim);">← run /mine-patterns</span></div>
+        <div><span style="color:var(--text);">  Known errors logged</span>     <span style="color:var(--amber);">6</span>   <span style="color:var(--dim);">← never debug twice</span></div>
+        <div><span style="color:var(--text);">  Rejected approaches</span>     <span style="color:var(--amber);">9</span>   <span style="color:var(--dim);">← regret-guard blocks these</span></div>
+        <div><span style="color:var(--text);">  Skill accuracy</span>          <span style="color:var(--amber);">78%</span> <span style="color:var(--dim);">(18 correct / 5 corrected)</span></div>
+        <div><span style="color:var(--text);">  Velocity data points</span>    <span style="color:var(--amber);">11</span>  <span style="color:var(--dim);">← estimates self-calibrate</span></div>
+        <br>
+        <div style="color:var(--dim);">  Last 3 sessions:</div>
+        <div style="color:var(--muted);">    [2025-05-12]  Email throttle + scheduler fix  (4 saves)</div>
+        <div style="color:var(--muted);">    [2025-05-14]  Dashboard accordion redesign     (7 saves)</div>
+        <div style="color:var(--muted);">    [2025-05-15]  Fixed IDENTITY column error       (2 saves)</div>
+        <br>
+        <div style="color:var(--green);">  → 8 sessions in. Compounding is happening.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div style="background:var(--s1); border:1px solid var(--border); padding:1.25rem 1.5rem;">
+          <div style="font-size:.68rem; color:var(--green); letter-spacing:.06em; margin-bottom:.5rem;">LESSONS ACCUMULATED</div>
+          <div style="font-size:.82rem; color:var(--text); margin-bottom:.4rem;">14 patterns extracted from failures</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.6;">Grows with every <code style="color:var(--amber);">/learn</code>. After 5+ lessons, <code style="color:var(--amber);">--mine-patterns</code> clusters them by topic and shows which mistakes keep coming back.</div>
+        </div>
+        <div style="background:var(--s1); border:1px solid var(--border); padding:1.25rem 1.5rem;">
+          <div style="font-size:.68rem; color:var(--amber); letter-spacing:.06em; margin-bottom:.5rem;">KNOWN ERRORS LOGGED</div>
+          <div style="font-size:.82rem; color:var(--text); margin-bottom:.4rem;">6 bugs that will never cost a session again</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.6;">Every <code style="color:var(--amber);">debug-session</code> ends by logging the root cause + fix to <code style="color:var(--amber);">error-lookup.md</code>. The next time that error appears, Claude surfaces the fix before investigating.</div>
+        </div>
+        <div style="background:var(--s1); border:1px solid var(--border); padding:1.25rem 1.5rem;">
+          <div style="font-size:.68rem; color:var(--muted); letter-spacing:.06em; margin-bottom:.5rem;">SKILL ACCURACY</div>
+          <div style="font-size:.82rem; color:var(--text); margin-bottom:.4rem;">78% — and rising</div>
+          <div style="font-size:.75rem; color:var(--muted); line-height:1.6;">Every <code style="color:var(--amber);">/learn</code> scores skills Y/N. <code style="color:var(--amber)">/evolve</code> reads the scores and patches the steps that keep failing. Skills that need correction become skills that don't.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- COMMANDS -->
 <section id="commands">
 <canvas id="scanBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.5;"></canvas>
@@ -1631,6 +1685,8 @@ footer {
       <div class="cmd-row"><div class="cr-cmd">Mode [develop|review|safe|deploy]</div><div class="cr-desc">Switch Claude's tool access for the current task — <em>review</em> = read-only, <em>safe</em> = no writes, <em>deploy</em> = shell only, <em>develop</em> = full access</div></div>
       <div class="cmd-row"><div class="cr-cmd">Mine Patterns</div><div class="cr-desc">Cluster lessons.md by keyword frequency — surfaces the mistakes that keep recurring across sessions</div></div>
       <div class="cmd-row"><div class="cr-cmd">Context Score</div><div class="cr-desc">Score every section of CLAUDE.md by actual journal usage — find dead weight that's eating context every prompt</div></div>
+      <div class="cmd-row"><div class="cr-cmd">Progress Report</div><div class="cr-desc">Show compounding metrics after N sessions: lessons accumulated, known errors, skill accuracy %, velocity data — see the system working</div></div>
+      <div class="cmd-row"><div class="cr-cmd">Generate Guards</div><div class="cr-desc">Mine your error history + regret log to propose project-specific guards — your past mistakes become automated prevention</div></div>
       <div class="cmd-row"><div class="cr-cmd">Handoff</div><div class="cr-desc">Generate HANDOFF.md — current state, next tasks, settled decisions, gotchas, how to start</div></div>
       <div class="cmd-row"><div class="cr-cmd">Estimate: [task]</div><div class="cr-desc">Complexity + files that change + risks — <em>writes plan to todo.md on confirm</em></div></div>
       <div class="cmd-row"><div class="cr-cmd">Push Memory</div><div class="cr-desc">Manually save memory — useful mid-session before a risky change. Also pushes to git if you have sync configured.</div></div>

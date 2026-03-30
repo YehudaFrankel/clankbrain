@@ -2,6 +2,8 @@
 
 **Trigger:** "verify" or "run verification loop" or "check this works" or after any code change
 
+**Auto-triggered by:** `debug-session` after Step 5 (fix applied). Fires automatically — user does not need to ask.
+
 **Description:** Continuous self-evaluation after code changes. Combines compile/build verification with functional smoke tests and a code quality self-check. Catches problems before the user has to report them.
 
 **Allowed Tools:** Bash, Read, Glob

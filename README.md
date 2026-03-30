@@ -539,6 +539,32 @@ Commit `.claude/memory/` and `.claude/skills/` to your repo. Memory and skills t
 
 ---
 
+## After 5 Sessions: What You Actually See
+
+Type `Progress Report` in Claude Code and get a dashboard built from your own session history:
+
+```
+=== Clankbrain Progress Report ===
+
+  Sessions logged         8
+  Lessons accumulated     14  ← run /mine-patterns to see recurring ones
+  Known errors logged     6   ← debug-session stops repeating these
+  Rejected approaches     9   ← regret-guard blocks re-proposing these
+  Skill accuracy          78%  (18 correct / 5 needed correction)
+  Velocity data points    11  ← estimates self-calibrate from these
+
+  Last 3 sessions:
+    [2025-05-12 09:14]  Added email throttle + fixed scheduler bug   (4 file saves)
+    [2025-05-14 11:03]  Dashboard redesign — accordion + sessions     (7 file saves)
+    [2025-05-15 10:48]  Fixed IDENTITY column error on ch_UserEmail   (2 file saves)
+
+  → 8 sessions in. Compounding is happening.
+```
+
+The report starts empty. After a few sessions of `Start Session` → work → `End Session` → `/learn`, the numbers fill in — and they're all real. Not estimated. Not synthetic. Your actual session history, turned into a metric.
+
+---
+
 ## Real Results
 
 Tested across **140 real development sessions** on a production codebase — legacy Java backend, 5 JS files, 100+ functions, multi-page frontend with scheduler, email system, and encrypted URL handling. Not a demo project.
@@ -577,24 +603,23 @@ The habit is the product. The kit is just what makes the habit stick.
 
 ## Roadmap
 
-Five features actively in development — each one closes a gap no other memory tool addresses.
+### What just shipped
 
-### Regret Guard *(highest value)*
-Before every session, auto-scan `regret.md` + `decisions.md` and inject relevant warnings based on what you're about to work on. Not just "here's the full list" — keyword-matched to the current task. If you rejected an approach three sessions ago and are about to propose it again, Claude catches it before the plan is shown.
+The v2 batch closes five gaps that no other memory kit addresses:
 
-*Institutional memory that actively changes behavior. Nobody else does this.*
+| Feature | What it does |
+|---|---|
+| **Regret Guard** | Live hook — fires before every prompt, keyword-matches against `regret.md` and warns if you're about to re-propose a discarded approach |
+| **Decision Guard** | Live hook — detects planning language and checks it against `decisions.md` before Claude responds |
+| **Context Score** | Scores every section of `CLAUDE.md` by actual session usage — surfaces dead weight that eats context every prompt |
+| **Mine Patterns** | Clusters `lessons.md` by keyword frequency across sessions — shows which mistakes keep coming back |
+| **Generate Guards** | Converts your error history (`error-lookup.md`, `regret.md`) into project-specific grep guards — your past mistakes become automated prevention |
 
-### Context Efficiency Score
-Track which parts of `CLAUDE.md` are actually referenced in sessions vs sitting there bloating context silently. After 10+ sessions, surface a report: "These 4 sections were never referenced — remove them or consolidate." Dead context is paid context.
+### What's next
 
-### Velocity-Honest Estimates
-When you start a task, pull from `velocity.md` and say: *"Last 3 similar tasks took 2–4 sessions, not 1. Adjust your plan."* Estimates stop being optimistic guesses and start reflecting your actual track record. After 20+ entries, the system has enough signal to be honest.
-
-### Cross-Session Pattern Mining
-`/evolve` currently patches individual skills. The next layer: automatically cluster `lessons.md` entries across sessions and surface recurring patterns — *"You make this type of mistake every ~15 sessions"* — and convert them into standing rules automatically. Patterns you don't notice become rules you don't have to remember.
-
-### Decision Guard
-Before any plan is shown, auto-check `decisions.md` and warn if the proposed approach contradicts a settled decision. Currently `decisions.md` is passive — you read it if you remember to. Decision Guard makes it active: Claude can't propose the rejected approach without surfacing the reason it was rejected.
+- **Progress Report API** — expose `--progress-report` as a JSON output for dashboard integrations
+- **Guard auto-suggest** — after any `debug-session`, automatically propose a guard based on the root cause without the user asking
+- **Team mode** — shared `error-lookup.md` and `decisions.md` across a team via git, so one person's debugging session benefits everyone
 
 ---
 

@@ -29,6 +29,7 @@ Usage:
   python tools/memory.py --mine-patterns             # Cluster lessons.md entries, surface recurring mistakes
   python tools/memory.py --error-lookup              # UserPromptSubmit: match debug prompt vs error-lookup.md
   python tools/memory.py --guard-check               # Scan codebase against all guards in guard-patterns.md
+  python tools/memory.py --progress-report           # Show compounding metrics: sessions, lessons, errors known, skill accuracy
 """
 
 import json
@@ -1845,6 +1846,113 @@ def cmd_guard_check():
         print('Fix before committing. Add to error-lookup.md if this was a runtime surprise.')
 
 
+# ─── PROGRESS REPORT ──────────────────────────────────────────────────────────
+# Shows how Claude has improved across sessions.
+# Run: python tools/memory.py --progress-report
+
+def cmd_progress_report():
+    """Show compounding metrics across all sessions: lessons, errors known, skill accuracy, velocity data."""
+    memory_dir = find_memory_dir()
+
+    # Session count + last 3 from session_journal.md
+    session_count = 0
+    last_sessions = []
+    journal_path = memory_dir / 'session_journal.md'
+    if journal_path.exists():
+        text = journal_path.read_text(encoding='utf-8', errors='ignore')
+        entries = re.findall(
+            r'## \[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\]\n'
+            r'\*\*Files:\*\* .+?\n'
+            r'\*\*Edits:\*\* (.+?) \|.+?\n'
+            r'\*\*What:\*\* (.+?)(?:\n|$)',
+            text
+        )
+        session_count = len(entries)
+        for dt, edits, what in entries[-3:]:
+            last_sessions.append((dt, what.strip(), edits.strip()))
+
+    # Lessons count
+    lesson_count = 0
+    for lpath in [memory_dir / 'tasks' / 'lessons.md', memory_dir / 'lessons.md']:
+        if lpath.exists():
+            rows = _parse_md_table_rows(lpath.read_text(encoding='utf-8', errors='ignore'))
+            lesson_count = sum(1 for r in rows if r and r[0].lower() not in ('date', 'session', 'when', 'title'))
+            break
+
+    # Known errors count
+    error_count = 0
+    error_path = memory_dir / 'error-lookup.md'
+    if error_path.exists():
+        rows = _parse_md_table_rows(error_path.read_text(encoding='utf-8', errors='ignore'))
+        error_count = sum(1 for r in rows if r and r[0].lower() not in ('error', 'error message', 'symptom', 'issue'))
+
+    # Skill accuracy from skill_scores.md
+    yes_count = 0
+    no_count = 0
+    scores_path = memory_dir / 'tasks' / 'skill_scores.md'
+    if scores_path.exists():
+        text = scores_path.read_text(encoding='utf-8', errors='ignore')
+        yes_count = len(re.findall(r'\|\s*[Yy]\s*\|', text))
+        no_count = len(re.findall(r'\|\s*[Nn]\s*\|', text))
+
+    # Velocity data points
+    velocity_count = 0
+    vel_path = memory_dir / 'tasks' / 'velocity.md'
+    if vel_path.exists():
+        rows = _parse_md_table_rows(vel_path.read_text(encoding='utf-8', errors='ignore'))
+        velocity_count = sum(1 for r in rows if r and r[0].lower() not in ('task', 'feature', 'item'))
+
+    # Rejected approaches
+    regret_count = 0
+    regret_path = memory_dir / 'tasks' / 'regret.md'
+    if regret_path.exists():
+        rows = _parse_md_table_rows(regret_path.read_text(encoding='utf-8', errors='ignore'))
+        regret_count = sum(1 for r in rows if r and r[0].lower() not in ('approach', 'what was tried', 'rejected'))
+
+    print('\n=== Clankbrain Progress Report ===\n')
+
+    if session_count == 0:
+        print('  No sessions logged yet.')
+        print('  Run /learn after your first session to start tracking.')
+        print('  This report fills in as you use Start Session / End Session.\n')
+        return
+
+    total_uses = yes_count + no_count
+    if total_uses > 0:
+        accuracy_str = f'{int(100 * yes_count / total_uses)}%  ({yes_count} correct / {no_count} needed correction)'
+    else:
+        accuracy_str = 'not yet scored  (run /learn to start scoring skills)'
+
+    print(f'  Sessions logged         {session_count}')
+    print(f'  Lessons accumulated     {lesson_count}'
+          + ('  ← run /mine-patterns to cluster these' if lesson_count >= 5 else ''))
+    print(f'  Known errors logged     {error_count}'
+          + ('  ← debug-session stops repeating these' if error_count > 0 else '  ← grows as you use debug-session'))
+    print(f'  Rejected approaches     {regret_count}'
+          + ('  ← regret-guard blocks re-proposing these' if regret_count > 0 else ''))
+    print(f'  Skill accuracy          {accuracy_str}')
+    print(f'  Velocity data points    {velocity_count}'
+          + ('  ← estimates self-calibrate from these' if velocity_count >= 5 else ''))
+
+    if last_sessions:
+        print('\n  Last 3 sessions:')
+        for dt, what, edits in last_sessions:
+            print(f'    [{dt}]  {what[:55]:<55}  ({edits})')
+
+    print()
+    if lesson_count == 0 and error_count == 0 and session_count < 3:
+        print('  → Just getting started. The report fills in fast — 3 sessions changes it.')
+    elif session_count >= 10:
+        print(f'  → {session_count} sessions deep. This is a compounding system now.')
+        if no_count > yes_count:
+            print('  → Corrections outnumber passes — run /evolve to patch the weak skills.')
+    else:
+        remaining = max(0, 5 - session_count)
+        if remaining > 0:
+            print(f'  → {remaining} more session(s) until --mine-patterns has enough signal.')
+    print()
+
+
 # ─── DISPATCH ─────────────────────────────────────────────────────────────────
 
 def main():
@@ -1892,6 +2000,8 @@ def main():
         cmd_error_lookup()
     elif '--guard-check' in ARGS:
         cmd_guard_check()
+    elif '--progress-report' in ARGS:
+        cmd_progress_report()
     else:
         print(__doc__)
         sys.exit(1)
