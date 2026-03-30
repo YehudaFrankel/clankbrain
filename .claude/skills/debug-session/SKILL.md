@@ -71,14 +71,19 @@ Add an entry to `.claude/memory/error-lookup.md`:
 |---|---|---|
 | [exact symptom from Step 2] | [root cause from Step 4] | [what was changed in Step 5] |
 
-Then check: is this a pattern that belongs in `regret.md` (rejected approach) or `guard-patterns.md` (recurring class of mistake)?
+Then check: does this belong in `regret.md` (rejected approach) or `guard-patterns.md` (recurring class of mistake)?
+
+**After writing the entry, always say this:**
+> "Error logged. Run **Generate Guards** now to convert your error history into automated prevention? I can scan error-lookup.md, regret.md, and lessons.md and propose guards that would catch this class of mistake before it ships — takes about 30 seconds."
+
+Do not skip this prompt. The user can say no. But they should always be offered it.
 
 ---
 
 ## Closing message
-"Bug fixed. Root cause: [X]. Fix: [Y]. Logged to error-lookup.md. [N] minutes this costs next time: 0."
+"Bug fixed. Root cause: [X]. Fix: [Y]. Logged to error-lookup.md. [N] minutes this costs next time: 0. Run **Generate Guards** to make this class of mistake impossible to repeat."
 
 ## Auto-Chain
 - **After Step 5 (fix applied):** automatically invoke `verification-loop` — do not wait for user to ask. Run it immediately.
 - **On verification failure:** loop back to Step 4 with updated hypotheses — do not escalate until 2 hypotheses have been ruled out
-- **After Step 7:** if this is the second time the same type of bug appeared → add a guard to `guard-patterns.md`; if 3+ bugs share a pattern, say `Generate Guards` to build project-specific guards from the full error history
+- **After Step 7:** always prompt Generate Guards — every logged error is a candidate guard

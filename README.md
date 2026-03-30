@@ -8,6 +8,30 @@
 
 **Memory that compounds. Skills that evolve. Sessions that build — not reset.**
 
+After 8 sessions, type `Progress Report`:
+
+```
+=== Clankbrain Progress Report ===
+
+  Sessions logged         8
+  Lessons accumulated     14  ← /mine-patterns clusters these by topic
+  Known errors logged     6   ← debug-session stops repeating these
+  Rejected approaches     9   ← regret-guard blocks re-proposing these
+  Skill accuracy          78%  (18 correct / 5 needed correction)
+  Velocity data points    11  ← estimates calibrate to your actual track record
+
+  Last 3 sessions:
+    [2025-05-12]  Email throttle + scheduler fix      (4 file saves)
+    [2025-05-14]  Dashboard accordion redesign         (7 file saves)
+    [2025-05-15]  Fixed IDENTITY column error          (2 file saves)
+
+  → 8 sessions in. Compounding is happening.
+```
+
+All real numbers. Built automatically from your session history. The report starts empty — it fills in as you work.
+
+---
+
 Claude Code is stateless. Every session starts from zero — no memory of yesterday's decisions, no record of bugs already fixed, no knowledge of the approach you rejected last week. You re-explain. Claude re-suggests the same things. The same mistake happens twice.
 
 Clankbrain is a living system on top of Claude Code. It doesn't just store context — it grows with your project, improves its own skills from failure data, and runs multi-step workflows without human checkpoints between each step.

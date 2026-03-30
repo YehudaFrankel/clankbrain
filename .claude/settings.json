@@ -69,6 +69,16 @@
             "statusMessage": "Checking edit against plan…"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python tools/memory.py --suggest-guards",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "InstructionsLoaded": [

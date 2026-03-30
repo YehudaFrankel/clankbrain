@@ -30,6 +30,7 @@ Usage:
   python tools/memory.py --error-lookup              # UserPromptSubmit: match debug prompt vs error-lookup.md
   python tools/memory.py --guard-check               # Scan codebase against all guards in guard-patterns.md
   python tools/memory.py --progress-report           # Show compounding metrics: sessions, lessons, errors known, skill accuracy
+  python tools/memory.py --suggest-guards            # PostToolUse hook: fires when error-lookup.md is edited, prompts Generate Guards
 """
 
 import json
@@ -1846,6 +1847,41 @@ def cmd_guard_check():
         print('Fix before committing. Add to error-lookup.md if this was a runtime surprise.')
 
 
+# ─── SUGGEST GUARDS ──────────────────────────────────────────────────────────
+# PostToolUse hook: fires when error-lookup.md is edited.
+# Prompts Claude to offer Generate Guards — turns every debug into prevention.
+# Hook: PostToolUse (Edit|Write)
+
+def cmd_suggest_guards():
+    """PostToolUse: if error-lookup.md was just written, prompt Claude to offer Generate Guards."""
+    try:
+        raw = sys.stdin.read()
+        if raw:
+            payload = json.loads(raw)
+            fp = payload.get('tool_input', {}).get('file_path', '')
+            if 'error-lookup' not in fp.replace('\\', '/').lower():
+                return  # Not error-lookup.md — silent exit
+    except Exception:
+        return
+
+    memory_dir = find_memory_dir()
+    error_count = 0
+    error_path = memory_dir / 'error-lookup.md'
+    if error_path.exists():
+        rows = _parse_md_table_rows(error_path.read_text(encoding='utf-8', errors='ignore'))
+        error_count = sum(1 for r in rows if r and r[0].lower() not in ('error', 'error message', 'symptom', 'issue'))
+
+    msg = (
+        f'error-lookup.md updated ({error_count} known error(s) now logged). '
+        'REQUIRED: Offer to run Generate Guards. '
+        'Say exactly: "Error logged. Run Generate Guards to turn this into automated prevention? '
+        'I can scan your full error history and propose guards in about 30 seconds — '
+        'catches this class of mistake before it ships. Say yes to run it now." '
+        'Do not skip this offer.'
+    )
+    print(json.dumps({'callback': msg}))
+
+
 # ─── PROGRESS REPORT ──────────────────────────────────────────────────────────
 # Shows how Claude has improved across sessions.
 # Run: python tools/memory.py --progress-report
@@ -2000,6 +2036,8 @@ def main():
         cmd_error_lookup()
     elif '--guard-check' in ARGS:
         cmd_guard_check()
+    elif '--suggest-guards' in ARGS:
+        cmd_suggest_guards()
     elif '--progress-report' in ARGS:
         cmd_progress_report()
     else:
