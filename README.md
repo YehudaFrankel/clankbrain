@@ -325,6 +325,50 @@ No human steps between. Claude reads the chain and runs it. Build your own chain
 
 ---
 
+## Team Sync (opt-in)
+
+One person's `error-lookup.md` entry benefits the whole team. One person's `decisions.md` entry means nobody re-debates the same thing. Team Sync shares 6 memory files across your team via a single private git repo — personal memory (velocity, journal, skill scores) stays local.
+
+**Prerequisite:** git must be authenticated to GitHub. Check: `gh auth status`. If not: `gh auth login`. This is the same requirement as the solo sync feature — any GitHub push needs this.
+
+| File shared | Why |
+|---|---|
+| `error-lookup.md` | One person debugs it once — zero cost for everyone |
+| `decisions.md` | Team can't re-debate what the team settled |
+| `regret.md` | Rejected approaches are codebase-wide, not per-person |
+| `guard-patterns.md` | Guards protect the whole codebase |
+| `agreed-flow.md` | User journeys are team agreements |
+| `critical-notes.md` | Gotchas cost time regardless of who hits them |
+
+### Setup (one person does this once)
+
+Create a private repo at github.com/new, share the URL with teammates. Each person runs:
+
+```
+Setup Team: https://github.com/team/shared-memory
+```
+
+Or from terminal:
+```bash
+python tools/team_sync.py setup-team https://github.com/team/shared-memory
+```
+
+The script checks git auth before doing anything — if it fails, it tells you exactly how to fix it (`gh auth login`).
+
+### Day to day
+
+```
+Team Pull     ←  at Start Session — get teammates' additions
+Team Push     ←  at End Session — share what you found
+Team Status   ←  check last sync times + recent commits
+```
+
+Or from terminal: `python tools/team_sync.py pull-team` / `push-team`
+
+Merge is append-only, keyed by first column — no git conflicts possible.
+
+---
+
 ## Cross-Machine Sync (opt-in, not required)
 
 **Default setup needs no GitHub account, no repo, and no configuration — name and stack are auto-detected from your folder.**

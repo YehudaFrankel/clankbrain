@@ -333,6 +333,38 @@ Run `/learn` before `End Session`. Run `/evolve` when lessons accumulate (every 
 
 ---
 
+## Team Sync (opt-in)
+
+Shares 6 memory files with your team via a private git repo. Personal memory (velocity, skill_scores, session_journal) stays local. Team memory (error-lookup, decisions, regret, guard-patterns, agreed-flow, critical-notes) is shared.
+
+**Prerequisite:** git must be authenticated to GitHub. Check with `gh auth status`. If not set up: `gh auth login` (GitHub CLI) or configure git credential manager.
+
+### `Setup Team`
+When the user types **"Setup Team"** or **"Setup Team: [repo URL]"**, do the following:
+1. If no URL — ask: "What's the URL of your team's private GitHub repo for shared memory? (One person creates it at github.com/new — make it Private, share the URL with teammates)"
+2. Run: `python tools/team_sync.py setup-team [repo-url]`
+3. If it reports an auth error → tell the user to run `gh auth login` first, then retry
+4. If it reports a 404 → tell the user the repo doesn't exist yet (create at github.com/new)
+5. Report: "Team sync enabled. Shared files: error-lookup, decisions, regret, guard-patterns, agreed-flow, critical-notes. Run Team Pull at Start Session, Team Push at End Session."
+
+### `Team Pull`
+When the user types **"Team Pull"**, do the following:
+1. Run: `python tools/team_sync.py pull-team`
+2. Report what merged: "[file]: +N new entries from team" or "Already up to date"
+3. If new error-lookup entries arrived → say: "N new known errors from your team. These are now active in the error-lookup hook."
+
+### `Team Push`
+When the user types **"Team Push"**, do the following:
+1. Run: `python tools/team_sync.py push-team`
+2. Report: "Pushed team files" or "Nothing new to push"
+
+### `Team Status`
+When the user types **"Team Status"**, do the following:
+1. Run: `python tools/team_sync.py team-status`
+2. Show the output — repo URL, last pull/push times, recent commits, shared vs personal file list
+
+---
+
 ## Advanced: Cross-Machine Sync (opt-in)
 
 Memory is local by default. Nothing is pushed anywhere unless you set this up.
