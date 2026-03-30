@@ -1,0 +1,71 @@
+# Every Command
+
+Type these in Claude Code chat. All commands are plain English.
+
+---
+
+## Daily
+
+| Command | What it does |
+|---------|-------------|
+| `Start Session` | Reads memory, applies lessons, surfaces open plans, picks up where you left off |
+| `End Session` | Runs /learn, updates STATUS.md, saves everything to memory locally |
+| `/learn` | Extracts lessons, scores skills (Y/N), logs velocity — auto-runs at End Session |
+| `/evolve` | Patches failing skills, clusters repeated patterns into new reusable skills |
+| `Quick Learn` | Fast lesson capture — writes a stub immediately, then prompts for 1-3 lessons |
+| `Plan [feature]` | Structured planning — options with ratings, decision logged live |
+| `Show Plan` | Display the full current plan file — always the complete document, never a summary |
+| `Should I compact?` | Guides safe context compaction without losing memory |
+
+---
+
+## Analysis
+
+| Command | What it does |
+|---------|-------------|
+| `Progress Report` | Dashboard of sessions, lessons, errors, skill accuracy — built from your actual history |
+| `Check Drift` | Manually run drift detector — find undocumented functions and stale memory entries |
+| `Analyze Codebase` | Full scan of all JS, CSS, and backend — documents every function, class, and endpoint |
+| `Code Health` | Finds leftover console.log, hardcoded values, dead code, missing error handling — reports file + line |
+| `Kit Health` | Check all kit components are wired and healthy |
+| `Context Score` | Score every CLAUDE.md section by session journal usage — find dead weight bloating your context |
+| `Mine Patterns` | Cluster lessons.md across all sessions — surface recurring mistakes you haven't noticed |
+| `Guard Check` | Run all named guards from `guard-patterns.md` against the codebase, report violations |
+| `Estimate: [task]` | Match task to past velocity history — reports what similar tasks actually took, not what felt right |
+| `/check-anthropic` | Fetch Claude Code releases and docs, cross-reference hooks and features in use, report gaps |
+
+---
+
+## Planning
+
+| Command | What it does |
+|---------|-------------|
+| `Debug Session` | Structured diagnosis: reproduce -> isolate -> hypothesize -> fix -> verify -> log to regret.md |
+| `Handoff` | Generates HANDOFF.md — current state, next 3 tasks, key decisions, known bugs, how to start |
+
+---
+
+## Setup and recovery
+
+| Command | What it does |
+|---------|-------------|
+| `Setup Memory` | First-time setup — creates all memory files for your project |
+| `Install Memory` | New machine — copies memory files to Claude's system path |
+| `Generate Skills` | Auto-creates skills tailored to your actual stack, file names, and patterns |
+| `Upgrade to Full` | Upgrade from Lite to Full mode — downloads memory.py and wires lifecycle hooks |
+| `Update Kit` | Pulls latest kit version — shows what will change, asks for confirmation. Never touches your memory, skills, or code. |
+
+---
+
+## Sync (opt-in)
+
+| Command | What it does |
+|---------|-------------|
+| `Setup Sync: [repo URL]` | One-time setup — points memory at your private GitHub repo |
+| `Sync Memory` | Push memory to your repo after a session |
+| `Pull Memory` | Pull memory on a new machine |
+| `Sync Status` | Check if anything is unpushed |
+| `Setup Team: [repo URL]` | Set up shared team memory via a private repo |
+| `Team Pull` | Get teammates' additions at Start Session |
+| `Team Push` | Share what you found at End Session |
+| `Team Status` | Check last sync times and recent commits |
