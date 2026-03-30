@@ -20,6 +20,8 @@ Usage:
   python tools/memory.py --search "query"             # Search all memory .md files
   python tools/memory.py --search "query" --top 10   # Return top N files (default 5)
   python tools/memory.py --verify-edit                # PostToolUse hook (plan verification)
+  python tools/memory.py --quick-learn               # Fast lesson capture (no ceremony)
+  python tools/memory.py --kit-health                # Check all kit components are wired
 """
 
 import json
@@ -1162,6 +1164,138 @@ def cmd_verify_edit():
     print(json.dumps({'callback': msg}))
 
 
+# ─── QUICK LEARN ──────────────────────────────────────────────────────────────
+# Fast lesson capture — fires a callback asking Claude to write lessons now.
+# Use when /learn is too slow but you want to capture the session's insights.
+# Run: python tools/memory.py --quick-learn
+
+def cmd_quick_learn():
+    memory_dir = find_memory_dir()
+    context_parts = []
+
+    # Surface any draft lessons auto-captured this session
+    draft_path = memory_dir / 'tasks' / 'draft-lessons.md'
+    if draft_path.exists():
+        draft_text = draft_path.read_text(encoding='utf-8', errors='ignore').strip()
+        # Only include if there's actual content beyond the header
+        useful_lines = [l for l in draft_text.splitlines() if l.strip() and not l.startswith('#') and not l.startswith('_')]
+        if useful_lines:
+            context_parts.append('Draft notes from this session:\n' + '\n'.join(useful_lines))
+
+    # Surface pending corrections queue
+    queue_path = memory_dir / 'tasks' / 'corrections_queue.md'
+    if queue_path.exists():
+        q = queue_path.read_text(encoding='utf-8', errors='ignore')
+        entries = re.findall(r'## \d{4}-\d{2}-\d{2} \d{2}:\d{2}\n\*\*Prompt:\*\* ".+?"', q)
+        if entries:
+            context_parts.append(f'{len(entries)} correction(s) captured:\n' + '\n'.join(entries))
+
+    context_str = ('\n\n' + '\n\n'.join(context_parts)) if context_parts else ''
+    today = datetime.now().strftime('%Y-%m-%d')
+    msg = (
+        f'Quick-learn triggered.{context_str}\n\n'
+        f'Write 1-3 concise lessons to tasks/lessons.md right now. '
+        f'Format each as: | {today} | short title | what to remember | '
+        'No ceremony — just scan this session\'s work, capture the key pattern or gotcha, and done. '
+        'Then update STATUS.md session summary if anything changed.'
+    )
+    print(json.dumps({'callback': msg}))
+
+
+# ─── KIT HEALTH ───────────────────────────────────────────────────────────────
+# Checks that all memory kit components are present and wired correctly.
+# Run: python tools/memory.py --kit-health
+
+def cmd_kit_health():
+    mem_dir = find_memory_dir()
+    checks = []
+
+    # MEMORY.md
+    if (mem_dir / 'MEMORY.md').exists():
+        checks.append(('PASS', 'MEMORY.md', 'exists'))
+    else:
+        checks.append(('FAIL', 'MEMORY.md', 'missing — memory index not found'))
+
+    # STATUS.md
+    status_md = ROOT / 'STATUS.md'
+    if status_md.exists():
+        checks.append(('PASS', 'STATUS.md', 'exists'))
+    else:
+        checks.append(('FAIL', 'STATUS.md', 'missing — session tracking not initialized'))
+
+    # tasks/ directory
+    tasks_dir = mem_dir / 'tasks'
+    if tasks_dir.exists():
+        checks.append(('PASS', 'tasks/', 'directory exists'))
+    else:
+        checks.append(('FAIL', 'tasks/', 'missing — run Setup Memory'))
+
+    # settings.json hooks
+    settings_paths = [
+        ROOT / '.claude' / 'settings.json',
+        ROOT / '.claude' / 'settings.local.json',
+    ]
+    settings_found = False
+    hooks_wired = {'SessionStart': False, 'Stop': False, 'PostToolUse': False}
+    for sp in settings_paths:
+        if sp.exists():
+            settings_found = True
+            try:
+                data = json.loads(sp.read_text(encoding='utf-8'))
+                for event in hooks_wired:
+                    if not hooks_wired[event] and event in data.get('hooks', {}):
+                        hooks_wired[event] = True
+            except Exception:
+                pass
+    if not settings_found:
+        checks.append(('FAIL', 'settings.json', 'not found in .claude/ — hooks not wired'))
+    else:
+        for event, wired in hooks_wired.items():
+            if wired:
+                checks.append(('PASS', f'{event} hook', 'wired'))
+            else:
+                checks.append(('WARN', f'{event} hook', 'not found in settings.json'))
+
+    # skills
+    skills_dir = ROOT / '.claude' / 'skills'
+    if skills_dir.exists():
+        skill_names = sorted(d.name for d in skills_dir.iterdir() if d.is_dir() and (d / 'SKILL.md').exists())
+        if skill_names:
+            checks.append(('PASS', 'skills', f'{len(skill_names)} installed: {", ".join(skill_names)}'))
+        else:
+            checks.append(('WARN', 'skills', 'none installed — run "Generate Skills"'))
+    else:
+        checks.append(('WARN', 'skills', '.claude/skills/ not found'))
+
+    # complexity profile
+    if (mem_dir / 'complexity_profile.md').exists():
+        checks.append(('PASS', 'complexity_profile.md', 'exists'))
+    else:
+        checks.append(('WARN', 'complexity_profile.md', 'missing — run Start Session to generate'))
+
+    # lessons.md
+    if (mem_dir / 'tasks' / 'lessons.md').exists():
+        checks.append(('PASS', 'lessons.md', 'exists'))
+    else:
+        checks.append(('WARN', 'lessons.md', 'not yet created — run /learn after first session'))
+
+    pass_count = sum(1 for s, _, _ in checks if s == 'PASS')
+    fail_count = sum(1 for s, _, _ in checks if s == 'FAIL')
+    warn_count = sum(1 for s, _, _ in checks if s == 'WARN')
+
+    print(f'\nKit Health -- {pass_count} pass, {warn_count} warn, {fail_count} fail\n')
+    for status, component, detail in checks:
+        icon = '\u2713' if status == 'PASS' else ('!' if status == 'WARN' else 'X')
+        print(f'  [{icon}] {component}: {detail}')
+
+    if fail_count > 0:
+        print('\nFix FAILs before proceeding -- memory may not load correctly.')
+    elif warn_count > 0:
+        print('\nWARNs are optional but recommended.')
+    else:
+        print('\nAll systems healthy.')
+
+
 # ─── DISPATCH ─────────────────────────────────────────────────────────────────
 
 def main():
@@ -1191,6 +1325,10 @@ def main():
         cmd_search()
     elif '--verify-edit' in ARGS:
         cmd_verify_edit()
+    elif '--quick-learn' in ARGS:
+        cmd_quick_learn()
+    elif '--kit-health' in ARGS:
+        cmd_kit_health()
     else:
         print(__doc__)
         sys.exit(1)

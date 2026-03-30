@@ -125,6 +125,13 @@ When the user types **"Debug Session"** (or **"Debug Session: [description]"**),
 7. **Log it** — add one line to `tasks/errors.md`: `[date] | error description | root cause | fix applied`
 8. Report: "Bug fixed. Root cause was: [X]. Changed: [files]. Verified: [how]."
 
+### `Kit Health`
+When the user types **"Kit Health"**, do the following:
+1. Run `python tools/memory.py --kit-health` (or `python3`)
+2. Report what passed, what's missing (FAIL), and what's optional (WARN)
+3. If any FAILs — fix them immediately (run Setup Memory, create missing files, wire hooks)
+4. If any WARNs — ask the user if they want to address them now
+
 ### `Code Health`
 When the user types **"Code Health"**, do the following:
 1. **Scan for debug leftovers** — find any `console.log`, `print(`, `debugger`, `TODO`, `FIXME`, `HACK` across all project JS/backend files

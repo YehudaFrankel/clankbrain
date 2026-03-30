@@ -1432,8 +1432,9 @@ footer {
     <h2>Plans that check<br><span class="h2-amber">their own work.</span></h2>
     <p class="sec-desc">
       Before showing you a plan, Claude greps the codebase to verify every
-      function exists at the stated line. After every edit, it reads the file
-      back and confirms it matches. Say <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">undo</code> — it
+      function exists at the stated line. After every edit, it quotes the
+      actual changed lines back to you — you confirm it matches, not a
+      background process. Say <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">undo</code> — it
       reverts immediately, no questions.
     </p>
 
@@ -1468,8 +1469,8 @@ footer {
       </div>
       <div class="loop-panel reveal">
         <div class="lp-label">AFTER EDIT</div>
-        <div class="lp-title">Reads it back</div>
-        <div class="lp-body">Confirms the file matches the After block. Reports <code style="color:var(--amber);background:var(--s2);padding:.1rem .25rem;">✓ Verified</code> or flags a mismatch before moving on.</div>
+        <div class="lp-title">Shows you the lines</div>
+        <div class="lp-body">Quotes the actual changed lines back to you. You confirm it matches the plan — not a background check. Two sets of eyes on every edit.</div>
       </div>
       <div class="loop-panel reveal">
         <div class="lp-label">IF WRONG</div>
