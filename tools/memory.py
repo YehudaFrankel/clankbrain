@@ -31,6 +31,8 @@ Usage:
   python tools/memory.py --guard-check               # Scan codebase against all guards in guard-patterns.md
   python tools/memory.py --progress-report           # Show compounding metrics: sessions, lessons, errors known, skill accuracy
   python tools/memory.py --suggest-guards            # PostToolUse hook: fires when error-lookup.md is edited, prompts Generate Guards
+  python tools/memory.py --log-edit                  # PostToolUse hook: append edited filename to draft-lessons.md
+  python tools/memory.py --check-expiry              # SessionStart hook: warn about memory files past their expires: date
 """
 
 import json
@@ -141,6 +143,13 @@ def cmd_session_start():
                         parts.append(f'\n\n# Team Sync\n{out}')
         except Exception:
             pass  # Never block session start on team sync failure
+
+    # Token budget warning — surface at session start so user can compact before hitting the wall
+    _, pct, _ = _journal_estimate_tokens()
+    if pct >= 80:
+        parts.append(f'\n\n# \u26a0 Context at {pct}% — run /compact NOW before starting new work')
+    elif pct >= 60:
+        parts.append(f'\n\n# Context at {pct}% — consider /compact soon')
 
     # Silent kit health check — only surfaces FAILs, never WARNs
     kit_fails = _kit_health_fails()
@@ -2009,6 +2018,69 @@ def cmd_progress_report():
     print()
 
 
+# ─── LOG EDIT ─────────────────────────────────────────────────────────────────
+# Appends "Edited: <filename>" to draft-lessons.md so the session journal can
+# report which files were touched without relying on Claude's memory.
+# Hook: PostToolUse (Edit|Write), async
+
+def cmd_log_edit():
+    try:
+        raw = sys.stdin.read()
+        if not raw:
+            return
+        payload = json.loads(raw)
+        tool_input = payload.get('tool_input', {})
+        file_path = tool_input.get('file_path', '')
+        if not file_path:
+            return
+        filename = Path(file_path).name
+        memory_dir = find_memory_dir()
+        draft = memory_dir / 'tasks' / 'draft-lessons.md'
+        draft.parent.mkdir(parents=True, exist_ok=True)
+        if not draft.exists():
+            draft.write_text(
+                '# Draft Lessons (auto-tracked edits)\n'
+                '_Run /learn to extract patterns from these._\n',
+                encoding='utf-8'
+            )
+        existing = draft.read_text(encoding='utf-8')
+        entry = f'- Edited: {filename}\n'
+        if entry not in existing:
+            with open(draft, 'a', encoding='utf-8') as f:
+                f.write(entry)
+    except Exception:
+        pass
+
+
+# ─── CHECK EXPIRY ─────────────────────────────────────────────────────────────
+# Scans memory files for "expires: YYYY-MM-DD" in frontmatter.
+# Any file past that date is surfaced as a systemMessage reminder.
+# Hook: SessionStart (silent)
+
+def cmd_check_expiry():
+    memory_dir = find_memory_dir()
+    if not memory_dir.exists():
+        return
+    today = datetime.now().date()
+    expired = []
+    for md_file in sorted(memory_dir.rglob('*.md')):
+        try:
+            text = md_file.read_text(encoding='utf-8', errors='ignore')
+            m = re.search(r'^expires:\s*(\d{4}-\d{2}-\d{2})', text, re.MULTILINE)
+            if not m:
+                continue
+            exp_date = datetime.strptime(m.group(1), '%Y-%m-%d').date()
+            if exp_date < today:
+                rel = md_file.relative_to(memory_dir)
+                expired.append((str(rel), m.group(1)))
+        except Exception:
+            continue
+    if expired:
+        lines = [f'- {f} (expired {d})' for f, d in expired]
+        msg = 'Stale memories — review or remove:\n' + '\n'.join(lines)
+        print(json.dumps({'systemMessage': msg}))
+
+
 # ─── DISPATCH ─────────────────────────────────────────────────────────────────
 
 def main():
@@ -2060,6 +2132,10 @@ def main():
         cmd_suggest_guards()
     elif '--progress-report' in ARGS:
         cmd_progress_report()
+    elif '--log-edit' in ARGS:
+        cmd_log_edit()
+    elif '--check-expiry' in ARGS:
+        cmd_check_expiry()
     else:
         print(__doc__)
         sys.exit(1)

@@ -19,6 +19,11 @@
             "command": "python tools/memory.py --session-start",
             "timeout": 15,
             "statusMessage": "Loading project memory…"
+          },
+          {
+            "type": "command",
+            "command": "python tools/memory.py --check-expiry",
+            "timeout": 5
           }
         ]
       }
@@ -49,6 +54,16 @@
       }
     ],
     "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python tools/memory.py --log-edit",
+            "async": true
+          }
+        ]
+      },
       {
         "matcher": "Edit|Write",
         "hooks": [

@@ -19,13 +19,24 @@
    - Architectural decisions made
    - Stack-specific gotchas discovered
 
-3. **Categorize findings:**
+3. **Conflict check before saving:**
+   For each new lesson or decision, run:
+   ```
+   python tools/memory.py --search "[key term from lesson]" --top 3
+   ```
+   Scan the results for contradictions — existing memory that says the opposite. If found:
+   - Show both the old and new entry side by side
+   - Ask: "This conflicts with an existing memory. Replace it? (yes / keep both / skip)"
+   - If replacing: use `/forget` to invalidate the old entry, then save the new one
+   - If keeping both: add a note `(supersedes [old filename])` to the new entry
+
+4. **Categorize findings:**
    - Bugs/errors → append to `.claude/memory/lessons.md` (create if missing)
    - Architectural decisions → append to `.claude/memory/decisions.md` (create if missing)
    - Rejected approaches → append to `.claude/memory/tasks/regret.md` (format: `| Date | Approach | Why Rejected |`)
    - Repeated patterns (3+ times) → flag as skill candidate
 
-4. **Format each entry as:**
+5. **Format each entry as:**
    ```
    ## [YYYY-MM-DD] - [short title]
    **Context:** what you were doing
@@ -34,7 +45,7 @@
    **Apply when:** trigger conditions
    ```
 
-5. **Global lessons check:** For each lesson, ask: "Does this apply beyond this project?" If yes, also append to `~/.claude/global-lessons.md`:
+6. **Global lessons check:** For each lesson, ask: "Does this apply beyond this project?" If yes, also append to `~/.claude/global-lessons.md`:
    ```
    ## [YYYY-MM-DD] - [title]
    **Source:** [project name]
@@ -42,14 +53,14 @@
    **Apply when:** [trigger]
    ```
 
-6. **Skill scoring:** Log each skill that fired this session to `.claude/memory/tasks/skill_scores.md`:
+7. **Skill scoring:** Log each skill that fired this session to `.claude/memory/tasks/skill_scores.md`:
    `| [date] | [skill] | [used for] | Y/N | [what specifically failed — be precise, /evolve uses this to patch the right step] | - |`
    If Y: the "What Failed" column is critical — describe the exact step that was wrong, not just "it didn't work".
 
-7. **Velocity log:** If this session had an estimated task, append to `.claude/memory/tasks/velocity.md`:
+8. **Velocity log:** If this session had an estimated task, append to `.claude/memory/tasks/velocity.md`:
    `| [date] | [task] | [estimated] | [actual] | [complexity 1-5] | [notes] |`
 
-8. **After writing:**
+9. **After writing:**
    - Report: "Extracted N lessons: [list titles]"
    - If any pattern appeared 3+ times: "Suggest creating skill: [name] — run /evolve to cluster"
 

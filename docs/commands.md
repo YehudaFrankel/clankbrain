@@ -19,6 +19,15 @@ Type these in Claude Code chat. All commands are plain English.
 
 ---
 
+## Memory
+
+| Command | What it does |
+|---------|-------------|
+| `/recall [topic]` | Search all memory files for a topic — returns matching entries with context. Fast single-pass. |
+| `/forget [topic]` | Invalidate a stale or wrong memory — marks it as removed, keeps history intact |
+
+---
+
 ## Analysis
 
 | Command | What it does |
