@@ -2714,7 +2714,7 @@ function initRadarAnim() {
       var age = ts - ring.born;
       if (age > RING_LIFE) return false;
       var progress = age / RING_LIFE;          // 0 → 1
-      var radius   = progress * MAX_RADIUS;
+      var radius   = Math.max(0, progress * MAX_RADIUS);
       var alpha    = (1 - progress) * 0.55;
 
       ctx.beginPath();
