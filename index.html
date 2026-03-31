@@ -978,10 +978,10 @@ footer {
       <div class="td td-r"></div>
       <div class="td td-y"></div>
       <div class="td td-g"></div>
-      <span class="term-path"><span class="amber">yf@clankbrain</span> ~ sessions/139</span>
+      <span class="term-path"><span class="amber">yf@clankbrain</span> ~ sessions/active</span>
     </div>
     <div class="term-body" id="hero-term">
-      <span class="tmut"># session 139 / march 29</span><br>
+      <span class="tmut"># session active / <span id="heroDate"></span></span><br>
       <span class="tgap"></span>
       <span class="tp">yf@clankbrain ~ $</span> <span id="typeTarget"></span><span class="cursor" id="typeCursor"></span>
     </div>
@@ -1050,7 +1050,7 @@ footer {
     </div>
 
     <div style="margin-top:2.5rem; display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border2); font-size:.76rem;" class="reveal mob-stack">
-      <div style="padding:1rem 1.4rem; background:var(--s2); border-bottom:1px solid var(--border); grid-column:1; color:var(--muted); letter-spacing:.08em;">HEAVY TOOLS</div>
+      <div style="padding:1rem 1.4rem; background:var(--s2); border-bottom:1px solid var(--border); grid-column:1; color:var(--muted); letter-spacing:.08em;">OTHER TOOLS</div>
       <div style="padding:1rem 1.4rem; background:var(--s1); border-bottom:1px solid var(--border); border-left:1px solid var(--border2); grid-column:2; color:var(--amber); letter-spacing:.08em;">CLANKBRAIN</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); color:var(--muted);">API key required</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); color:var(--green);">zero dependencies</div>
@@ -1335,7 +1335,7 @@ footer {
 <!-- SYNC -->
 <section id="sync" style="background:var(--s1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
   <div class="wrap-sm">
-    <div class="sec-label">cross-machine sync</div>
+    <div class="sec-label">sync &amp; team</div>
     <h2>Works on any machine — <span class="h2-amber">when you want it to</span></h2>
     <p class="sec-desc">Memory stays on your machine by default. Nothing leaves unless you set this up. When you're ready to work across machines, three commands get you there.</p>
 
@@ -1362,51 +1362,47 @@ footer {
       </div>
     </div>
 
-  </div>
-</section>
-
-<!-- TEAM SYNC -->
-<section id="team-sync" style="background:#0d0e12; border-top:1px solid var(--border);">
-  <div class="wrap-lg">
-    <div class="sec-label">team mode — opt-in</div>
-    <h2>One person debugs it.<br><span class="h2-amber">Zero cost for everyone.</span></h2>
-    <p class="sec-desc">
-      One private git repo. Six shared files. When a teammate logs a bug fix in <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">error-lookup.md</code>, every developer on the project gets it at their next <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">Team Pull</code>. The debug session that cost them an hour costs you zero.
-    </p>
-
-    <div style="margin-top:2rem;" class="reveal">
-      <div style="font-size:.68rem; color:var(--muted); letter-spacing:.06em; margin-bottom:1rem;">// WHAT GETS SHARED</div>
-      <div style="display:flex; flex-direction:column; gap:.6rem;">
-        <div style="display:flex; gap:.75rem; align-items:baseline;">
-          <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">error-lookup.md</span>
-          <span style="font-size:.75rem; color:var(--muted);">One person debugs it once — zero cost for everyone</span>
+    <div style="margin-top:3rem; padding-top:2.5rem; border-top:1px solid var(--border);">
+      <div class="sec-label" style="margin-bottom:1rem;">team mode — opt-in</div>
+      <h3 style="font-size:1.15rem; font-weight:600; color:var(--text); margin-bottom:.75rem;">One person debugs it. <span style="color:var(--amber);">Zero cost for everyone.</span></h3>
+      <p style="font-size:.82rem; color:var(--muted); line-height:1.8; margin-bottom:1.5rem;">
+        One private git repo. Six shared files. When a teammate logs a bug fix in <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">error-lookup.md</code>, every developer on the project gets it at their next <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">Team Pull</code>.
+      </p>
+      <div class="reveal">
+        <div style="font-size:.68rem; color:var(--muted); letter-spacing:.06em; margin-bottom:1rem;">// WHAT GETS SHARED</div>
+        <div style="display:flex; flex-direction:column; gap:.6rem;">
+          <div style="display:flex; gap:.75rem; align-items:baseline;">
+            <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">error-lookup.md</span>
+            <span style="font-size:.75rem; color:var(--muted);">One person debugs it once — zero cost for everyone</span>
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:baseline;">
+            <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">decisions.md</span>
+            <span style="font-size:.75rem; color:var(--muted);">Team can't re-debate what the team settled</span>
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:baseline;">
+            <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">regret.md</span>
+            <span style="font-size:.75rem; color:var(--muted);">Rejected approaches are codebase-wide</span>
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:baseline;">
+            <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">guard-patterns.md</span>
+            <span style="font-size:.75rem; color:var(--muted);">Guards protect the whole codebase</span>
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:baseline;">
+            <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">agreed-flow.md</span>
+            <span style="font-size:.75rem; color:var(--muted);">User journeys are team agreements</span>
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:baseline;">
+            <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">critical-notes.md</span>
+            <span style="font-size:.75rem; color:var(--muted);">Gotchas cost time regardless of who hits them</span>
+          </div>
         </div>
-        <div style="display:flex; gap:.75rem; align-items:baseline;">
-          <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">decisions.md</span>
-          <span style="font-size:.75rem; color:var(--muted);">Team can't re-debate what the team settled</span>
+        <div style="margin-top:1.25rem; padding:.75rem 1rem; background:var(--s2); border:1px solid var(--border); font-size:.72rem; color:var(--dim); line-height:1.7;">
+          Personal files <em>never</em> leave your machine: velocity.md, skill_scores.md, session_journal.md, user_preferences.md, todo.md
         </div>
-        <div style="display:flex; gap:.75rem; align-items:baseline;">
-          <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">regret.md</span>
-          <span style="font-size:.75rem; color:var(--muted);">Rejected approaches are codebase-wide</span>
-        </div>
-        <div style="display:flex; gap:.75rem; align-items:baseline;">
-          <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">guard-patterns.md</span>
-          <span style="font-size:.75rem; color:var(--muted);">Guards protect the whole codebase</span>
-        </div>
-        <div style="display:flex; gap:.75rem; align-items:baseline;">
-          <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">agreed-flow.md</span>
-          <span style="font-size:.75rem; color:var(--muted);">User journeys are team agreements</span>
-        </div>
-        <div style="display:flex; gap:.75rem; align-items:baseline;">
-          <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">critical-notes.md</span>
-          <span style="font-size:.75rem; color:var(--muted);">Gotchas cost time regardless of who hits them</span>
-        </div>
+        <div style="margin-top:1rem; font-family:var(--mono); font-size:.8rem; color:var(--amber);">Setup Team: https://github.com/team/repo</div>
       </div>
-      <div style="margin-top:1.25rem; padding:.75rem 1rem; background:var(--s2); border:1px solid var(--border); font-size:.72rem; color:var(--dim); line-height:1.7;">
-        Personal files <em>never</em> leave your machine: velocity.md, skill_scores.md, session_journal.md, user_preferences.md, todo.md
-      </div>
-      <div style="margin-top:1rem; font-family:var(--mono); font-size:.8rem; color:var(--amber);">Setup Team: https://github.com/team/repo</div>
     </div>
+
   </div>
 </section>
 
@@ -1608,13 +1604,20 @@ footer {
 </footer>
 
 <script>
+// ─── HERO DATE ───
+(function() {
+  var d = new Date();
+  var el = document.getElementById('heroDate');
+  if (el) el.textContent = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }).toLowerCase();
+})();
+
 // ─── TYPEWRITER ───
 const lines = [
   { text: 'Start Session', speed: 80, pause: 400 },
 ];
 const outputs = [
   { delay: 0,    html: '<span class="tmut">// loading memory from disk...</span>' },
-  { delay: 600,  html: '<span class="tok">✓ MEMORY.md loaded (session 139)</span>' },
+  { delay: 600,  html: '<span class="tok">✓ MEMORY.md loaded (session active)</span>' },
   { delay: 1000, html: '<span class="tok">✓ lessons.md — 34 patterns applied</span>' },
   { delay: 1400, html: '<span class="tok">✓ decisions.md — 15 settled decisions</span>' },
   { delay: 1900, html: '<span class="tmut">// last session: skill chaining + autonomous hooks</span>' },
