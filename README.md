@@ -201,7 +201,15 @@ Next session, Claude loads these lessons automatically — before you write a si
 
 ## Agents — multi-skill orchestrators
 
-Skills handle one step. Agents chain several skills into a complete workflow, with explicit human-in-the-loop **BREAKPOINT** markers at every decision point. Three ship out of the box: `feature-build`, `bug-fix`, `end-session`. Add your own in `.claude/agents/`.
+Skills handle one step. Agents chain several skills into a complete workflow, with explicit human-in-the-loop **BREAKPOINT** markers at every decision point. Three ship out of the box:
+
+| Agent | Steps |
+|-------|-------|
+| `feature-build` | search-first → plan → implement → code-reviewer → verification-loop → /learn |
+| `bug-fix` | reproduce → isolate → fix → verify → log+learn |
+| `end-session` | /learn → update memory → drift check → STATUS.md → evolve → sync |
+
+Claude stops at every `BREAKPOINT`, shows its findings, and waits for your explicit "continue" before proceeding. You can abort, adjust, or redirect at any point. Add your own in `.claude/agents/`.
 
 → [Full agent reference and breakpoint patterns](docs/agents.md)
 
@@ -211,6 +219,18 @@ Skills handle one step. Agents chain several skills into a complete workflow, wi
 
 Rules declare which file types they apply to via `globs` frontmatter — a SQL quoting rule only loads when you open a `.java` or `.sql` file, not on a CSS change. Always-load rules (`alwaysApply: true`) stay in CLAUDE.md's `@rules/` imports; path-scoped rules rely on auto-discovery instead.
 
+```yaml
+---
+description: SQL injection patterns and quoting rules for Java + SQL files
+globs:
+  - "**/*.java"
+  - "**/*.sql"
+alwaysApply: false
+---
+```
+
+Remove path-scoped rules from `@rules/` imports in CLAUDE.md so they only load when the globs match — not on every turn.
+
 → [Always-load vs. path-scoped breakdown and recommended splits](docs/rules.md)
 
 ---
@@ -218,6 +238,16 @@ Rules declare which file types they apply to via `globs` frontmatter — a SQL q
 ## Skill Map in CLAUDE.md
 
 CLAUDE.md ships with a Skill Map — a lookup table showing which skills to chain for each workflow. One table replaces pages of "when to use what" prose. The full CLAUDE.md stays under 150 lines.
+
+```markdown
+## Skill Map
+
+| Workflow | Skills in Order |
+|----------|----------------|
+| New Feature | `/search-first` → `/plan` → *(code)* → `/code-reviewer` → `/learn` |
+| Bug Fix | `/debug-session` → *(fix)* → `/verification-loop` → `/learn` |
+| End of Session | `/learn` → `/evolve` *(every 3–5 sessions)* |
+```
 
 → [Keeping CLAUDE.md lean](docs/extending.md#keeping-claudemd-lean)
 
