@@ -199,6 +199,59 @@ Next session, Claude loads these lessons automatically — before you write a si
 
 ---
 
+## Agents — multi-skill orchestrators
+
+Skills handle one step. Agents chain several skills into a full workflow, with explicit human-in-the-loop breakpoints at every decision point.
+
+Three agents ship out of the box:
+
+| Agent | Steps |
+|-------|-------|
+| `feature-build` | search-first → plan → implement → code-reviewer → verification-loop → /learn |
+| `bug-fix` | reproduce → isolate → fix → verify → log+learn |
+| `end-session` | /learn → update memory → drift check → STATUS.md → evolve → sync |
+
+Each step has a `BREAKPOINT` marker — Claude stops and waits for your confirmation before proceeding. You can abort, adjust, or redirect at any point.
+
+Add your own in `.claude/agents/` — same markdown format, any steps you want.
+
+---
+
+## Path-scoped rules
+
+Rules can declare which file types they apply to. A rule with `globs: ["**/*.java", "**/*.sql"]` only loads when you're working on Java or SQL files — it doesn't consume context on a CSS-only change.
+
+```yaml
+---
+description: SQL injection patterns and quoting rules
+globs:
+  - "**/*.java"
+  - "**/*.sql"
+alwaysApply: false
+---
+```
+
+Rules that should always load (like `plan-before-edit`) use `alwaysApply: true` and stay in the `@rules/` imports in CLAUDE.md. Rules that are only relevant to specific file types drop out of always-load and rely on Claude Code's auto-discovery instead.
+
+---
+
+## Skill Map in CLAUDE.md
+
+CLAUDE.md ships with a Skill Map — a lookup table showing which skills to run for each common workflow:
+
+```
+| Workflow       | Skills in Order                                          |
+|----------------|----------------------------------------------------------|
+| New Feature    | search-first → plan → (code) → code-reviewer → ...      |
+| Bug Fix        | debug-session → (fix) → verification-loop → /learn       |
+| End of Session | /learn → /evolve (every 3–5)                             |
+| Maintenance    | check-drift → guard-check → code-health                  |
+```
+
+This replaces the long command-by-command prose that previously made CLAUDE.md ~500 lines. The full CLAUDE.md is now under 150 lines.
+
+---
+
 ## The habit is the product
 
 Clankbrain compounds with use — but only if you use it. A developer who runs `Start Session` / `End Session` every session and `/evolve` every few weeks will have a Claude that gets measurably better at their specific codebase over time. Someone who uses it sporadically gets marginal gains.
