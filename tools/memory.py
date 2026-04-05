@@ -128,22 +128,34 @@ def cmd_session_start():
         pass
 
     # Auto team pull — if team sync is configured, pull silently and report new entries
-    team_config_path = ROOT / '.claude' / 'team_config.json'
-    if team_config_path.exists():
+    sync_config_path = ROOT / '.claude' / '.sync-config.json'
+    team_config_path = ROOT / '.claude' / 'team_config.json'  # legacy fallback
+    has_team = False
+    if sync_config_path.exists():
         try:
-            team_cfg = json.loads(team_config_path.read_text(encoding='utf-8'))
-            if team_cfg.get('repo'):
-                import subprocess as _sp
-                team_script = ROOT / 'tools' / 'team_sync.py'
-                if team_script.exists():
-                    r = _sp.run(
-                        [sys.executable, str(team_script), 'pull-team'],
-                        capture_output=True, text=True, timeout=30
-                    )
-                    out = (r.stdout or '').strip()
-                    # Only surface output if there were actual new entries
-                    if out and ('+' in out or 'new entr' in out.lower()):
-                        parts.append(f'\n\n# Team Sync\n{out}')
+            cfg = json.loads(sync_config_path.read_text(encoding='utf-8'))
+            has_team = bool(cfg.get('team_repo'))
+        except Exception:
+            pass
+    elif team_config_path.exists():
+        try:
+            cfg = json.loads(team_config_path.read_text(encoding='utf-8'))
+            has_team = bool(cfg.get('repo'))
+        except Exception:
+            pass
+    if has_team:
+        try:
+            import subprocess as _sp
+            sync_script = ROOT / 'sync.py'
+            if sync_script.exists():
+                r = _sp.run(
+                    [sys.executable, str(sync_script), 'team-pull'],
+                    capture_output=True, text=True, timeout=30
+                )
+                out = (r.stdout or '').strip()
+                # Only surface output if there were actual new entries
+                if out and ('+' in out or 'new entr' in out.lower()):
+                    parts.append(f'\n\n# Team Sync\n{out}')
         except Exception:
             pass  # Never block session start on team sync failure
 
