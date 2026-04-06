@@ -34,13 +34,13 @@ npx clankbrain
 
 No API keys. No background service. No database. **Requires:** [Claude Code](https://claude.ai/claude-code)
 
-> Used by 600+ developers in its first two weeks. No signup. No cloud. Runs entirely on your machine.
-
-> Anonymous usage stats are collected on setup and session start (mode, platform, Python version — no project data). Opt out: `CLANKBRAIN_NO_TELEMETRY=1`.
+> Used by 600+ developers in its first two weeks. If it helps, [star it ★](https://github.com/YehudaFrankel/clankbrain)
 
 ---
 
-## What changes after a few sessions
+## What it feels like
+
+After `Start Session`, Claude doesn't wait for you to re-explain anything:
 
 ```
 Start Session
@@ -50,73 +50,6 @@ on filter change, debounce added, loading spinner missing on slow queries).
 
 What are we working on?
 ```
-
-Claude already knows what changed last session, what was deferred, and what patterns to apply — before you type a word.
-
-After 8 sessions:
-
-```
-=== Clankbrain Progress Report ===
-
-  Sessions logged         8
-  Lessons accumulated     14
-  Known errors logged     6    <- never debugged twice
-  Rejected approaches     9    <- never re-proposed
-  Skill accuracy          78%
-
-  -> 8 sessions in. Compounding is happening.
-```
-
-From a real project — 160 sessions on a production Java/SQL Server codebase, not a demo.
-
----
-
-## Is this for you?
-
-- You use **Claude Code** daily on a real, ongoing project
-- You've felt the pain of re-explaining your codebase every session
-- You're disciplined enough to run two commands: `Start Session` and `End Session`
-
-If you're just experimenting with Claude Code, come back when it's your primary tool.
-
----
-
-## Lite or Full?
-
-Setup asks which mode fits your project.
-
-| | Lite | Full |
-|---|---|---|
-| Setup | Python 3.7+ | Python 3.7+ |
-| Memory | 3 typed memory files | 5 typed memory files |
-| Drift detection | None | Automated after every edit |
-| Session journal | Manual (End Session) | Auto-captured on every Stop |
-| Best for | Any project | Complex, long-running codebases |
-
-Not sure? Start with Lite. `Upgrade to Full` adds everything any time.
-
-→ [Full comparison and upgrade steps](docs/architecture.md#full-vs-lite)
-
----
-
-## How automation works (Full mode)
-
-Full setup wires Claude Code lifecycle hooks into `.claude/settings.json`. They fire automatically — nothing to remember, nothing to run manually.
-
-| Hook | Fires when | What it does |
-|------|-----------|-------------|
-| `UserPromptSubmit` | Every prompt you send | Queues corrections; regret guard checks past rejected approaches |
-| `PostToolUse` | After every Edit or Write | Drift detection — flags undocumented JS/CSS changes |
-| `Stop` | Claude ends a response | Writes session journal; reminds you to End Session if memory has changed |
-| `SessionStart` | Session begins | Loads memory, checks for interruptions, pulls team memory if configured |
-
-Lite mode has none of these — memory updates only when you run `End Session` manually.
-
-→ [Full hook reference](docs/hooks.md)
-
----
-
-## What a session looks like
 
 You describe a bug. Claude presents a plan before touching anything:
 
@@ -163,9 +96,7 @@ Done. First submit after page load will now pass validation correctly.
 
 No code changes happen without your approval. Every edit is verified against what was planned.
 
----
-
-## What End Session looks like
+After `End Session`, lessons are extracted automatically:
 
 ```
 End Session
@@ -183,9 +114,6 @@ Extracted 3 lessons:
 3. Page state (current page, sort column) must be reset on filter change —
    otherwise stale offset returns an empty result set silently
 
-No skills needed correction this session. Now updating STATUS.md and
-MEMORY.md, then pushing.
-
 Memory saved this session:
   lessons.md +18  ("- Debounce must wrap the filter handler, not the fetch call")
   tasks/skill_scores.md +2  ("| code-review | Y |")
@@ -195,6 +123,34 @@ Session complete.
 ```
 
 Next session, Claude loads these lessons automatically — before you write a single prompt.
+
+---
+
+## After 8 sessions
+
+```
+=== Clankbrain Progress Report ===
+
+  Sessions logged         8
+  Lessons accumulated     14
+  Known errors logged     6    <- never debugged twice
+  Rejected approaches     9    <- never re-proposed
+  Skill accuracy          78%
+
+  -> 8 sessions in. Compounding is happening.
+```
+
+From a real project — 160 sessions on a production Java/SQL Server codebase, not a demo.
+
+---
+
+## Is this for you?
+
+- You use **Claude Code** on a real, ongoing project — not just experimenting
+- You've felt the pain of re-explaining your codebase every session
+- You're willing to run two commands: `Start Session` and `End Session`
+
+The value compounds with consistency. The more sessions you log, the smarter Claude gets about your specific codebase.
 
 ---
 
@@ -228,6 +184,41 @@ Every one of them remembers. None of them learn.
 The gap is small at session 5. By session 50 it's measurable.
 
 → [Does this work with Auto Memory? How does it compare to other kits?](docs/faq.md)
+
+---
+
+## Lite or Full?
+
+Setup asks which mode fits your project.
+
+| | Lite | Full |
+|---|---|---|
+| Setup | Python 3.7+ | Python 3.7+ |
+| Memory | 3 typed memory files | 5 typed memory files |
+| Drift detection | None | Automated after every edit |
+| Session journal | Manual (End Session) | Auto-captured on every Stop |
+| Best for | Any project | Complex, long-running codebases |
+
+Not sure? Start with Lite. `Upgrade to Full` adds everything any time.
+
+→ [Full comparison and upgrade steps](docs/architecture.md#full-vs-lite)
+
+---
+
+## How automation works (Full mode)
+
+Full setup wires Claude Code lifecycle hooks into `.claude/settings.json`. They fire automatically — nothing to remember, nothing to run manually.
+
+| Hook | Fires when | What it does |
+|------|-----------|-------------|
+| `UserPromptSubmit` | Every prompt you send | Queues corrections; regret guard checks past rejected approaches |
+| `PostToolUse` | After every Edit or Write | Drift detection — flags undocumented JS/CSS changes |
+| `Stop` | Claude ends a response | Writes session journal; reminds you to End Session if memory has changed |
+| `SessionStart` | Session begins | Loads memory, checks for interruptions, pulls team memory if configured |
+
+Lite mode has none of these — memory updates only when you run `End Session` manually.
+
+→ [Full hook reference](docs/hooks.md)
 
 ---
 
@@ -301,14 +292,11 @@ Tested across 160 real sessions on a production codebase. Not a demo project.
 
 | Version | What changed |
 |---------|-------------|
-| v2.6 | Content-aware memory diff shows last line saved; guided first-run box; 69 automated tests; anonymous telemetry (opt-out: `CLANKBRAIN_NO_TELEMETRY=1`) |
-| v2.5 | CHANGELOG + `sync.py migrate`; starter content in Lite typed files; CI workflow; Python version check |
-| v2.4 | Dependency detection with platform hints; End Session memory diff; `upgrade.py --dry-run` |
-| v2.3 | 3 typed files in Lite mode; `sync diagnose`; memory.py refactored into single-purpose helpers |
-| v2.2 | Team sync merged into sync.py — one tool, one config; `join` command; health checks; 16 automated tests |
-| v2.1 | Markdown agents with BREAKPOINT markers; path-scoped rule frontmatter; CLAUDE.md trimmed to <150 lines with Skill Map |
-| v2.0 | Semantic memory search (`/recall`); compound learning (velocity tracker, skill scores); guard patterns; complexity scanner |
-| v1.0 | Initial release — persistent memory, skills, lifecycle hooks, cross-machine sync |
+| v2.6 | Content-aware memory diff; guided first-run; 69 automated tests; telemetry (opt-out: `CLANKBRAIN_NO_TELEMETRY=1`) |
+| v2.5 | CHANGELOG + `sync.py migrate`; starter content in Lite; CI workflow; Python version check |
+| v2.4 | Dependency detection; End Session memory diff; `upgrade.py --dry-run` |
+
+→ [Full changelog](CHANGELOG.md)
 
 ---
 
@@ -328,4 +316,6 @@ Tested across 160 real sessions on a production codebase. Not a demo project.
 
 ---
 
-**Built by [Yehuda Frankel](https://github.com/YehudaFrankel).** Using it on a real project? [Tell us what you're building →](https://github.com/YehudaFrankel/clankbrain/discussions) — If it helped, [star it](https://github.com/YehudaFrankel/clankbrain).
+**Built by [Yehuda Frankel](https://github.com/YehudaFrankel).** Using it on a real project? [Tell us what you're building →](https://github.com/YehudaFrankel/clankbrain/discussions)
+
+> Anonymous usage stats collected on setup (mode, platform, Python version — no project data). Opt out: `CLANKBRAIN_NO_TELEMETRY=1`
