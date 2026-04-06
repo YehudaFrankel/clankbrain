@@ -901,11 +901,20 @@ Files created:
   upgrade.py             ← Upgrade to Full when ready
   .claude/skills/        ← Auto-invoked prompt packs (if generated)
 
-Next steps:
-  1. Fill in rules/stack.md — tech stack, file paths, gotchas
-  2. Open Claude Code and type: Start Session
-  3. Work on your project — Claude updates memory after each change
-  4. Type: End Session when done
+┌─────────────────────────────────────────────────────────────┐
+│  You're done. Open Claude Code and type:                    │
+│                                                             │
+│      Start Session                                          │
+│                                                             │
+│  Claude will read memory, ask what you're working on,       │
+│  and update files automatically as you go.                  │
+│                                                             │
+│  At the end: type  End Session  to save what was learned.   │
+└─────────────────────────────────────────────────────────────┘
+
+Optional — fill in before your first session:
+  rules/stack.md    ← tech stack, key file paths, gotchas
+  rules/conventions.md  ← naming, patterns, anything Claude should always follow
 
 Want automated drift detection and session journals?
   python upgrade.py      ← Upgrade to Full (requires Python 3.7+)
@@ -1637,32 +1646,30 @@ type: reference
     print(f"""
 Done. Full memory system created in: {ROOT}{ide_note}
 
-Next steps:
-  1. Fill in CLAUDE.md — tech stack, file paths, coding conventions
-  2. Open Claude Code and type: Start Session
-  3. Claude will check memory, run drift detection, and report status
+┌─────────────────────────────────────────────────────────────┐
+│  You're done. Open Claude Code and type:                    │
+│                                                             │
+│      Start Session                                          │
+│                                                             │
+│  Claude will load memory, run drift detection, and ask      │
+│  what you're working on. Hooks fire automatically.          │
+│                                                             │
+│  At the end: type  End Session  to save what was learned.   │
+└─────────────────────────────────────────────────────────────┘
 
-Drift detection (memory.py auto-detects all JS/CSS files):
-  4 hooks installed: UserPromptSubmit (corrections), PostToolUse (drift), Stop (journal + stop-check)
-  Run manually: python tools/memory.py --check-drift
+Hooks installed (fire automatically — nothing to run):
+  UserPromptSubmit → captures corrections + regret guard
+  PostToolUse      → drift detection after every edit
+  Stop             → session journal + stop-check reminder
 
 Task files (commit these to your repo):
-  tasks/todo.md       — Claude writes plans here before touching code
-  tasks/lessons.md    — corrections logged here, read every session start
+  tasks/todo.md       — plans before touching code
+  tasks/lessons.md    — corrections, read every session start
   tasks/decisions.md  — architectural choices and why
-  tasks/errors.md     — runtime errors, root causes, fixes
+  tasks/errors.md     — runtime errors + root causes
 
-.gitignore:
-  HANDOFF.md excluded — it's a point-in-time snapshot, not a long-lived doc
-
-Skills (auto-invoked prompts):
-  code-review/        — "review this file"
-  security-check/     — "check for security issues"
-  fix-bug/            — "fix the bug where..."
-  new-feature/        — "add a feature that..."
-  environment-check/  — "ready for prod", "before deploy"
-  run-verification/   — "verify this works", "before I ship"
-  refactor/           — "refactor", "clean up", "simplify this"
+Optional — fill in before your first session:
+  CLAUDE.md  ← tech stack section, file paths, coding conventions
 
 ⭐  If clankbrain saves you time, a star on GitHub helps others find it:
    https://github.com/YehudaFrankel/clankbrain

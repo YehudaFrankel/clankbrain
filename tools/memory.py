@@ -211,10 +211,24 @@ def _snapshot_memory_state(memory_dir):
         pass  # Never block session start
 
 
+def _last_meaningful_line(path, skip_lines):
+    """Return the last non-blank, non-comment line after line index skip_lines."""
+    try:
+        lines = path.read_text(encoding='utf-8', errors='ignore').splitlines()
+        new_lines = lines[skip_lines:]
+        for line in reversed(new_lines):
+            stripped = line.strip()
+            if stripped and not stripped.startswith('<!--') and not stripped.startswith('#'):
+                return stripped[:80] + ('...' if len(stripped) > 80 else '')
+    except Exception:
+        pass
+    return ''
+
+
 def cmd_memory_diff():
     """
     Compare current memory file state to the session-start snapshot.
-    Prints a one-line summary: "Memory saved: notes.md +12, lessons.md +3"
+    Prints line counts and the last line added per changed file.
     Call at End Session to confirm what was actually written.
     """
     memory_dir = find_memory_dir()
@@ -234,17 +248,25 @@ def cmd_memory_diff():
     for f in sorted(memory_dir.rglob('*.md')):
         rel = str(f.relative_to(memory_dir))
         try:
-            current = len(f.read_text(encoding='utf-8', errors='ignore').splitlines())
+            current_lines = f.read_text(encoding='utf-8', errors='ignore').splitlines()
+            current = len(current_lines)
         except Exception:
             continue
-        diff = current - before.get(rel, 0)
+        before_count = before.get(rel, 0)
+        diff = current - before_count
         if diff > 0:
-            changes.append(f'{Path(rel).name} +{diff}')
+            last = _last_meaningful_line(f, before_count)
+            entry = f'{Path(rel).name} +{diff}'
+            if last:
+                entry += f'  ("{last}")'
+            changes.append(entry)
         elif diff < 0:
             changes.append(f'{Path(rel).name} {diff}')
 
     if changes:
-        print('Memory saved: ' + ', '.join(changes))
+        print('Memory saved this session:')
+        for c in changes:
+            print(f'  {c}')
     else:
         print('Memory unchanged this session.')
 
