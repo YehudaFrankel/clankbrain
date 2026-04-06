@@ -86,6 +86,97 @@ Not sure? Start with Lite. `Upgrade to Full` adds everything any time.
 
 ---
 
+## What a session looks like
+
+You describe a bug. Claude presents a plan before touching anything:
+
+```
+Plan
+
+Problem
+openCoursePage nulls courseDescEditor, defeating the if (!courseDescEditor)
+guard and causing a new Quill instance (+ toolbar) to be appended to the
+DOM on every course open.
+
+All Related Functions
+- openCoursePage — mobile/js/AdminFunctions.js:1738
+
+Before:
+  courseDescEditor  = null;
+  sessionEditors    = {};
+
+After:
+  sessionEditors    = {};
+
+Why this will work
+The detailCourseDescEditor DOM element is static HTML — it persists across
+course opens. Keeping the Quill instance alive and just updating
+courseDescEditor.root.innerHTML is correct. sessionEditors / fullContentEditors
+/ reminderEditors still reset because those are tied to dynamically-rendered
+session HTML.
+
+Scope / Blast Radius
+- Files touched: mobile/js/AdminFunctions.js
+- Lines changed: 1 removed
+- Type: Bug fix
+- Affected at runtime: Course description editor only — no behavior change,
+  just stops toolbar duplication
+
+Proceed?
+```
+
+You type `yes`. Claude applies the edit, reads back the changed lines, and confirms:
+
+```
+✓ Verified AdminFunctions.js:1736-1743 — courseDescEditor = null removed.
+sessionEditors = {} is now the first reset line. All diagnostics pre-existing.
+
+Done. Opening a second or third course will reuse the existing Quill instance
+instead of creating new ones — one toolbar only.
+```
+
+No code changes happen without your approval. Every edit is verified against what was planned.
+
+---
+
+## What End Session looks like
+
+```
+End Session
+
+/learn
+
+Extracted 3 lessons:
+
+1. Rich-text editor duplicates when the instance variable is nulled before the
+   re-init guard — keep the instance alive, update content only
+
+2. Debounce must wrap the filter handler, not the fetch call — wrapping fetch
+   leaves rapid keystrokes queued, debounce on the handler cancels them
+
+3. Page state (current page, sort column) must be reset on filter change —
+   otherwise stale offset returns an empty result set silently
+
+No skills needed correction this session. Now updating STATUS.md and
+MEMORY.md, then pushing.
+
+Memory saved this session:
+  lessons.md +18  ("- Debounce must wrap the filter handler, not the fetch call")
+  tasks/skill_scores.md +2  ("| code-review | Y |")
+  STATUS.md +1  ("Session 42 — Dashboard pagination fix")
+
+Pushing to GitHub...
+
+  4 files changed, 23 insertions(+), 1 deletion(-)
+  To https://github.com/your-username/your-memory-repo.git
+
+Session complete. Memory pushed to GitHub.
+```
+
+Next session, Claude loads these lessons automatically — before you write a single prompt.
+
+---
+
 ## What you get
 
 - **Persistent memory** — decisions, bugs fixed, rejected approaches, codebase knowledge
@@ -170,6 +261,10 @@ Tested across 160 real sessions on a production codebase. Not a demo project.
 
 | Version | What changed |
 |---------|-------------|
+| v2.6 | Content-aware memory diff shows last line saved; guided first-run box; 69 automated tests |
+| v2.5 | CHANGELOG + `sync.py migrate`; starter content in Lite typed files; CI workflow; Python version check |
+| v2.4 | Dependency detection with platform hints; End Session memory diff; `upgrade.py --dry-run` |
+| v2.3 | 3 typed files in Lite mode; `sync diagnose`; memory.py refactored into single-purpose helpers |
 | v2.2 | Team sync merged into sync.py — one tool, one config; `join` command; health checks; 16 automated tests |
 | v2.1 | Markdown agents with BREAKPOINT markers; path-scoped rule frontmatter; CLAUDE.md trimmed to <150 lines with Skill Map |
 | v2.0 | Semantic memory search (`/recall`); compound learning (velocity tracker, skill scores); guard patterns; complexity scanner |
