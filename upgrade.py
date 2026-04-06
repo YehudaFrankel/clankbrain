@@ -6,7 +6,9 @@ Adds tools/memory.py + lifecycle hooks to an existing Lite setup.
 Keeps @rules/ files in parallel — static conventions stay in rules/,
 dynamic session data (drift, journal, stop-check) handled by memory.py.
 
-Usage: python upgrade.py
+Usage:
+  python upgrade.py             Apply the upgrade
+  python upgrade.py --dry-run   Preview what will be created without changing anything
 """
 
 import json
@@ -54,6 +56,45 @@ HOOKS = {
 
 
 def main():
+    dry_run = '--dry-run' in sys.argv
+
+    if dry_run:
+        print("\n=== Upgrade to Full — Dry Run ===\n")
+        print("Files that would be created or modified:\n")
+
+        dst = ROOT / "tools" / "memory.py"
+        if dst.exists():
+            print("  tools/memory.py — already exists, would skip download")
+        else:
+            print("  tools/memory.py — would download from GitHub (~800 lines)")
+            print("    Provides: drift detection, session journal, stop-check,")
+            print("    /recall semantic search, and 25+ other lifecycle commands")
+
+        print()
+        settings_path = ROOT / ".claude" / "settings.json"
+        has_hooks = False
+        if settings_path.exists():
+            try:
+                with open(settings_path) as f:
+                    existing = json.load(f)
+                has_hooks = 'hooks' in existing
+            except Exception:
+                pass
+
+        if has_hooks:
+            print("  .claude/settings.json — already has hooks, would add missing entries only")
+        elif settings_path.exists():
+            print("  .claude/settings.json — would add 3 hooks to existing file:")
+        else:
+            print("  .claude/settings.json — would create with 3 hooks:")
+
+        print("    PostToolUse (Edit|Write) → python tools/memory.py --check-drift --silent")
+        print("    Stop                     → python tools/memory.py --journal")
+        print("    Stop                     → python tools/memory.py --stop-check")
+        print()
+        print("Nothing was created. Run without --dry-run to apply.")
+        return
+
     print("\n=== Upgrade to Full ===\n")
 
     # ── Python version check ──────────────────────────────────────────────────

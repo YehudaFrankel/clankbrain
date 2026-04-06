@@ -149,6 +149,56 @@ def cmd_diagnose():
         print(line)
 
 
+# ─── DEPENDENCY CHECK ─────────────────────────────────────────────────────────
+
+def _check_dependencies():
+    """
+    Check required dependencies are available. Returns list of (dep, hint) failures.
+    Call before any command that needs git.
+    """
+    failures = []
+
+    # git
+    try:
+        r = subprocess.run(['git', '--version'], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise FileNotFoundError
+    except FileNotFoundError:
+        if sys.platform == 'win32':
+            hint = (
+                'git not found. Install from https://git-scm.com/download/win\n'
+                '  Make sure "Add Git to PATH" is checked during install,\n'
+                '  then close and reopen your terminal.'
+            )
+        elif sys.platform == 'darwin':
+            hint = (
+                'git not found. Install with:\n'
+                '  xcode-select --install    # installs git via Xcode tools\n'
+                'or:\n'
+                '  brew install git          # if Homebrew is available'
+            )
+        else:
+            hint = (
+                'git not found. Install with:\n'
+                '  sudo apt install git      # Debian / Ubuntu\n'
+                '  sudo dnf install git      # Fedora / RHEL\n'
+                '  sudo pacman -S git        # Arch'
+            )
+        failures.append(('git', hint))
+
+    return failures
+
+
+def _assert_dependencies():
+    """Print failure messages and exit if any required dependency is missing."""
+    failures = _check_dependencies()
+    if not failures:
+        return
+    for dep, hint in failures:
+        print(f'\nMissing dependency: {dep}\n{hint}')
+    sys.exit(1)
+
+
 # ─── GIT HELPERS ──────────────────────────────────────────────────────────────
 
 def run(cmd, cwd=None, capture=False):
@@ -336,6 +386,7 @@ def _copy_to_team_repo():
 # ─── PERSONAL SYNC COMMANDS ───────────────────────────────────────────────────
 
 def cmd_setup(repo_url):
+    _assert_dependencies()
     if not MEMORY_DIR.exists():
         print('ERROR: .claude/memory/ not found. Run Setup Memory first.')
         sys.exit(1)
@@ -494,6 +545,7 @@ def cmd_status():
 # ─── TEAM SYNC COMMANDS ───────────────────────────────────────────────────────
 
 def cmd_setup_team(repo_url):
+    _assert_dependencies()
     print(f'Setting up team sync → {repo_url}')
 
     print('Checking git access...')
@@ -553,6 +605,7 @@ def cmd_setup_team(repo_url):
 
 
 def cmd_join(repo_url):
+    _assert_dependencies()
     cfg = load_config()
 
     if cfg.get('team_repo'):

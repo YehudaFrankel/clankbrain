@@ -36,6 +36,7 @@ Usage:
   python tools/memory.py --build-index               # Build semantic embedding index from all .md files
   python tools/memory.py --search-semantic "query"   # Semantic search — finds related memories by meaning, not just keywords
   python tools/memory.py --search-semantic "query" --top 10  # Return top N semantic matches
+  python tools/memory.py --memory-diff               # Show what memory files changed this session (call at End Session)
 """
 
 import json
@@ -193,6 +194,61 @@ def _check_kit_health():
     return '\n\n# \u26a0 Kit Health FAILs\n' + '\n'.join(f'- {f}' for f in kit_fails)
 
 
+def _snapshot_memory_state(memory_dir):
+    """Record line counts of all .md files at session start for end-session diff."""
+    try:
+        snapshot = {}
+        for f in sorted(memory_dir.rglob('*.md')):
+            rel = str(f.relative_to(memory_dir))
+            try:
+                snapshot[rel] = len(f.read_text(encoding='utf-8', errors='ignore').splitlines())
+            except Exception:
+                snapshot[rel] = 0
+        snap_file = memory_dir / 'tasks' / 'session_snapshot.json'
+        snap_file.parent.mkdir(parents=True, exist_ok=True)
+        snap_file.write_text(json.dumps(snapshot, indent=2), encoding='utf-8')
+    except Exception:
+        pass  # Never block session start
+
+
+def cmd_memory_diff():
+    """
+    Compare current memory file state to the session-start snapshot.
+    Prints a one-line summary: "Memory saved: notes.md +12, lessons.md +3"
+    Call at End Session to confirm what was actually written.
+    """
+    memory_dir = find_memory_dir()
+    snap_file  = memory_dir / 'tasks' / 'session_snapshot.json'
+
+    if not snap_file.exists():
+        print('No session snapshot found — run Start Session first.')
+        return
+
+    try:
+        before = json.loads(snap_file.read_text(encoding='utf-8'))
+    except Exception as e:
+        print(f'Could not read session snapshot: {e}')
+        return
+
+    changes = []
+    for f in sorted(memory_dir.rglob('*.md')):
+        rel = str(f.relative_to(memory_dir))
+        try:
+            current = len(f.read_text(encoding='utf-8', errors='ignore').splitlines())
+        except Exception:
+            continue
+        diff = current - before.get(rel, 0)
+        if diff > 0:
+            changes.append(f'{Path(rel).name} +{diff}')
+        elif diff < 0:
+            changes.append(f'{Path(rel).name} {diff}')
+
+    if changes:
+        print('Memory saved: ' + ', '.join(changes))
+    else:
+        print('Memory unchanged this session.')
+
+
 def cmd_session_start():
     memory_dir = find_memory_dir()
 
@@ -206,6 +262,7 @@ def cmd_session_start():
         _check_kit_health(),
     ]
     _reset_session_counter(memory_dir)
+    _snapshot_memory_state(memory_dir)
 
     parts = [b for b in blocks if b]
     if not parts:
@@ -2331,6 +2388,8 @@ def main():
         cmd_build_index()
     elif '--search-semantic' in ARGS:
         cmd_search_semantic()
+    elif '--memory-diff' in ARGS:
+        cmd_memory_diff()
     else:
         print(__doc__)
         sys.exit(1)
