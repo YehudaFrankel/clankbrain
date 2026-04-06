@@ -86,7 +86,9 @@ Every task gets logged with estimated vs actual sessions. Claude reads this befo
 
 This is what separates Clankbrain from a config file.
 
-After every session, `/learn` scores each skill Y or N — did it work or did it need correction? `/evolve` reads those scores, finds the steps that keep failing, and patches them.
+After every session, `/learn` scores each skill with structured failure data — not just Y or N, but which step failed, what it produced, and what was needed. `/evolve-check` reads those scores and surfaces which skills are ready to patch, flagging vague entries that cannot be acted on. `/evolve` reads the structured data, finds the specific steps that keep failing across multiple sessions, and patches them precisely.
+
+The system requires patterns, not noise. A single failure does not trigger a rewrite. Two or more failures at the same step do.
 
 By session 50, the skills Claude uses on your project have been refined by 50 sessions of real feedback. A generic skill becomes a skill calibrated to your exact stack, your exact patterns, your exact failure modes.
 
@@ -104,7 +106,7 @@ Familiar errors surface faster. Decisions stop getting re-debated. Claude starts
 
 ### Sessions 10–30: Real Compounding
 
-Skills calibrate to your stack. Velocity estimates get accurate. Patterns become automatic. The error-lookup file starts paying off consistently. `/evolve` starts patching the skills that kept failing.
+Skills calibrate to your stack. Velocity estimates get accurate. Patterns become automatic. The error-lookup file starts paying off consistently. `/evolve-check` starts flagging skills with repeated failures. `/evolve` patches the specific steps that kept failing, with real failure data behind every change.
 
 ### Session 50 and Beyond
 
@@ -112,13 +114,15 @@ Claude knows your fragile functions, your rejected approaches, your architectura
 
 ---
 
-## The Two Rules That Make It Work
+## The Three Rules That Make It Work
 
 **Always run End Session.** If you skip it, lessons do not get extracted, skills do not get scored, and memory does not update. The compound loop only works if you close it.
 
-**Run `/evolve` every few sessions.** Skills do not self-patch without it. `/learn` gathers the data. `/evolve` acts on it. Both have to happen.
+**Run `/evolve-check` when you want to know what needs patching.** It reads skill_scores.md and shows you exactly which skills are urgent (🔴), ready to patch (🟡), stable (🟢), or missing the failure data needed to improve (⚠️). Takes five seconds. No files are changed.
 
-Everything else is automatic. These two habits are what the system runs on.
+**Run `/evolve` when skills are flagged.** Skills do not self-patch without it. `/learn` gathers the data. `/evolve-check` surfaces what needs attention. `/evolve` acts on it. All three have to happen.
+
+Everything else is automatic. These three habits are what the system runs on.
 
 ---
 
