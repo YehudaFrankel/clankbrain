@@ -4,9 +4,17 @@
 
 [![v2.0.0](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](https://github.com/YehudaFrankel/clankbrain/releases) [![MIT License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude-Code-orange?style=flat-square)](https://claude.ai/claude-code) [![Discussions](https://img.shields.io/badge/community-discussions-purple?style=flat-square)](https://github.com/YehudaFrankel/clankbrain/discussions)
 
-**Claude Code forgets everything every session. Clankbrain makes it remember — and get better over time.**
+Every session, Claude wakes up a stranger.
 
-Two commands. Everything else is automatic.
+You re-explain the stack. Re-describe what you were building. Re-establish why certain approaches won't work here. Every day, for a tool that spent yesterday learning all of it.
+
+Clankbrain ends that. It gives Claude a memory that compounds — decisions, mistakes, patterns, lessons — loaded automatically at the start of every session, updated automatically at the end.
+
+Session 1: Claude learns your stack.
+Session 10: it knows every mistake you've made, every approach you've rejected, every shortcut that works in your codebase.
+Session 20: you stop explaining. You just build.
+
+Two commands. That's the whole interface.
 
 ```
 Start Session   ->  reads memory, applies past lessons, picks up where you left off
