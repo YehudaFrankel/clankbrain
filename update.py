@@ -26,8 +26,21 @@ Usage:
 """
 
 import re
+import subprocess
 import sys
 from pathlib import Path
+
+
+def _detect_python_bin():
+    """Detect whether python3 or python is the right binary on this machine."""
+    for candidate in ("python3", "python"):
+        try:
+            r = subprocess.run([candidate, "--version"], capture_output=True, timeout=5)
+            if r.returncode == 0:
+                return candidate
+        except Exception:
+            pass
+    return "python"
 
 DEFAULT_GITHUB_BASE = "https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main"
 ROOT                = Path.cwd()
@@ -315,6 +328,17 @@ def main():
     (tools_dir / "check_memory.py").write_text(kit_check, encoding="utf-8")
     if kit_memory:
         (tools_dir / "memory.py").write_text(kit_memory, encoding="utf-8")
+
+    # Fix hooks in settings.json to use the correct Python binary (python vs python3)
+    settings_path = ROOT / ".claude" / "settings.json"
+    if settings_path.exists():
+        python_bin = _detect_python_bin()
+        settings_text = settings_path.read_text(encoding="utf-8")
+        # Replace both `python ` and `python3 ` with the detected binary
+        fixed = re.sub(r'\bpython3?\b(?= tools/memory\.py)', python_bin, settings_text)
+        if fixed != settings_text:
+            settings_path.write_text(fixed, encoding="utf-8")
+            print(f"  Fixed hooks in .claude/settings.json → using '{python_bin}'")
 
     # Write VERSION file so future runs can detect "already up to date"
     if remote_version:

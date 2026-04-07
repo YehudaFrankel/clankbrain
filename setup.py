@@ -22,6 +22,22 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = Path.cwd()
 
+# ─── Python binary detection ────────────────────────────────────────────────────
+# On Mac/Linux `python` often doesn't exist — only `python3`.
+# Detect which one works so hooks in settings.json use the right binary.
+def _detect_python_bin():
+    import subprocess
+    for candidate in ("python3", "python"):
+        try:
+            r = subprocess.run([candidate, "--version"], capture_output=True, timeout=5)
+            if r.returncode == 0:
+                return candidate
+        except Exception:
+            pass
+    return "python"  # fallback — will surface as a clear error rather than silent blank
+
+PYTHON_BIN = _detect_python_bin()
+
 # ─── Telemetry ─────────────────────────────────────────────────────────────────
 # Anonymous usage ping — no personal data. Opt out: CLANKBRAIN_NO_TELEMETRY=1
 sys.path.insert(0, str(HERE / 'tools'))
@@ -1619,7 +1635,7 @@ type: reference
     _copy_update_script()
 
     # ── .claude/settings.json ──
-    settings_content = '''{
+    settings_content = ('''{
   "permissions": {
     "allow": ["Read", "Glob", "Grep"],
     "deny": []
@@ -1627,26 +1643,26 @@ type: reference
   "hooks": {
     "UserPromptSubmit": [
       {
-        "hooks": [{ "type": "command", "command": "python tools/memory.py --capture-correction" }]
+        "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --capture-correction" }]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "python tools/memory.py --check-drift --silent" }]
+        "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --check-drift --silent" }]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "python tools/memory.py --process-corrections" },
-          { "type": "command", "command": "python tools/memory.py --journal", "timeout": 10, "statusMessage": "Capturing session journal..." },
-          { "type": "command", "command": "python tools/memory.py --stop-check", "timeout": 5 }
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --process-corrections" },
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --journal", "timeout": 10, "statusMessage": "Capturing session journal..." },
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --stop-check", "timeout": 5 }
         ]
       }
     ]
   }
-}'''
+}''')
     write(".claude/settings.json", settings_content)
 
     # ── tools/memory.py ──
