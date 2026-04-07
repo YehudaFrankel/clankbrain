@@ -10,15 +10,15 @@ The skill is `new-endpoint`. It failed at the same step twice. `/evolve` patched
 **`tasks/skill_scores.md` (excerpt):**
 
 ```
-| Date       | Skill        | Step   | Used For                          | Correction Needed | Severity | What Failed                                                                               | Improvement Applied |
-|------------|--------------|--------|-----------------------------------|-------------------|----------|-------------------------------------------------------------------------------------------|---------------------|
-| 2024-11-14 | new-endpoint | step 4 | Add appCourseGetCheckin endpoint  | N                 | minor    | -                                                                                         | -                   |
-| 2024-11-21 | new-endpoint | step 4 | Add appAdminSendReminder endpoint | Y                 | major    | Step 4: produced SELECT * in getOnlyMetaData, needed explicit column list. Fixed by: rewrote SELECT with all columns named. | - |
-| 2024-12-03 | new-endpoint | step 4 | Add appAdminGetMessages endpoint  | Y                 | major    | Step 4: produced SELECT * in getOnlyMetaData, needed explicit column list. Fixed by: rewrote SELECT with all columns named. | - |
-| 2024-12-09 | new-endpoint | step 6 | Add appCourseMarkComplete endpoint| N                 | minor    | -                                                                                         | -                   |
+| Date       | Skill        | Step   | Used For                          | Correction Needed | Severity | What Failed                                                                               | Code Fixed | Skill Patched |
+|------------|--------------|--------|-----------------------------------|-------------------|----------|-------------------------------------------------------------------------------------------|------------|---------------|
+| 2024-11-14 | new-endpoint | all    | Add appCourseGetCheckin endpoint  | N                 | minor    | -                                                                                         | -          | -             |
+| 2024-11-21 | new-endpoint | step 4 | Add appAdminSendReminder endpoint | Y                 | major    | Step 4: produced SELECT * in getOnlyMetaData, needed explicit column list. Fixed by: rewrote SELECT with all columns named. | manual | - |
+| 2024-12-03 | new-endpoint | step 4 | Add appAdminGetMessages endpoint  | Y                 | major    | Step 4: produced SELECT * in getOnlyMetaData, needed explicit column list. Fixed by: rewrote SELECT with all columns named. | manual | - |
+| 2024-12-09 | new-endpoint | step 6 | Add appCourseMarkComplete endpoint| N                 | minor    | -                                                                                         | -          | -             |
 ```
 
-Two Y entries. Same step. Same failure. That's the signal.
+Two Y entries. Same step. Same failure. `Code Fixed = manual` means the code was corrected at the time. `Skill Patched = -` means the SKILL.md hasn't been improved yet — the same mistake will happen again. That's the signal.
 
 ---
 
@@ -84,18 +84,48 @@ Example:
 It also writes to `tasks/skill_improvements.md`:
 
 ```
-| 2024-12-10 | new-endpoint | step 4 | 2 failures (same step) | Rewrote example: SELECT * → explicit column list. Added identity column warning. |
+| 2024-12-10 | new-endpoint | step 4 | 2 failures (same step) | Rewrote example: SELECT * → explicit column list. Added identity column warning. | skill_scores.md rows 2024-11-21, 2024-12-03 |
+```
+
+And updates `skill_scores.md` — the two Y rows now have `Skill Patched = 2024-12-10`:
+
+```
+| Date       | Skill        | Step   | Used For                          | Correction Needed | Severity | What Failed                             | Code Fixed | Skill Patched |
+|------------|--------------|--------|-----------------------------------|-------------------|----------|-----------------------------------------|------------|---------------|
+| 2024-11-21 | new-endpoint | step 4 | Add appAdminSendReminder endpoint | Y                 | major    | Step 4: produced SELECT *... Fixed by:… | manual     | 2024-12-10    |
+| 2024-12-03 | new-endpoint | step 4 | Add appAdminGetMessages endpoint  | Y                 | major    | Step 4: produced SELECT *... Fixed by:… | manual     | 2024-12-10    |
 ```
 
 ---
 
-## What happens on the next use
+## Verifying the patch held — the full cycle
 
-Session 7 weeks later. Adding a new endpoint. The skill fires.
+After /evolve patches the skill, the next /evolve-check shows:
 
-Step 4 now shows the explicit column example and the warning. Claude writes the correct query first time. No correction needed. N entry in skill_scores.md.
+```
+🔵 PATCHED — awaiting confirmation
+  new-endpoint — all Y entries patched on 2024-12-10, 0 uses since patch
+  Next N score → promote to 🟢 STABLE
+```
 
-The failure stops repeating.
+The skill isn't 🟢 STABLE yet — it's patched but unverified. It needs a real use that goes clean.
+
+**Session 7 weeks later.** Adding a new endpoint. The skill fires.
+
+Step 4 now shows the explicit column example and the warning. Claude writes the correct query first time. No correction needed. /learn logs an N entry:
+
+```
+| 2025-01-28 | new-endpoint | all | Add appCourseGetReminders endpoint | N | minor | - | - | - |
+```
+
+Next /evolve-check:
+
+```
+🟢 STABLE — new-endpoint
+  5 uses, 1 clean use since patch on 2024-12-10. Failure has not repeated.
+```
+
+**That's the complete cycle.** Failure → structured log → /evolve patches the skill → /evolve-check shows 🔵 PATCHED → real use confirms fix → 🟢 STABLE.
 
 ---
 

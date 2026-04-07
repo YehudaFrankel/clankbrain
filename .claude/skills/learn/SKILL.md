@@ -61,7 +61,7 @@
 
    If it worked: log a single N row silently — no further questions needed.
    ```
-   | [date] | [skill] | all | [what it was used for] | N | minor | - | - |
+   | [date] | [skill] | all | [what it was used for] | N | minor | - | - | - |
    ```
 
    If it needed a correction: ask two follow-up questions:
@@ -70,7 +70,7 @@
 
    Take their natural-language answer and translate it into the structured row:
    ```
-   | [date] | [skill] | step [N] | [used for] | Y | [severity] | Step [N]: produced [X], needed [Y]. Fixed by: [Z]. | - |
+   | [date] | [skill] | step [N] | [used for] | Y | [severity] | Step [N]: produced [X], needed [Y]. Fixed by: [Z]. | manual | - |
    ```
 
    **Translation rules:**
@@ -78,6 +78,8 @@
    - "Produced X" = what Claude actually did or output
    - "Needed Y" = what should have happened
    - "Fixed by Z" = the correction given (brief)
+   - `Code Fixed` = `manual` (user fixed it), `auto` (Claude self-corrected), or `-` (no code change)
+   - `Skill Patched` = always `-` when first logged; /evolve fills this in when it patches the skill
 
    If the user's answer is too vague to extract step + produced + needed, ask one more time:
    > "What specifically did it produce vs what you wanted?"

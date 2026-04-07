@@ -52,9 +52,11 @@ Run this phase every time `/evolve` is called, after Phase 2.
 ### Step A — Find failing skills
 Read `tasks/skill_scores.md`. Find all rows where:
 - `Correction Needed = Y`
-- `Improvement Applied = -` (not yet fixed)
+- `Skill Patched = -` (not yet patched by /evolve)
 
-Group by skill name. **Only proceed with skills that have 2 or more Y entries.**
+**Why `Skill Patched` not `Code Fixed`:** `Code Fixed` records how the immediate code issue was resolved at the time (manual/auto/-). `Skill Patched` records whether the SKILL.md itself was updated to prevent recurrence. A row can have `Code Fixed = manual` and `Skill Patched = -` — meaning the code was fixed in the session, but the skill hasn't been improved yet. This column is the gate.
+
+Group by skill name. **Only proceed with skills that have 2 or more Y entries with `Skill Patched = -`.**
 Single failures are noise. Patterns are signal.
 
 Log skipped skills: "Skipped [skill] — only 1 failure logged. Need 2+ to patch."
@@ -74,7 +76,7 @@ Log skipped skills: "Skipped [skill] — only 1 failure logged. Need 2+ to patch
 
    [YYYY-MM-DD] Improved: [one line — what changed and why]
 
-7. Update `Improvement Applied` column in skill_scores.md for all patched rows
+7. Update `Skill Patched` column in skill_scores.md for all patched rows: change `-` to today's date (e.g. `2026-04-06`)
 8. Log to `tasks/skill_improvements.md`:
    `| [date] | [skill] | Step [N] | [what failed before] | [what was fixed] | skill_scores.md [dates] |`
 9. Save all updated files
@@ -84,7 +86,7 @@ Append to `tasks/skill_improvements.md`:
 
 | [date] | [skill] | Step N | [what failed before] | [what was fixed] | skill_scores row [date] |
 
-Update the `skill_scores.md` row: change `Improvement Applied` from `-` to `Fixed [date]`.
+Update the `skill_scores.md` row: change `Skill Patched` from `-` to `[date]` (e.g. `2026-04-06`). This is what allows /evolve-check to classify the skill as 🔵 PATCHED on the next run.
 
 ### Step D — Report
 

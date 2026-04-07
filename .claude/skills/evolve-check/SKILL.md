@@ -16,16 +16,20 @@
 
 2. **Group by skill name.** For each skill compute:
    - Total fires (all rows for this skill)
-   - Y count (Correction Needed = Y)
+   - **Unpatched Y count** — Y rows where `Skill Patched = -` (not yet fixed by /evolve)
+   - **Patched Y count** — Y rows where `Skill Patched != -` (already fixed by /evolve)
    - N count (Correction Needed = N)
-   - Consecutive Y streak — count from the most recent row backwards until an N is hit
-   - Whether any Y entries have "INSUFFICIENT DATA" or vague "What Failed" (no step number)
+   - Consecutive unpatched Y streak — count from the most recent row backwards until an N or a patched-Y is hit
+   - Whether any unpatched Y entries have "INSUFFICIENT DATA" or vague "What Failed" (no step number)
+
+   **Important:** Only unpatched Y entries (`Skill Patched = -`) count toward URGENT/WATCH thresholds. Patched entries are resolved — they don't count as open failures.
 
 3. **Classify each skill:**
-   - 🔴 **URGENT** — 3+ Y scores, OR 2+ consecutive Y scores on the same step
-   - 🟡 **WATCH** — exactly 2 Y scores (threshold met, ready for /evolve)
-   - 🟢 **STABLE** — 0 or 1 Y score, or 10+ consecutive N scores
-   - ⚠️ **DATA MISSING** — has Y entries but "What Failed" is vague or marked INSUFFICIENT DATA
+   - 🔴 **URGENT** — 3+ unpatched Y scores, OR 2+ consecutive unpatched Y scores on the same step
+   - 🟡 **WATCH** — exactly 2 unpatched Y scores (threshold met, ready for /evolve)
+   - 🔵 **PATCHED** — has Y entries but ALL have `Skill Patched != -`; skill was fixed but not yet confirmed stable
+   - 🟢 **STABLE** — 0 or 1 unpatched Y score, or 10+ consecutive N scores (includes post-patch N scores)
+   - ⚠️ **DATA MISSING** — has unpatched Y entries but "What Failed" is vague or marked INSUFFICIENT DATA
 
 4. **Output the report:**
 
@@ -33,12 +37,16 @@
    === Evolve Check ===
 
    🔴 URGENT — patch now
-     [skill] — [Y count] failures, [streak] consecutive on Step [N]
+     [skill] — [unpatched Y count] open failures, [streak] consecutive on Step [N]
      Latest failure: "[verbatim What Failed entry]"
 
    🟡 WATCH — ready for /evolve
-     [skill] — 2 Y entries ([dates])
+     [skill] — 2 open Y entries ([dates])
      Failures: Step [N] / Step [N]
+
+   🔵 PATCHED — awaiting confirmation
+     [skill] — all Y entries patched on [date], [N] uses since patch
+     Next N score → promote to 🟢 STABLE
 
    🟢 STABLE
      [skill] — [N count] clean sessions
@@ -48,7 +56,7 @@
      Action: next failure, log as: Step [N]: produced [X], needed [Y]. Fixed by [Z].
 
    ---
-   [N] skills flagged.
+   [N] skills flagged (🔴/🟡 only — 🔵 PATCHED are resolved pending confirmation).
    Run /evolve on flagged skills now? [y/N]
    ```
 

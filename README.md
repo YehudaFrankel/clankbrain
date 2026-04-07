@@ -36,6 +36,8 @@ No API keys. No background service. No database. **Requires:** [Claude Code](htt
 
 > Used by 600+ developers in its first two weeks. If it helps, [star it ★](https://github.com/YehudaFrankel/clankbrain)
 
+→ **New?** [Your first 3 sessions →](QUICKSTART.md)
+
 ---
 
 ## What it feels like
@@ -297,6 +299,25 @@ Tested across 160 real sessions on a production codebase. Not a demo project.
 | v2.4 | Dependency detection; End Session memory diff; `upgrade.py --dry-run` |
 
 → [Full changelog](CHANGELOG.md)
+
+---
+
+## Which skill do I use?
+
+| I want to... | Use |
+|---|---|
+| Start working (new session) | `Start Session` |
+| Plan a feature or change | `/plan` |
+| Find where something lives in code | `/search-first` |
+| Fix a bug | `/fix-bug` |
+| Check nothing broke after changes | run a smoke test (stack-specific) |
+| Extract lessons from this session | `/learn` |
+| See which skills need improvement | `/evolve-check` |
+| Patch a skill based on failure data | `/evolve` |
+| Search past decisions and lessons | `/recall [topic]` |
+| End the session and save memory | `End Session` |
+
+→ [Detailed first-session guide with what to expect](QUICKSTART.md)
 
 ---
 
