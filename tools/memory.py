@@ -2370,8 +2370,8 @@ def cmd_log_edit():
 
 
 # ─── CHECK EXPIRY ─────────────────────────────────────────────────────────────
-# Scans memory files for "expires: YYYY-MM-DD" in frontmatter.
-# Any file past that date is surfaced as a systemMessage reminder.
+# Scans memory files for expires/valid_until/valid_from frontmatter.
+# Expired → surface as stale. valid_from in future → surface as not-yet-active.
 # Hook: SessionStart (silent)
 
 def cmd_check_expiry():
@@ -2380,22 +2380,35 @@ def cmd_check_expiry():
         return
     today = datetime.now().date()
     expired = []
+    not_yet_valid = []
     for md_file in sorted(memory_dir.rglob('*.md')):
         try:
             text = md_file.read_text(encoding='utf-8', errors='ignore')
-            m = re.search(r'^expires:\s*(\d{4}-\d{2}-\d{2})', text, re.MULTILINE)
-            if not m:
-                continue
-            exp_date = datetime.strptime(m.group(1), '%Y-%m-%d').date()
-            if exp_date < today:
-                rel = md_file.relative_to(memory_dir)
-                expired.append((str(rel), m.group(1)))
+            # expires OR valid_until
+            m = re.search(r'^(?:expires|valid_until):\s*(\d{4}-\d{2}-\d{2})', text, re.MULTILINE)
+            if m:
+                exp_date = datetime.strptime(m.group(1), '%Y-%m-%d').date()
+                if exp_date < today:
+                    rel = md_file.relative_to(memory_dir)
+                    expired.append((str(rel), m.group(1)))
+            # valid_from — memory not yet applicable
+            m2 = re.search(r'^valid_from:\s*(\d{4}-\d{2}-\d{2})', text, re.MULTILINE)
+            if m2:
+                start_date = datetime.strptime(m2.group(1), '%Y-%m-%d').date()
+                if start_date > today:
+                    rel = md_file.relative_to(memory_dir)
+                    not_yet_valid.append((str(rel), m2.group(1)))
         except Exception:
             continue
+    msgs = []
     if expired:
         lines = [f'- {f} (expired {d})' for f, d in expired]
-        msg = 'Stale memories — review or remove:\n' + '\n'.join(lines)
-        print(json.dumps({'systemMessage': msg}))
+        msgs.append('Stale memories — review or remove:\n' + '\n'.join(lines))
+    if not_yet_valid:
+        lines = [f'- {f} (active from {d})' for f, d in not_yet_valid]
+        msgs.append('Memories not yet active — do not apply yet:\n' + '\n'.join(lines))
+    if msgs:
+        print(json.dumps({'systemMessage': '\n\n'.join(msgs)}))
 
 
 # ─── PERMISSION DENIED ────────────────────────────────────────────────────────
@@ -2546,6 +2559,55 @@ def _scan_sections(text, stem_lower, label, matches, seen):
             matches.append(f'[{label}] {current_title[:100]}')
 
 
+def _parse_frontmatter(text):
+    """Return dict of frontmatter key: value from a memory file."""
+    fm = {}
+    if not text.startswith('---'):
+        return fm
+    end = text.find('\n---', 3)
+    if end == -1:
+        return fm
+    block = text[3:end]
+    for line in block.splitlines():
+        if ':' in line:
+            k, _, v = line.partition(':')
+            fm[k.strip()] = v.strip()
+    return fm
+
+
+def _follow_related(memory_dir, matched_files, seen_files, matches, seen):
+    """Follow related: links one level deep — the Tunnels concept."""
+    for md_file in matched_files:
+        try:
+            text = md_file.read_text(encoding='utf-8', errors='ignore')
+            fm = _parse_frontmatter(text)
+            related_raw = fm.get('related', '')
+            if not related_raw:
+                continue
+            # related: [file1.md, file2.md]  or  related: file1.md
+            related_raw = related_raw.strip('[]')
+            for rname in related_raw.split(','):
+                rname = rname.strip().strip('"\'')
+                if not rname:
+                    continue
+                rpath = memory_dir / rname
+                if not rpath.exists() or rpath in seen_files:
+                    continue
+                seen_files.add(rpath)
+                rtext = rpath.read_text(encoding='utf-8', errors='ignore')
+                rfm = _parse_frontmatter(rtext)
+                rname_val = rfm.get('name', rpath.stem)
+                # Surface first non-frontmatter, non-empty line as the snippet
+                body_lines = [l for l in rtext.splitlines() if l.strip() and not l.startswith('-') and not l.startswith('#')]
+                snippet = body_lines[0][:100] if body_lines else rname_val
+                key = snippet[:60]
+                if key not in seen:
+                    seen.add(key)
+                    matches.append(f'[Tunnel→{rname_val}] {snippet}')
+        except Exception:
+            continue
+
+
 def cmd_pre_edit():
     """PreToolUse hook: surface relevant memory before editing a file."""
     try:
@@ -2559,15 +2621,17 @@ def cmd_pre_edit():
     if not file_path:
         return
 
-    stem = Path(file_path).stem  # e.g. "nfpChallengeUtils" from "nfpChallengeUtils.java"
+    stem = Path(file_path).stem
     if len(stem) < 5:
-        return  # too short — would match too broadly
+        return
 
     stem_lower = stem.lower()
     memory_dir = find_memory_dir()
     matches = []
     seen = set()
+    matched_files = []  # track files that matched, for related: tunnel following
 
+    # 1. Scan aggregate memory files (lessons, regret, decisions)
     for filename, label in [
         ('lessons.md',       'Lesson'),
         ('tasks/regret.md',  'Regret'),
@@ -2578,7 +2642,6 @@ def cmd_pre_edit():
             continue
         text = md_path.read_text(encoding='utf-8', errors='ignore')
 
-        # Table rows (regret.md + any table-format memory files)
         for cells in _parse_md_table_rows(text):
             if not cells or cells[0].lower() in (
                 'approach', 'decision', 'what', 'rule', 'lesson', 'date', 'description'
@@ -2595,8 +2658,49 @@ def cmd_pre_edit():
             detail = cells[1][:90] if len(cells) > 1 else ''
             matches.append(f'[{label}] {snippet}' + (f' — {detail}' if detail else ''))
 
-        # Free-text ## section format (lessons.md, decisions.md)
         _scan_sections(text, stem_lower, label, matches, seen)
+
+    # 2. Scan individual memory files — enables related: tunnel following
+    today = datetime.now().date()
+    for md_file in sorted(memory_dir.glob('*.md')):
+        try:
+            text = md_file.read_text(encoding='utf-8', errors='ignore')
+            if stem_lower not in text.lower():
+                continue
+            fm = _parse_frontmatter(text)
+            # Skip expired or not-yet-valid memories
+            valid_until = fm.get('valid_until', fm.get('expires', ''))
+            if valid_until:
+                try:
+                    if datetime.strptime(valid_until, '%Y-%m-%d').date() < today:
+                        continue
+                except ValueError:
+                    pass
+            valid_from = fm.get('valid_from', '')
+            if valid_from:
+                try:
+                    if datetime.strptime(valid_from, '%Y-%m-%d').date() > today:
+                        continue
+                except ValueError:
+                    pass
+            mtype = fm.get('type', '')
+            mname = fm.get('name', md_file.stem)
+            label = f'{mtype.capitalize()}' if mtype else 'Memory'
+            # Surface first meaningful body line
+            body_lines = [l for l in text.splitlines()
+                          if l.strip() and not l.startswith('-') and not l.startswith('#') and ':' not in l[:20]]
+            snippet = body_lines[0][:100] if body_lines else mname
+            key = snippet[:60]
+            if key not in seen:
+                seen.add(key)
+                matches.append(f'[{label}] {snippet}')
+                matched_files.append(md_file)
+        except Exception:
+            continue
+
+    # 3. Follow related: links one level (Tunnels)
+    seen_files = set(matched_files)
+    _follow_related(memory_dir, matched_files, seen_files, matches, seen)
 
     if not matches:
         return
@@ -2604,9 +2708,67 @@ def cmd_pre_edit():
     fname = Path(file_path).name
     msg = (
         f'Before editing {fname}:\n'
-        + '\n'.join(f'  - {m}' for m in matches[:5])
+        + '\n'.join(f'  - {m}' for m in matches[:8])
     )
     print(json.dumps({'systemMessage': f'[kit] {msg}'}))
+
+
+# ─── MEMPALACE AUDIT ──────────────────────────────────────────────────────────
+# Scans memory files and flags: missing ## Source, state-type without valid_until,
+# no frontmatter at all. Run manually or wire to a periodic hook.
+
+def cmd_mempalace_audit():
+    memory_dir = find_memory_dir()
+    if not memory_dir.exists():
+        print('No memory directory found.')
+        return
+
+    no_source = []
+    no_expiry = []
+    no_frontmatter = []
+
+    for md_file in sorted(memory_dir.glob('*.md')):
+        if md_file.name in ('MEMORY.md', 'STATUS.md', 'lessons.md', 'decisions.md'):
+            continue
+        try:
+            text = md_file.read_text(encoding='utf-8', errors='ignore')
+            fm = _parse_frontmatter(text)
+
+            if not fm:
+                no_frontmatter.append(md_file.name)
+                continue
+
+            mtype = fm.get('type', '')
+
+            # Source block check — all memory files should have verbatim context
+            if '## Source' not in text and '## source' not in text:
+                no_source.append(f'{md_file.name} (type: {mtype or "?"})')
+
+            # Temporal validity check — state/project memories should expire
+            if mtype in ('state', 'project') and not fm.get('valid_until') and not fm.get('expires'):
+                no_expiry.append(f'{md_file.name} — add valid_until: YYYY-MM-DD')
+
+        except Exception:
+            continue
+
+    issues = []
+    if no_frontmatter:
+        issues.append('No frontmatter (add ---name/type/description---):\n'
+                      + '\n'.join(f'  {f}' for f in no_frontmatter))
+    if no_source:
+        issues.append('Missing ## Source block (add verbatim context for better recall):\n'
+                      + '\n'.join(f'  {f}' for f in no_source))
+    if no_expiry:
+        issues.append('State/project memories without valid_until (will never expire):\n'
+                      + '\n'.join(f'  {f}' for f in no_expiry))
+
+    if issues:
+        print('=== MemPalace Audit ===')
+        for issue in issues:
+            print(issue)
+        print(f'\n{len(no_frontmatter)} missing frontmatter | {len(no_source)} missing Source | {len(no_expiry)} missing valid_until')
+    else:
+        print('MemPalace audit: all memory files pass.')
 
 
 # ─── DISPATCH ─────────────────────────────────────────────────────────────────
@@ -2678,6 +2840,8 @@ def main():
         cmd_file_changed()
     elif '--pre-edit' in ARGS:
         cmd_pre_edit()
+    elif '--mempalace-audit' in ARGS:
+        cmd_mempalace_audit()
     else:
         print(__doc__)
         sys.exit(1)

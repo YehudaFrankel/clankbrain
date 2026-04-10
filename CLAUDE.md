@@ -103,6 +103,46 @@ After any code change, immediately update the relevant memory file — don't wai
 
 ---
 
+## Memory File Conventions (MemPalace-inspired)
+
+Every memory file uses this frontmatter + structure:
+
+```markdown
+---
+name: short-id
+description: one-line hook for MEMORY.md index
+type: rule | correction | decision | state | reference | user
+valid_from: YYYY-MM-DD        # optional — memory not applicable before this date
+valid_until: YYYY-MM-DD       # required for type: state/project — when this may go stale
+related: [other-memory.md]    # optional — tunnels to connected memories
+---
+
+[Summary — the rule, fact, or decision in plain English]
+
+**Why:** [reason this matters]
+**How to apply:** [when to use it]
+
+## Source
+> [Verbatim snippet from the conversation where this was established]
+— Session N
+```
+
+**Types:**
+- `rule` — permanent coding/workflow rule (no expiry needed)
+- `correction` — one-time fix Claude made that shouldn't repeat
+- `decision` — locked architectural choice
+- `state` — current phase, active work, temporary facts — always needs `valid_until`
+- `reference` — pointer to external system (Jira, Slack, URL)
+- `user` — who the user is, their preferences and expertise
+
+**Why `## Source`:** Storing verbatim context alongside summaries improves recall accuracy from ~84% to ~97%. When the summary is ambiguous, the Source block gives Claude the original exchange to reason from.
+
+**`related:`** links are followed automatically by the pre-edit hook (Tunnels). If two memories are connected — e.g. a rule and its exception — link them.
+
+Run `python tools/memory.py --mempalace-audit` to find files missing Source blocks or valid_until dates.
+
+---
+
 ## Autonomous Behaviors
 
 - **Skill chaining:** add `## Auto-Chain` to any SKILL.md — `On pass: → run X` / `On fail: → run Y`
