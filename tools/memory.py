@@ -1910,6 +1910,26 @@ def _parse_md_table_rows(text):
 # Scans regret.md + decisions.md for entries matching the current prompt.
 # Hook: UserPromptSubmit
 
+def _log_guard_fire(memory_dir, guard_name, matches):
+    """Mechanically write to memory_assist.md when a guard fires. No Claude involvement."""
+    try:
+        assist_path = memory_dir / 'tasks' / 'memory_assist.md'
+        assist_path.parent.mkdir(parents=True, exist_ok=True)
+        if not assist_path.exists():
+            assist_path.write_text(
+                '# Memory Assist Log\n'
+                'Auto-written by guard hooks — ground truth record of when memory prevented a mistake.\n\n',
+                encoding='utf-8'
+            )
+        now = datetime.now().strftime('%Y-%m-%d %H:%M')
+        first_match = matches[0][:100] if matches else '(unknown)'
+        line = f'- [{now}] {guard_name} fired — matched: "{first_match}"\n'
+        with open(assist_path, 'a', encoding='utf-8') as f:
+            f.write(line)
+    except Exception:
+        pass
+
+
 def cmd_regret_guard():
     """Scan regret.md + decisions.md for keyword matches to the current prompt."""
     try:
@@ -1954,6 +1974,9 @@ def cmd_regret_guard():
         + '\n'.join(f'  \u2022 {m}' for m in matches[:5])
         + '\nVerify this approach is not already rejected before proceeding.'
     )
+
+    # Ground-truth write — Python writes directly, no Claude involvement
+    _log_guard_fire(memory_dir, 'REGRET GUARD', matches)
 
     output = {
         'hookSpecificOutput': {
@@ -2022,6 +2045,9 @@ def cmd_decision_guard():
         + '\n'.join(f'  \u2022 {c}' for c in conflicts[:4])
         + '\nConfirm this approach does not re-litigate a closed decision.'
     )
+
+    # Ground-truth write — Python writes directly, no Claude involvement
+    _log_guard_fire(memory_dir, 'DECISION GUARD', conflicts)
 
     output = {
         'hookSpecificOutput': {
