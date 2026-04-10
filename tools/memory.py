@@ -291,10 +291,47 @@ def cmd_memory_diff():
         print('Memory unchanged this session.')
 
 
+def _memory_load_summary(memory_dir):
+    """Count lessons, decisions, and rejected approaches. Return a one-line summary block."""
+    try:
+        counts = []
+
+        lessons_file = memory_dir / 'lessons.md'
+        if lessons_file.exists():
+            text = lessons_file.read_text(encoding='utf-8', errors='ignore')
+            n = sum(1 for line in text.splitlines() if line.strip().startswith('- '))
+            if n:
+                counts.append(f'{n} lesson{"s" if n != 1 else ""}')
+
+        decisions_file = memory_dir / 'decisions.md'
+        if decisions_file.exists():
+            text = decisions_file.read_text(encoding='utf-8', errors='ignore')
+            n = sum(1 for line in text.splitlines() if line.strip().startswith('- '))
+            if n:
+                counts.append(f'{n} decision{"s" if n != 1 else ""}')
+
+        regret_file = memory_dir / 'tasks' / 'regret.md'
+        if regret_file.exists():
+            text = regret_file.read_text(encoding='utf-8', errors='ignore')
+            # Count table rows (lines with | that aren't headers or separators)
+            n = sum(1 for line in text.splitlines()
+                    if line.strip().startswith('|') and '---' not in line
+                    and not line.strip().startswith('| Approach'))
+            if n:
+                counts.append(f'{n} rejected approach{"es" if n != 1 else ""}')
+
+        if not counts:
+            return ''
+        return f'# Memory loaded: {", ".join(counts)}.'
+    except Exception:
+        return ''
+
+
 def cmd_session_start():
     memory_dir = find_memory_dir()
 
     blocks = [
+        _memory_load_summary(memory_dir),
         _load_memory_context(memory_dir),
         _load_status_context(),
         _check_interruption(memory_dir),
@@ -983,6 +1020,19 @@ def cmd_journal():
             '_Run /learn to extract patterns from these._\n',
             encoding='utf-8'
         )
+
+    # Auto-capture prompt: if files were edited, nudge Claude to record a lesson now
+    if edit_count and edit_count > 0:
+        lessons_path = mem_dir / 'lessons.md'
+        lessons_rel = str(lessons_path.relative_to(ROOT)) if ROOT in lessons_path.parents else str(lessons_path)
+        msg = (
+            f'This session had {edit_count} file save(s). '
+            f'If you fixed a non-obvious bug, made a key decision, or discovered a pattern worth remembering, '
+            f'append one bullet to {lessons_rel} now — before this session ends. '
+            f'Format: `- [what happened] — [why it matters]`. '
+            f'Skip if nothing notable to record.'
+        )
+        print(json.dumps({'systemMessage': msg}))
 
 
 # ─── BOOTSTRAP ───────────────────────────────────────────────────────────────
@@ -2897,6 +2947,27 @@ Session 1 — Project initialized.
         if not path.exists():
             path.write_text(content, encoding='utf-8')
             print(f'  created {path.relative_to(ROOT)}')
+
+    # --- Pre-populate lessons with user's foundational rules ---
+    lessons_file = memory_dir / 'lessons.md'
+    print('\nBefore session 1, tell me up to 3 things Claude should never forget about this project.')
+    print('(These go directly into lessons.md — Claude sees them from the very first session.)')
+    initial_lessons = []
+    for i in range(1, 4):
+        try:
+            lesson = input(f'  Lesson {i} (Enter to skip): ').strip()
+        except (EOFError, KeyboardInterrupt):
+            lesson = ''
+        if lesson:
+            initial_lessons.append(lesson)
+        else:
+            break  # stop asking once user skips
+    if initial_lessons:
+        content = '# Lessons Learned\n\n'
+        for lesson in initial_lessons:
+            content += f'- {lesson}\n'
+        lessons_file.write_text(content, encoding='utf-8')
+        print(f'  written {len(initial_lessons)} starter lesson(s) to lessons.md')
 
     # --- CLAUDE.md at project root ---
     claude_md = ROOT / 'CLAUDE.md'
