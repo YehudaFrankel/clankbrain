@@ -198,6 +198,18 @@
         ]
       }
     ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python tools/memory.py --post-tool-failure",
+            "timeout": 8,
+            "async": true
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
