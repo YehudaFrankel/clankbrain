@@ -182,6 +182,9 @@ Every one of them remembers. None of them learn.
 | Permanently blocks rejected approaches | ✗ | ✓ |
 | Semantic memory search (offline, no API) | ✗ | ✓ |
 | Team sync with personal memory kept local | ✗ | ✓ |
+| Verbatim source storage (~97% recall accuracy) | ✗ | ✓ |
+| Temporal memory validity (auto-surfaces stale memories) | ✗ | ✓ |
+| Cross-linked memories followed before every edit (Tunnels) | ✗ | ✓ |
 | Works without API keys or cloud | varies | ✓ |
 
 The gap is small at session 5. By session 50 it's measurable.
