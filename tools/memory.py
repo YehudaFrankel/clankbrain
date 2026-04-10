@@ -291,6 +291,87 @@ def cmd_memory_diff():
         print('Memory unchanged this session.')
 
 
+def _auto_expire_memories(memory_dir):
+    """Move expired memory files to archive/. Returns count of files archived."""
+    today = datetime.now().date()
+    archive_dir = memory_dir / 'archive'
+    archived = []
+    for md_file in sorted(memory_dir.rglob('*.md')):
+        # Skip files already in archive or tasks/
+        if 'archive' in md_file.parts or 'tasks' in md_file.parts:
+            continue
+        try:
+            text = md_file.read_text(encoding='utf-8', errors='ignore')
+            m = re.search(r'^(?:expires|valid_until):\s*(\d{4}-\d{2}-\d{2})', text, re.MULTILINE)
+            if not m:
+                continue
+            exp_date = datetime.strptime(m.group(1), '%Y-%m-%d').date()
+            if exp_date < today:
+                archive_dir.mkdir(parents=True, exist_ok=True)
+                dest = archive_dir / md_file.name
+                # Avoid overwriting if name collides
+                if dest.exists():
+                    stem = md_file.stem
+                    dest = archive_dir / f'{stem}_{exp_date.strftime("%Y%m%d")}.md'
+                md_file.rename(dest)
+                archived.append(md_file.name)
+        except Exception:
+            continue
+    return archived
+
+
+_STACK_SKILL_MAP = {
+    'Java':       ['java-reviewer', 'debug-resin', 'new-endpoint'],
+    'Python':     ['debug-session', 'test-runner', 'search-first'],
+    'JavaScript': ['js-reviewer',   'debug-session'],
+    'TypeScript': ['js-reviewer',   'test-runner'],
+    'SQL':        ['add-db-column', 'search-first'],
+    'Go':         ['debug-session', 'test-runner'],
+    'Ruby':       ['debug-session', 'test-runner'],
+    'Rust':       ['debug-session', 'test-runner'],
+    'C#':         ['debug-session', 'new-endpoint'],
+    'PHP':        ['debug-session', 'new-endpoint'],
+}
+
+
+def _suggest_skills_for_stack(memory_dir):
+    """Read complexity_profile.md, compare Recommended Skills to existing skills, return suggestion block."""
+    try:
+        profile = memory_dir / 'complexity_profile.md'
+        if not profile.exists():
+            return ''
+        text = profile.read_text(encoding='utf-8', errors='ignore')
+
+        # Extract recommended skills from the profile
+        rec_section = re.search(r'## Recommended Skills\n(.*?)(?:\n##|\Z)', text, re.DOTALL)
+        if not rec_section:
+            return ''
+        recommended = re.findall(r'^- (\S+)', rec_section.group(1), re.MULTILINE)
+        if not recommended:
+            return ''
+
+        # What skills already exist?
+        skills_dir = ROOT / '.claude' / 'skills'
+        existing = set()
+        if skills_dir.exists():
+            existing = {d.name for d in skills_dir.iterdir() if d.is_dir()}
+
+        missing = [s for s in recommended if s not in existing]
+        if not missing:
+            return ''
+
+        top = missing[:2]  # Surface at most 2 at a time — don't overwhelm
+        skill_list = ', '.join(f'`{s}`' for s in top)
+        return (
+            f'# Skill suggestion: your complexity profile recommends {skill_list} '
+            f'but {"they are" if len(top) > 1 else "it is"} not yet created. '
+            f'Run `Create a skill called [name] that [description]` to add '
+            f'{"them" if len(top) > 1 else "it"}.'
+        )
+    except Exception:
+        return ''
+
+
 def _memory_load_summary(memory_dir):
     """Count lessons, decisions, and rejected approaches. Return a one-line summary block."""
     try:
@@ -330,6 +411,9 @@ def _memory_load_summary(memory_dir):
 def cmd_session_start():
     memory_dir = find_memory_dir()
 
+    # Auto-expire: move stale memories to archive/ before loading context
+    archived = _auto_expire_memories(memory_dir)
+
     blocks = [
         _memory_load_summary(memory_dir),
         _load_memory_context(memory_dir),
@@ -339,6 +423,8 @@ def cmd_session_start():
         _auto_team_pull(),
         _check_token_budget(),
         _check_kit_health(),
+        _suggest_skills_for_stack(memory_dir),
+        f'# {len(archived)} expired memory file(s) archived: {", ".join(archived)}' if archived else '',
     ]
     _reset_session_counter(memory_dir)
     _snapshot_memory_state(memory_dir)
@@ -357,6 +443,13 @@ def cmd_session_start():
         'Do NOT wait for them to type "Start Session". '
         'If they already asked a specific question, answer it after the one-line greeting.'
     )
+    # Memory assist: passive tracking instruction — Claude notes when memory changes its behavior
+    mem_assist = (
+        'MEMORY ASSIST (passive): As you work this session, mentally note when a lesson, decision, '
+        'or rejected approach from memory visibly changes your response — prevents a mistake, '
+        'saves a lookup, or avoids a rejected pattern. You will be asked to log these at session end.'
+    )
+    parts.insert(0, mem_assist)
     parts.insert(0, auto_greet)
 
     output = {
@@ -1036,12 +1129,19 @@ def cmd_journal():
     if edit_count and edit_count > 0:
         lessons_path = mem_dir / 'lessons.md'
         lessons_rel = str(lessons_path.relative_to(ROOT)) if ROOT in lessons_path.parents else str(lessons_path)
+        assist_path = mem_dir / 'tasks' / 'memory_assist.md'
+        assist_rel = str(assist_path.relative_to(ROOT)) if ROOT in assist_path.parents else str(assist_path)
         msg = (
             f'This session had {edit_count} file save(s). '
             f'If you fixed a non-obvious bug, made a key decision, or discovered a pattern worth remembering, '
             f'append one bullet to {lessons_rel} now — before this session ends. '
             f'Format: `- [what happened] — [why it matters]`. '
-            f'Skip if nothing notable to record.'
+            f'Skip if nothing notable to record.\n\n'
+            f'MEMORY ASSIST LOG: Also append one line to {assist_rel} for each lesson from memory '
+            f'that visibly changed your response this session (prevented a mistake, saved a lookup, '
+            f'avoided a rejected approach). Format: `- [lesson name or summary] — applied when: [what you were doing]`. '
+            f'If memory made no observable difference this session, write: `- (none this session)`. '
+            f'This log shows the user proof that memory is compounding.'
         )
         print(json.dumps({'systemMessage': msg}))
 
