@@ -95,22 +95,18 @@ def get_content(source, rel_path, github_base=None):
 def extract_kit_block(text):
     """
     Extract the kit-managed block from a CLAUDE.md:
-    from '## Session Commands' through the end of '## If Your Session Crashes'
-    (stops before the next --- separator)
+    from '## Session Commands' to the next '---' separator.
     """
     m_start = re.search(r'^## Session Commands', text, re.MULTILINE)
     if not m_start:
         return None, "Could not find '## Session Commands' in kit CLAUDE.md"
 
-    m_end = re.search(
-        r'^## If Your Session Crashes.*?(?=\n---)',
-        text[m_start.start():],
-        re.MULTILINE | re.DOTALL
-    )
-    if not m_end:
-        return None, "Could not find '## If Your Session Crashes' section in kit CLAUDE.md"
+    after_start = text[m_start.start():]
+    m_sep = re.search(r'\n---', after_start)
+    if not m_sep:
+        return None, "Could not find a '---' separator after '## Session Commands' in kit CLAUDE.md"
 
-    block = text[m_start.start(): m_start.start() + m_end.end()]
+    block = text[m_start.start(): m_start.start() + m_sep.start()]
     return block, None
 
 
