@@ -1062,7 +1062,7 @@ footer {
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">no team sync</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">shared team memory · personal stays local</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">API key or database required</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">zero dependencies — Python 3.7+</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">stdlib Python only — no pip install*</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">unofficial / proprietary internals</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">official Anthropic hooks + skills APIs</div>
     </div>
@@ -1566,8 +1566,8 @@ footer {
       <details>
         <summary>What Python version do I need?</summary>
         <div class="faq-body">
-          Python 3.7 or newer. That's it — no external packages, no pip install.
-          All tools use only the standard library.
+          Python 3.7 or newer. The core kit uses only the standard library — no pip install needed.
+          Semantic search (<code style="color:var(--amber)">/recall</code>) optionally uses <code>sentence-transformers</code> for meaning-based matching; without it, recall falls back to keyword grep.
           Free at <a href="https://python.org/downloads" style="color:var(--amber)">python.org/downloads</a>.
         </div>
       </details>

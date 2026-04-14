@@ -40,7 +40,9 @@ python tools/memory.py --init
 
 Five questions. Creates your memory directory, hooks config, and starter files. Done in 30 seconds.
 
-No API keys. No background service. No database. **Requires:** [Claude Code](https://claude.ai/claude-code)
+No API keys. No background service. No database. Zero pip dependencies — stdlib Python only. **Requires:** [Claude Code](https://claude.ai/claude-code) + Python 3.7+
+
+> Semantic search (`/recall`) optionally uses `sentence-transformers` for meaning-based matching. Without it, `/recall` falls back to keyword grep — still works, just less fuzzy.
 
 > Used by 600+ developers in its first two weeks. If it helps, [star it ★](https://github.com/YehudaFrankel/clankbrain)
 
