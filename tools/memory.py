@@ -42,6 +42,8 @@ Usage:
   python tools/memory.py --pre-edit                  # PreToolUse hook: surface relevant lessons/regret/decisions before editing a file
   python tools/memory.py --post-read                 # PostToolUse hook (Read|Grep): log when Claude consults a memory file mid-session
   python tools/memory.py --mempalace-audit           # Audit memory files for missing Source blocks and valid_until dates
+  python tools/memory.py --subagent-start            # SubagentStart hook (inject regret+decisions into subagents)
+  python tools/memory.py --subagent-stop             # SubagentStop hook (log subagent completions)
   python tools/memory.py --init                      # Interactive setup wizard — run once in a new project
 """
 
@@ -824,13 +826,38 @@ def cmd_check_drift():
 
 def cmd_precompact():
     memory_dir = find_memory_dir()
+
+    # Block compaction if an active plan exists (v2.1.105 feature)
+    active_plan = None
+    plans_dir = memory_dir / 'plans'
+    if plans_dir.exists():
+        for f in plans_dir.glob('*.md'):
+            if 'archive' in str(f).lower():
+                continue
+            try:
+                text = f.read_text(encoding='utf-8', errors='ignore')
+                if re.search(r'Status:\s*(Draft|Ready to Code|In Progress)', text):
+                    active_plan = f.stem
+                    break
+            except Exception:
+                continue
+
+    if active_plan:
+        output = {
+            'decision': 'block',
+            'reason': f'Active plan "{active_plan}" in progress - complete or archive before compacting'
+        }
+        print(json.dumps(output))
+        sys.exit(2)
+        return
+
     lines = [
-        'BEFORE COMPACTING \u2014 check that memory files are up to date:',
+        'BEFORE COMPACTING - check that memory files are up to date:',
         '',
-        '\u2022 Any JS function added or changed \u2192 js_functions.md',
-        '\u2022 Any HTML element or CSS class changed \u2192 html_css_reference.md',
-        '\u2022 Any endpoint or backend method changed \u2192 backend_reference.md',
-        '\u2022 Any architecture decision or gotcha \u2192 project_status.md',
+        '- Any JS function added or changed -> js_functions.md',
+        '- Any HTML element or CSS class changed -> html_css_reference.md',
+        '- Any endpoint or backend method changed -> backend_reference.md',
+        '- Any architecture decision or gotcha -> project_status.md',
         '',
         'After compaction, MEMORY.md will be auto-loaded at session start.',
         '',
@@ -962,6 +989,79 @@ def _stop_open_plans(memory_dir):
         except Exception:
             continue
     return open_plans
+
+
+# ─── SUBAGENT START ──────────────────────────────────────────────────────────
+# Injects regret.md + decisions.md into subagents so they don't re-propose
+# rejected approaches or violate settled decisions.
+# Hook: SubagentStart
+
+def cmd_subagent_start():
+    memory_dir = find_memory_dir()
+    context_parts = []
+
+    # Inject regret.md (rejected approaches)
+    regret_file = memory_dir / 'regret.md'
+    if regret_file.exists():
+        text = regret_file.read_text(encoding='utf-8', errors='ignore').strip()
+        if text:
+            context_parts.append('## REJECTED APPROACHES - DO NOT PROPOSE THESE')
+            context_parts.append(text)
+            context_parts.append('')
+
+    # Inject decisions.md (settled decisions)
+    decisions_file = memory_dir / 'decisions.md'
+    if decisions_file.exists():
+        text = decisions_file.read_text(encoding='utf-8', errors='ignore').strip()
+        if text:
+            context_parts.append('## SETTLED DECISIONS - LOCKED')
+            context_parts.append(text)
+            context_parts.append('')
+
+    if context_parts:
+        output = {
+            'hookSpecificOutput': {
+                'additionalContext': '\n'.join(context_parts)
+            }
+        }
+        print(json.dumps(output))
+
+
+# ─── SUBAGENT STOP ───────────────────────────────────────────────────────────
+# Logs subagent completions for effectiveness tracking.
+# Hook: SubagentStop
+
+def cmd_subagent_stop():
+    memory_dir = find_memory_dir()
+    log_file = memory_dir / 'tasks' / 'subagent_scores.md'
+
+    # Read agent type from stdin
+    agent_type = 'unknown'
+    try:
+        raw = sys.stdin.read()
+        if raw:
+            payload = json.loads(raw)
+            agent_type = payload.get('agent_type', payload.get('subagent_type', 'unknown'))
+    except Exception:
+        pass
+
+    # Create file with header if needed
+    tasks_dir = memory_dir / 'tasks'
+    tasks_dir.mkdir(exist_ok=True)
+    if not log_file.exists():
+        header = (
+            '# Subagent Effectiveness Log\n\n'
+            '_One line per subagent completion. /evolve reads this to assess agent quality._\n'
+            '_Correction column filled manually or by /learn at end of session._\n\n'
+            '| Date | Time | Agent Type | Correction Needed | Notes |\n'
+            '|------|------|------------|-------------------|-------|\n'
+        )
+        log_file.write_text(header, encoding='utf-8')
+
+    now = datetime.now()
+    line = f'| {now.strftime("%Y-%m-%d")} | {now.strftime("%H:%M")} | {agent_type} | - | - |\n'
+    with open(log_file, 'a', encoding='utf-8') as f:
+        f.write(line)
 
 
 def cmd_stop_check():
@@ -2678,6 +2778,18 @@ def cmd_session_title():
             parts.append(f'{open_plans} plan{"s" if open_plans != 1 else ""}')
         if open_todos:
             parts.append(f'{open_todos} todo{"s" if open_todos != 1 else ""}')
+
+        # Prune reminder every 20 sessions
+        try:
+            status_file = memory_dir / 'STATUS.md'
+            if status_file.exists():
+                st = status_file.read_text(encoding='utf-8', errors='ignore')
+                m = re.search(r'Session\s+(\d+)', st)
+                if m and int(m.group(1)) % 20 == 0:
+                    parts.append('PRUNE DUE')
+        except Exception:
+            pass
+
         status_msg = ' | '.join(parts) if parts else 'All clear'
     except Exception:
         status_msg = ''
@@ -3307,6 +3419,10 @@ def main():
         cmd_postcompact()
     elif '--stop-failure' in ARGS:
         cmd_stop_failure()
+    elif '--subagent-start' in ARGS:
+        cmd_subagent_start()
+    elif '--subagent-stop' in ARGS:
+        cmd_subagent_stop()
     elif '--stop-check' in ARGS:
         cmd_stop_check()
     elif '--journal' in ARGS:

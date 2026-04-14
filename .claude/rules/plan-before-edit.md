@@ -1,6 +1,5 @@
 ---
 description: Require a written plan and user approval before any code edit
-alwaysApply: true
 ---
 
 # Plan Before Edit — Required for All Code Changes

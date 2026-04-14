@@ -1,6 +1,5 @@
 ---
 description: Core behavioral rules — search-first, verify-before-done, stop-on-unexpected
-alwaysApply: true
 ---
 
 # Work Rules — Behavioral Guardrails for Every Session

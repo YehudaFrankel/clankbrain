@@ -242,6 +242,30 @@
           }
         ]
       }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python tools/memory.py --subagent-start",
+            "timeout": 10,
+            "statusMessage": "Injecting project conventions into subagent..."
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python tools/memory.py --subagent-stop",
+            "timeout": 8,
+            "async": true
+          }
+        ]
+      }
     ]
   }
 }

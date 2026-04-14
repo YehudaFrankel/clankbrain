@@ -1,14 +1,7 @@
 ---
 description: Keep code-map.md and memory files in sync after every code edit
-globs:
-  - "**/*.js"
-  - "**/*.ts"
-  - "**/*.java"
-  - "**/*.py"
-  - "**/*.html"
-  - "**/*.css"
-  - "**/*.sql"
-alwaysApply: false
+paths:
+  - "**/*.{js,ts,java,py,html,css,sql}"
 ---
 
 # Update Code Map — After Every Code Change
