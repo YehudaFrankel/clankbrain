@@ -367,6 +367,49 @@ Open a fresh conversation and type `Update Kit`. This re-downloads and repairs a
 
 ---
 
+## Product Risk — validate before you build
+
+Most tools help you build faster. This one stops you from building the wrong thing.
+
+`/product-risk` runs the Four Big Risks framework (Value, Usability, Feasibility, Viability) in two modes:
+
+**Evaluate mode** — score an existing product:
+
+```
+/product-risk evaluate
+
+Which product? > Clankbrain
+
+Value (Will they buy?)      Green — 600 installs in 2 weeks, active discussions
+Usability (Can they use?)   Yellow — requires Git + Python + manual push/pull
+Feasibility (Can we build?) Green — already built and shipping
+Viability (Should we do?)   Green — MIT license, no infra costs, compounds with use
+
+Biggest risk: Usability — setup friction kills adoption.
+Next action: Build the onboarding wizard to cut setup from 30 min to 5 min.
+```
+
+**Create mode** — validate an idea, then generate working prototypes:
+
+```
+/product-risk create
+
+What problem are you solving? > Community engagement for small organizations
+Who has this problem? > Synagogue administrators managing 200 families
+
+[walks through 4 risks — kills bad ideas before a line of code is written]
+
+Risk gate passed. Generating:
+  - 4 interactive HTML prototypes (member app, admin dashboard, onboarding, signup)
+  - Plan file with full technical spec
+  - Decisions logged to memory
+  - Project scaffolding ready for next session
+```
+
+The kill gate is the key: if 2+ risks are red, it refuses to build prototypes and tells you what to validate first. The skill's job is to prevent building things nobody wants.
+
+---
+
 ## Which skill do I use?
 
 | I want to... | Use |
@@ -375,6 +418,8 @@ Open a fresh conversation and type `Update Kit`. This re-downloads and repairs a
 | Plan a feature or change | `/plan` |
 | Find where something lives in code | `/search-first` |
 | Fix a bug | `/fix-bug` |
+| Validate a product idea before building | `/product-risk create` |
+| Score an existing product's risks | `/product-risk evaluate` |
 | Check nothing broke after changes | run a smoke test (stack-specific) |
 | Extract lessons from this session | `/learn` |
 | See which skills need improvement | `/evolve-check` |

@@ -1189,7 +1189,7 @@ footer {
 <canvas id="hexBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.15;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">agentic toolkit</div>
-    <h2>10 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
+    <h2>11 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
     <p class="sec-desc">
       Skills live in <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">.claude/skills/</code> as markdown files.
       Chain them with <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">## Auto-Chain</code>.
@@ -1216,6 +1216,7 @@ footer {
         <tr><td class="td-cmd">mode</td><td class="td-trig">mode develop, mode review, mode safe, mode deploy</td><td class="td-desc">Restrict Claude's tool access to what a task actually needs — develop (full), review (read-only), safe (no writes), deploy (shell only)</td></tr>
         <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so the same bug never takes time twice. <em>Auto-chains to verification-loop after the fix.</em></td></tr>
         <tr><td class="td-cmd">generate-guards</td><td class="td-trig">generate guards, add guards, what guards should I add</td><td class="td-desc">Mines your error-lookup.md, regret.md, and lessons.md to propose project-specific guards — converts your actual mistake history into automated prevention. Generic guards catch common patterns; these catch yours.</td></tr>
+        <tr><td class="td-cmd">product-risk</td><td class="td-trig">/product-risk, validate this idea, is this worth building</td><td class="td-desc">Four Big Risks (Value, Usability, Feasibility, Viability). <strong>Evaluate</strong> mode scores existing products Red/Yellow/Green. <strong>Create</strong> mode validates an idea, then generates working HTML/CSS/JS prototypes + full project scaffolding. Kill gate: refuses to build if 2+ risks are red.</td></tr>
       </tbody>
     </table>
     </div>
@@ -1283,6 +1284,40 @@ footer {
       </div>
       <div style="font-size:.75rem; color:var(--dim); margin-top:.9rem; line-height:1.6;">
         setup.py — first-time setup (Full or Lite) &nbsp;·&nbsp; upgrade.py — Lite → Full &nbsp;·&nbsp; update.py — safe kit updater
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT RISK -->
+<section id="product-risk" style="background:var(--s1); border-top:1px solid var(--border);">
+  <div class="wrap-md">
+    <div class="sec-label">product studio</div>
+    <h2>Don't build the wrong thing.<br><span class="h2-amber">Validate first.</span></h2>
+    <p class="sec-desc">
+      <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">/product-risk</code> runs the Four Big Risks framework before you write a line of code. Two modes:
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; margin-top:2rem;" class="reveal">
+      <div style="background:var(--s2); border:1px solid var(--border2); padding:1.5rem; border-radius:6px;">
+        <div style="font-size:.68rem; color:var(--amber); letter-spacing:.06em; margin-bottom:.5rem;">EVALUATE MODE</div>
+        <div style="font-size:.95rem; color:var(--text); font-weight:600; margin-bottom:.75rem;">Score an existing product</div>
+        <div style="font-size:.82rem; color:var(--muted); line-height:1.7;">
+          Walk through Value, Usability, Feasibility, and Viability with targeted questions. Get a Red/Yellow/Green scorecard with the biggest risk identified and one concrete next action.
+        </div>
+      </div>
+      <div style="background:var(--s2); border:1px solid var(--border2); padding:1.5rem; border-radius:6px;">
+        <div style="font-size:.68rem; color:var(--amber); letter-spacing:.06em; margin-bottom:.5rem;">CREATE MODE</div>
+        <div style="font-size:.95rem; color:var(--text); font-weight:600; margin-bottom:.75rem;">Validate + prototype + scaffold</div>
+        <div style="font-size:.82rem; color:var(--muted); line-height:1.7;">
+          Chat through your idea. Pass the four-risk gate. Generate working HTML/CSS/JS prototypes with real interactions, realistic data, and responsive layouts. Get a full plan file, decisions logged, and project scaffolding ready for the next session.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg); border:1px solid var(--border2); padding:1.25rem 1.5rem; margin-top:1.5rem; border-radius:6px;" class="reveal">
+      <div style="font-size:.82rem; color:var(--text); line-height:1.7;">
+        <span style="color:#e05252; font-weight:600;">Kill gate:</span> If 2+ risks score red, the skill refuses to generate prototypes and tells you exactly what to validate first. The skill's job is to prevent building things nobody wants.
       </div>
     </div>
   </div>
