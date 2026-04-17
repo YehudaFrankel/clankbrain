@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.7 (2026-04-16) — Build to Learn vs Build to Earn
+
+### Added — Cagan-inspired discovery/delivery split
+- **`rules/build-mode.md`** — explicit mode declaration at session start. Discovery (build to learn) and delivery (build to earn) have different conventions. Mixing them is the failure mode.
+- **`skills/prototype-hypothesis/`** — forces a one-line hypothesis before any prototype iteration. 4 questions: what does this answer, what tells us yes, what tells us no, which user. Prevents "learning theater."
+- **`skills/parallel-prototypes/`** — run 2-3 variants of a UX decision in parallel instead of iterating sequentially. Cagan's "freshest observation" enabled by AI tooling.
+- **`memory/tasks/regret.md`** — 2 starter entries: iterating without a hypothesis, and mixing build modes.
+- **`memory/tasks/velocity.md`** — split into two tables: Discovery sessions (measured by hypotheses tested) and Delivery sessions (measured by features shipped). Don't conflate the units.
+
+### Changed
+- `CLAUDE.md` Skill Map — added separate **Build to Learn** and **Build to Earn** workflow rows
+- `CLAUDE.md` @imports — added `@rules/build-mode.md` so it loads every session
+
+### Why
+The bottleneck has moved from delivery cost to discovery quality. AI made building cheap, which means knowing what to build is now the binding constraint. Discovery and delivery are different activities with different conventions, different success metrics, and different failure modes. The kit now treats them as separate first-class workflows instead of one undifferentiated "building" mode.
+
 ## v2.6 (2026-04-06)
 
 ### Changed

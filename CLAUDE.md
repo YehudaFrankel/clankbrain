@@ -78,9 +78,10 @@ Team Pull runs automatically at Start Session — no command needed.
 
 | Workflow | Skills in Order |
 |----------|----------------|
-| **New Feature** | `search-first` → `plan` → *(code)* → `code-reviewer` → `verification-loop` → `/learn` |
+| **Build to Learn (discovery)** | Declare `build-mode: learn` → `product-risk` → `prototype-hypothesis` → *(prototype)* → `parallel-prototypes` (if multiple options) → log to `prototype_log.md` |
+| **Build to Earn (delivery)** | Declare `build-mode: earn` → `search-first` → `plan` → *(code)* → `code-reviewer` → `verification-loop` → `/learn` |
 | **Bug Fix** | `debug-session` → *(fix)* → `verification-loop` → `/learn` |
-| **End of Session** | `/learn` → `/evolve` *(every 3–5 sessions)* |
+| **End of Session** | `/learn` → `/evolve-check` → `/evolve` *(every 3–5 sessions)* |
 | **Maintenance** | `check-drift` → `guard-check` → `code-health` |
 | **Memory** | `/recall [topic]` · `search-memory` · `/forget [topic]` |
 
@@ -152,6 +153,7 @@ Run `python tools/memory.py --mempalace-audit` to find files missing Source bloc
 
 ---
 
+@rules/build-mode.md
 @rules/plan-before-edit.md
 @rules/work-rules.md
 @rules/token-rules.md
