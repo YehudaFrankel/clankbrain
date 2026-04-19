@@ -109,6 +109,44 @@ Do NOT proceed to Phase 3 with 2+ red risks. The skill's job is to prevent build
 
 If 0-1 risks are red, proceed.
 
+### Phase 2b: Go-To-Market Reality (5 minutes)
+
+The Four Risks pass judges *whether* to build. This pass judges *how you'd actually launch* — three questions that kill more products than any of the Four Risks. Skip only if the user is shipping to an existing audience you've already validated.
+
+**a) Real Competition — who's the actual enemy?**
+- "What do people do TODAY to solve this? Include the boring answers (spreadsheet, doing nothing, WhatsApp group, paying someone)."
+- "Name direct competitors (same category) AND indirect (different category, same job-to-be-done)."
+- "Which one is the real enemy — the competitor users will actually compare you to?"
+
+The status-quo ("they do nothing / they live with it") counts as a competitor. Often the hardest one.
+
+**b) First 10 Customers — where are they, how do you reach them?**
+- "Name 10 specific people (or narrow segments) who would try this in the first month. Not 'small business owners' — 10 names or one tight group you can list by Saturday."
+- "Where do those 10 hang out online or offline?"
+- "What's the manual outreach plan — DMs, email, showing up? (Not 'we'll run ads' — ads are for later.)"
+
+If the user can't name 10 in under a minute, distribution risk is real. Flag as Yellow even if all Four Risks were Green.
+
+**c) 2-Week MVP — what's the minimum that proves the idea?**
+- "If you had to ship something a real user could try in 2 weeks, what's the ONE thing it does?"
+- "What can you cut? What CAN'T you cut?"
+- "What's the launch plan for day 1 — not marketing, just 'how does the first user get in'?"
+
+Write the answer as a 2-week scope statement. Anything that doesn't fit goes on a "later" list.
+
+**Output of Phase 2b** — append to scorecard:
+
+```
+### Go-To-Market Reality
+| Question | Answer |
+|----------|--------|
+| Real enemy | [the thing to beat] |
+| First 10 plan | [who + where + how to reach] |
+| 2-week MVP | [single-sentence scope] |
+```
+
+If any of the 3 is "I don't know" or handwavy, flag as Yellow and note what to resolve before building.
+
 ### Phase 3: Product Shape (10 minutes)
 
 Now that the idea is validated, define what to build:

@@ -52,6 +52,25 @@ A summary is not verification. The file content is verification.
 Do not stack multiple unverified changes. Apply one change, verify it, then proceed.
 If a second change depends on the first being correct, verify the first before starting the second.
 
+## Tool-Result Hygiene — Prefer Targeted Reads
+Every token loaded into context lives there until compaction. Keep it lean:
+- **File reads:** always use `Read offset=LINE limit=N` on files over a few hundred lines. Never read large files in full.
+- **Greps:** use `head_limit` to cap matches. A 500-match grep dump is usually useless; top 20 is usually enough.
+- **User pastes:** if the user pastes a stack trace / log / file >50 lines, ask them to crop to the relevant lines instead of analyzing the whole dump.
+- **Prefer indexes over scans:** function indexes and code maps let you jump; use them before reading source files.
+
+Costs compound over long sessions. One lazy full-file read early = thousands of tokens carried forward.
+
+## Don't Build Orchestration Without Evidence
+Multi-role agents, gated workflows, 5-step ceremonies sound powerful on paper. They usually die in practice because the ceremony exceeds the value.
+
+Before building any new orchestration (agent with 3+ steps, workflow with human-in-loop gates, meta-skill that invokes other skills):
+- **Require ≥3 real feature uses** where the existing simpler tools (plan-before-edit, a single skill, a targeted subagent) demonstrably fell short
+- **Default to extending existing skills first** — add a phase to an existing skill before creating a new one
+- **If you build it anyway, try it once, then honestly assess** — kill it same-session if it feels heavy; do NOT "tune it later"
+
+Trust the feeling. If a workflow feels heavy, you won't use it — which is worse than not having it.
+
 ---
 
 *These rules exist because skipping them is where sessions go wrong.*

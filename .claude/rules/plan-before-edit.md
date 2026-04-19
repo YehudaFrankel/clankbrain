@@ -26,6 +26,12 @@ Count lines from the Before/After sections directly — do not estimate. Report 
 ### Problem / Feature
 One clear sentence: what is broken or what needs to be added.
 
+**For user-facing changes (new feature, new page, UX change) — also answer:**
+- **Who is this for?** (which user / role / narrative)
+- **What do they actually need?** (the underlying job, not the feature — "know what's left to finish," not "a checklist")
+
+Skip this for internal refactors, bug fixes, index rebuilds, config changes. If you can't answer both questions in one sentence each, stop and ask before writing the plan.
+
 ### All Related Functions / Files
 List every function and file touched — including callers, callees, frontend/backend pairs. Verified against codebase before showing.
 Format: `functionName` — `path/to/file.ext:LINE`
