@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.9.0 (2026-05-11) — Full install ships 21 skills; Lite ships 5
+
+### Changed
+- **Full install** now copies 16 curated skills verbatim from the kit (learn, smart-resume, recall, forget, plan, search-first, debug-session, skill-creator, mode, fix-bug, guard, verification-loop, tour, kit-health, evolve, evolve-check) plus generates 5 project-scaffolded templates (security-check, new-feature, environment-check, run-verification, refactor). Previously shipped 7 thin generated stubs.
+- **Lite install** copies 4 core skills (learn, smart-resume, recall, fix-bug) plus generates code-review. Separate `generate_lite_skills()` function — Lite and Full no longer share skill generation.
+- Kit skills are copied verbatim — they stay up to date automatically when the user runs `Update Kit`.
+- README skill table updated to reflect what actually ships (removed TicTacWisdom-specific skills 07-refactoring, 03-security, 04-environments, 06-testing from the "what you get" description).
+
+### Fixed
+- `setup.py` crashed on Windows with `UnicodeEncodeError` after writing all files — box-drawing characters in the Done banner couldn't encode in cp1252. Added `sys.stdout.reconfigure(encoding='utf-8')` at startup (same fix `memory.py` already had).
+
+### Added
+- `test-install.ps1` — 63-check install verifier. Creates a dummy project in a temp folder, runs the installer non-interactively, checks all files/hooks/content/functional commands, then cleans up. Run any time to confirm a clean install works end-to-end.
+
 ## v2.8 (2026-04-16) — Onboarding Pass
 
 ### Added — make the magic obvious in the first 10 minutes

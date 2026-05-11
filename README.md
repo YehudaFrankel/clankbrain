@@ -196,18 +196,19 @@ The value compounds with consistency. The more sessions you log, the smarter Cla
 - **Drift detection** — catches undocumented changes after every file edit (Full mode).
 - **Progress reports** — real numbers built from your actual session history.
 
-### Workflow layer (20+ built-in skills)
+### Workflow layer (21 built-in skills)
 
 Every development activity has a structured skill — not just memory, but a repeatable way to do the work right:
 
 | Category | Skills |
 |---|---|
-| **Debug** | `fix-bug` — structured root-cause flow; `guard` — scans for known error patterns |
-| **Code quality** | `code-review` — antipattern checklist; `07-refactoring` — safe restructure flow; `03-security` — auth/injection/secrets audit |
-| **Frontend** | `frontend-design` — full design system from archetype; `refactoring-ui` — tactical visual fixes; `ux-heuristics` — Nielsen + Krug audit |
-| **Verification** | `06-testing` — layer-by-layer checklist; `04-environments` — env config sweep |
-| **Session** | `smart-resume` — reads STATUS + todo, proposes exact next step; `shadow-code` — you write first, Claude reviews gap |
-| **Meta** | `skill-creator` — build new skills; `product-risk` — validate before building |
+| **Memory** | `learn` — extract lessons at end of session; `smart-resume` — picks up exactly where you left off; `recall` — search memory by topic; `forget` — invalidate stale entries |
+| **Planning** | `plan` — structured feature planning before touching code; `search-first` — find existing patterns before writing new ones |
+| **Debug** | `fix-bug` — structured root-cause flow; `debug-session` — reproduce → isolate → fix → verify; `guard` — scans for known error patterns |
+| **Code quality** | `code-review` — antipattern checklist; `verification-loop` — post-change verification; `security-check` — auth/injection/secrets audit |
+| **Scaffolded** | `new-feature` — plan → implement → update memory; `environment-check` — env config sweep; `run-verification` — layer-by-layer checklist; `refactor` — safe restructure flow |
+| **Meta** | `skill-creator` — build new skills; `mode` — switch tool access modes; `evolve` + `evolve-check` — skills self-improve from feedback |
+| **Kit** | `tour` — 5-min interactive walkthrough; `kit-health` — confirms install worked |
 
 Skills compound with memory: `fix-bug` auto-runs `guard`, which extracts the root cause as a new permanent rule. Every bug fixed once becomes impossible to ship twice.
 
