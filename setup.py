@@ -35,6 +35,11 @@ def _detect_python_bin():
 
 PYTHON_BIN = _detect_python_bin()
 
+# Windows: default stdout encoding (cp1252) can't handle box-drawing chars in the Done banner.
+# Reconfigure to UTF-8 so the success message prints cleanly.
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
 # ─── Telemetry ─────────────────────────────────────────────────────────────────
 # Anonymous usage ping — no personal data. Opt out: CLANKBRAIN_NO_TELEMETRY=1
 sys.path.insert(0, str(HERE / 'tools'))
