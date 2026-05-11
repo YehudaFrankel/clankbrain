@@ -130,10 +130,27 @@ CheckFile "tools/memory.py" "tools\memory.py"
 # ─── 7. Skills ────────────────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host "--- Skills ---" -ForegroundColor Yellow
-CheckFile "skill: code-review"       ".claude\skills\code-review\SKILL.md"
-CheckFile "skill: security-check"    ".claude\skills\security-check\SKILL.md"
+Write-Host "--- Skills (copied from kit) ---" -ForegroundColor Yellow
+CheckFile "skill: learn"             ".claude\skills\learn\SKILL.md"
+CheckFile "skill: smart-resume"      ".claude\skills\smart-resume\SKILL.md"
+CheckFile "skill: recall"            ".claude\skills\recall\SKILL.md"
+CheckFile "skill: forget"            ".claude\skills\forget\SKILL.md"
+CheckFile "skill: plan"              ".claude\skills\plan\SKILL.md"
+CheckFile "skill: search-first"      ".claude\skills\search-first\SKILL.md"
+CheckFile "skill: debug-session"     ".claude\skills\debug-session\SKILL.md"
+CheckFile "skill: skill-creator"     ".claude\skills\skill-creator\SKILL.md"
+CheckFile "skill: mode"              ".claude\skills\mode\SKILL.md"
 CheckFile "skill: fix-bug"           ".claude\skills\fix-bug\SKILL.md"
+CheckFile "skill: guard"             ".claude\skills\guard\SKILL.md"
+CheckFile "skill: verification-loop" ".claude\skills\verification-loop\SKILL.md"
+CheckFile "skill: tour"              ".claude\skills\tour\SKILL.md"
+CheckFile "skill: kit-health"        ".claude\skills\kit-health\SKILL.md"
+CheckFile "skill: evolve"            ".claude\skills\evolve\SKILL.md"
+CheckFile "skill: evolve-check"      ".claude\skills\evolve-check\SKILL.md"
+
+Write-Host ""
+Write-Host "--- Skills (generated templates) ---" -ForegroundColor Yellow
+CheckFile "skill: security-check"    ".claude\skills\security-check\SKILL.md"
 CheckFile "skill: new-feature"       ".claude\skills\new-feature\SKILL.md"
 CheckFile "skill: environment-check" ".claude\skills\environment-check\SKILL.md"
 CheckFile "skill: run-verification"  ".claude\skills\run-verification\SKILL.md"

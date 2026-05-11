@@ -928,7 +928,7 @@ type: project
 """)
 
     if ask_yn("Generate skill files? (code-review, fix-bug — auto-invoked)", "y"):
-        generate_skills(name, tech)
+        generate_lite_skills(name, tech)
 
     write(".claude/settings.json", '''{
   "permissions": {
@@ -1001,8 +1001,44 @@ Want automated drift detection and session journals?
 
 # ─── Skills Generation ────────────────────────────────────────────────────────
 
-def generate_skills(name, tech):
-    """Generate .claude/skills/ files — auto-invoked prompt packs."""
+# Skills copied verbatim from the kit on Full install
+FULL_CURATED_SKILLS = [
+    'learn', 'smart-resume', 'recall', 'forget',                        # memory lifecycle
+    'plan', 'search-first', 'debug-session', 'skill-creator', 'mode',  # workflow
+    'fix-bug', 'guard', 'verification-loop',                            # code quality
+    'tour', 'kit-health',                                               # kit utilities
+    'evolve', 'evolve-check',                                           # advanced memory
+]
+
+# Minimal set for Lite install
+LITE_CURATED_SKILLS = [
+    'learn', 'smart-resume', 'recall', 'fix-bug',
+]
+
+
+def _copy_kit_skills(skill_names):
+    """Copy skills from the kit's .claude/skills/ into the project."""
+    kit_skills = HERE / '.claude' / 'skills'
+    dst_skills = ROOT / '.claude' / 'skills'
+    dst_skills.mkdir(parents=True, exist_ok=True)
+    copied = []
+    for skill_name in skill_names:
+        src = kit_skills / skill_name
+        if not src.exists():
+            continue
+        dst = dst_skills / skill_name
+        if dst.exists():
+            continue
+        shutil.copytree(str(src), str(dst))
+        copied.append(skill_name)
+    return copied
+
+
+def generate_lite_skills(name, tech):
+    """Lite install: copy minimal kit skills + generate code-review template."""
+    copied = _copy_kit_skills(LITE_CURATED_SKILLS)
+    if copied:
+        print(f"  Copied {len(copied)} skills from kit: {', '.join(copied)}")
 
     write(".claude/skills/code-review/SKILL.md", f"""\
 ---
@@ -1024,6 +1060,16 @@ Review the file(s) for the following — report findings before fixing anything:
 
 Format findings as a numbered list. Ask before making any changes.
 """)
+    print("  Generated skill: code-review")
+
+
+def generate_skills(name, tech):
+    """Full install: copy curated kit skills + generate project-scaffolded ones."""
+
+    copied = _copy_kit_skills(FULL_CURATED_SKILLS)
+    if copied:
+        print(f"  Copied {len(copied)} skills from kit: {', '.join(copied)}")
+
 
     write(".claude/skills/security-check/SKILL.md", f"""\
 ---
@@ -1045,24 +1091,7 @@ Scan the file(s) for:
 Report every finding with file + line reference. Suggest the fix but don't apply it until confirmed.
 """)
 
-    write(".claude/skills/fix-bug/SKILL.md", f"""\
----
-name: fix-bug
-description: Structured approach to diagnosing and fixing a bug. Use when the user describes something broken or asks to fix an issue.
-allowed tools: Read, Grep, Glob, Bash
----
-
-# Bug Fix for {name}
-
-Follow this process:
-
-1. **Locate** — find the relevant file(s) using the description. Check both frontend and backend if the bug could be in either.
-2. **Read** — read the relevant function(s) in full before forming a theory.
-3. **Diagnose** — state the root cause clearly before touching anything.
-4. **Show the fix** — present the exact change (old vs new) and explain why it works.
-5. **Wait for confirmation** — don't apply the fix until the user says yes.
-6. **Update memory** — after applying, update the relevant memory file if the fix reveals a non-obvious pattern or gotcha.
-""")
+    # fix-bug is copied from the kit — not generated here
 
     write(".claude/skills/new-feature/SKILL.md", f"""\
 ---
@@ -1287,7 +1316,7 @@ Things to flag when found in this codebase.
 > Add patterns specific to this codebase that should always be flagged.
 """)
 
-    print("  Created .claude/skills/ (code-review, security-check, fix-bug, new-feature, environment-check, run-verification, refactor)")
+    print("  Generated template skills: security-check, new-feature, environment-check, run-verification, refactor")
 
 
 # ─── Multi-IDE Adapters ───────────────────────────────────────────────────────
