@@ -1253,7 +1253,7 @@ footer {
 <canvas id="hexBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.15;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">agentic toolkit</div>
-    <h2>11 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
+    <h2>21 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
     <p class="sec-desc">
       Skills live in <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">.claude/skills/</code> as markdown files.
       Chain them with <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">## Auto-Chain</code>.
@@ -1276,10 +1276,10 @@ footer {
         <tr><td class="td-cmd">verification-loop</td><td class="td-trig">verify, run verification loop, did that work</td><td class="td-desc">After a code change — confirm it compiled, smoke test, self-check quality</td></tr>
         <tr><td class="td-cmd">search-first</td><td class="td-trig">search first, check if this exists</td><td class="td-desc">Enforce research-before-coding: search codebase before implementing anything new</td></tr>
         <tr><td class="td-cmd">strategic-compact</td><td class="td-trig">should I compact, context getting long</td><td class="td-desc">Evaluate whether to compact and guide through safe compaction that preserves all memory</td></tr>
-        <tr><td class="td-cmd">java-reviewer</td><td class="td-trig">review this java, java review</td><td class="td-desc">Deep Java review against your stack's specific patterns — goes beyond generic code review</td></tr>
+        <tr><td class="td-cmd">fix-bug</td><td class="td-trig">fix the bug, it's broken, not working</td><td class="td-desc">Structured root-cause flow: locate → read → diagnose → show fix → wait for confirmation → update memory. Auto-chains to guard after the fix.</td></tr>
         <tr><td class="td-cmd">mode</td><td class="td-trig">mode develop, mode review, mode safe, mode deploy</td><td class="td-desc">Restrict Claude's tool access to what a task actually needs — develop (full), review (read-only), safe (no writes), deploy (shell only)</td></tr>
         <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so the same bug never takes time twice. <em>Auto-chains to verification-loop after the fix.</em></td></tr>
-        <tr><td class="td-cmd">generate-guards</td><td class="td-trig">generate guards, add guards, what guards should I add</td><td class="td-desc">Mines your error-lookup.md, regret.md, and lessons.md to propose project-specific guards — converts your actual mistake history into automated prevention. Generic guards catch common patterns; these catch yours.</td></tr>
+        <tr><td class="td-cmd">guard</td><td class="td-trig">guard check, scan for issues, did I miss anything</td><td class="td-desc">Scans recently changed files against a library of known error patterns, flags violations before they ship. After any bug fix, extracts the root cause as a new permanent rule.</td></tr>
         <tr><td class="td-cmd">product-risk</td><td class="td-trig">/product-risk, validate this idea, is this worth building</td><td class="td-desc">Four Big Risks (Value, Usability, Feasibility, Viability). <strong>Evaluate</strong> mode scores existing products Red/Yellow/Green. <strong>Create</strong> mode validates an idea, then generates working HTML/CSS/JS prototypes + full project scaffolding. Kill gate: refuses to build if 2+ risks are red.</td></tr>
       </tbody>
     </table>
