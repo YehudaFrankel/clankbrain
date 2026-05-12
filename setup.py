@@ -490,8 +490,10 @@ def session_start_block(js_files, automated):
 ### `Setup Memory`
 When the user types **"Setup Memory"**, do the following:
 1. Check if `setup.py` exists in the current directory
-2. If yes — run it: `python setup.py` (or `python3 setup.py`)
-3. If no — tell the user: "Copy setup.py from the starter kit into this folder first, then type Setup Memory again."
+2. If yes — run it via the Bash tool: `python setup.py` (or `python3 setup.py`)
+3. If no — download it from GitHub and run it via the Bash tool (one command):
+   - Windows: `python -c "import urllib.request; urllib.request.urlretrieve('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/setup.py', 'setup.py')" && python setup.py`
+   - Mac/Linux: `python3 -c "import urllib.request; urllib.request.urlretrieve('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/setup.py', 'setup.py')" && python3 setup.py`
 
 ### `Start Session`
 When the user types **"Start Session"**, do the following:
