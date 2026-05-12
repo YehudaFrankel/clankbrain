@@ -80,19 +80,27 @@ FRAMEWORK_PREFIXES = {
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 def _copy_update_script():
-    """Copy update.py from the kit into the project root."""
+    """Copy update.py from the kit into the project root, downloading if not local."""
     src = HERE / "update.py"
     dst = ROOT / "update.py"
+    if dst.exists():
+        overwrite = input("  update.py already exists. Overwrite? [y/N] ").strip().lower()
+        if overwrite != 'y':
+            print("  Skipped update.py")
+            return
     if src.exists():
-        if dst.exists():
-            overwrite = input("  update.py already exists. Overwrite? [y/N] ").strip().lower()
-            if overwrite != 'y':
-                print("  Skipped update.py")
-                return
         shutil.copy2(src, dst)
         print("  Created update.py")
     else:
-        print("  WARN: update.py not found in kit — skipping")
+        # setup.py was copied standalone — fetch update.py from GitHub
+        try:
+            import urllib.request
+            url = "https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/update.py"
+            with urllib.request.urlopen(url, timeout=10) as resp:
+                dst.write_bytes(resp.read())
+            print("  Created update.py (downloaded from GitHub)")
+        except Exception as e:
+            print(f"  WARN: could not download update.py — {e}")
 
 
 def _copy_memory_py():
