@@ -220,6 +220,14 @@ Claude ships built-in Auto Memory since v2.1.59, and dozens of community tools e
 
 Every one of them remembers. None of them learn.
 
+**Clankbrain is workflow-first, not search-first.**
+
+Most memory tools optimize for one thing: recall. Give the AI more context, faster. That's useful, but it's table stakes. The real problem isn't that Claude can't find what you told it last week — it's that Claude makes the same class of mistakes every session, proposes approaches you've already rejected, and has no structured way to do the work (debugging, code review, planning) that isn't just "write a prompt and hope."
+
+Clankbrain is built around a different premise: **the value comes from what you do with the memory, not just that you have it.** The skills are the product. The regret guard, the evolve pipeline, the skill scoring — these are what turn memory from a lookup table into a system that actually gets better.
+
+> Vector search (`/recall`) is available (local model, no API key, ~90MB) for meaning-based lookup when grep isn't enough. But it's a feature, not the foundation. If you want pure semantic search with ChromaDB + SQLite and ~97% recall accuracy, [MemPalace](https://github.com/milla-jovovich/mempalace) does that better. Clankbrain borrows MemPalace's best ideas and adds everything it doesn't have.
+
 | | Auto Memory | MemPalace | Clankbrain |
 |---|---|---|---|
 | Remembers context across sessions | ✓ | ✓ | ✓ |

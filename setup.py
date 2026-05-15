@@ -158,6 +158,24 @@ def _write_gitignore():
         print("  Created .gitignore — HANDOFF.md excluded")
 
 
+def _load_demo_files():
+    """Copy pre-populated demo memory files so users can see what session 50 looks like."""
+    demo_dir = HERE / "demo"
+    if not demo_dir.exists():
+        return False
+    copied = []
+    for src in demo_dir.rglob("*.md"):
+        rel = src.relative_to(demo_dir)
+        dst = ROOT / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if not dst.exists():
+            shutil.copy2(src, dst)
+            copied.append(str(rel))
+    if copied:
+        print(f"  Loaded {len(copied)} demo memory files (showing what session 50 looks like)")
+    return True
+
+
 def create_task_files():
     """Create tasks/ folder with all four task files and a .gitkeep."""
     write("tasks/todo.md", """\
@@ -949,6 +967,8 @@ type: project
 
     # tasks/ files
     create_task_files()
+    if use_demo:
+        _load_demo_files()
 
     # Copy update.py from kit into project
     _copy_update_script()
@@ -1508,6 +1528,13 @@ def main():
     print(f"Stack:      {tech}")
     print()
 
+    # ── Demo mode ──
+    use_demo = "--demo" in sys.argv
+    if not use_demo and (HERE / "demo").exists():
+        print("Load demo memory? (20 lessons, 5 decisions, 5 errors from a real 50-session project)")
+        print("  Helps you see what the system looks like when it's working — replace with your own over time.")
+        use_demo = ask_yn("Load demo memory?", "y")
+
     # ── Project size ──
     print()
     print("Project size:")
@@ -1670,6 +1697,8 @@ Best used for: generating scaffolding, large refactors where the goal is clear, 
 
     # ─── Task Files ───────────────────────────────────────────────────────────
     create_task_files()
+    if use_demo:
+        _load_demo_files()
 
     # ── HELP.md — in-project self-heal instructions ──
     write("HELP.md", f"""\
@@ -1851,7 +1880,7 @@ type: reference
         "hooks": [
           { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --process-corrections" },
           { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --journal", "timeout": 10, "statusMessage": "Capturing session journal..." },
-          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --stop-check", "timeout": 5 }
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --stop-check", "timeout": 20, "statusMessage": "Checking memory + plan drift..." }
         ]
       }
     ]
