@@ -23,7 +23,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "[YOUR_PROJECT_PATH]/mem
 Then read `[MEM]\STATUS.md` and report: "Ready. Last change: [summary]. What are we working on?"
 
 ### `End Session`
-1. Run `/learn` — extract lessons and decisions from this session
+1. Run `/learn` — extract lessons and decisions from this session. Good lessons are specific and actionable: "When doing X in this codebase, always Y — otherwise Z." Vague lessons ("be more careful") help nobody. If nothing surprising happened, extract nothing.
 2. Run `/evolve-check` — scan skill scores, flag 🔴/🟡 skills
 3. Run `/evolve` only when `/evolve-check` flags 🔴 or 🟡
 4. Update `[MEM]\tasks\skill_usage.md`

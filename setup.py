@@ -158,21 +158,42 @@ def _write_gitignore():
         print("  Created .gitignore — HANDOFF.md excluded")
 
 
-def _load_demo_files():
-    """Copy pre-populated demo memory files so users can see what session 50 looks like."""
+def _load_demo_files(tech=""):
+    """Copy pre-populated demo memory files matching the detected stack."""
     demo_dir = HERE / "demo"
     if not demo_dir.exists():
         return False
+
+    # Pick the best-matching variant based on detected tech stack
+    tech_lower = tech.lower()
+    if "python" in tech_lower or "django" in tech_lower:
+        variant = demo_dir / "python-django"
+        label = "Python/Django"
+    elif "java" in tech_lower:
+        variant = demo_dir / "java"
+        label = "Java/Spring"
+    elif "go" in tech_lower:
+        variant = demo_dir / "go"
+        label = "Go"
+    else:
+        variant = demo_dir          # default: TypeScript/React
+        label = "TypeScript/React"
+
+    # Only copy files that are direct children or in tasks/ (not subdirs like python-django/)
+    source = variant if variant.exists() else demo_dir
     copied = []
-    for src in demo_dir.rglob("*.md"):
-        rel = src.relative_to(demo_dir)
+    for src in source.rglob("*.md"):
+        # Skip nested variant folders when using the root demo dir
+        if source == demo_dir and src.parent.parent == demo_dir:
+            continue
+        rel = src.relative_to(source)
         dst = ROOT / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         if not dst.exists():
             shutil.copy2(src, dst)
             copied.append(str(rel))
     if copied:
-        print(f"  Loaded {len(copied)} demo memory files (showing what session 50 looks like)")
+        print(f"  Loaded {len(copied)} demo memory files ({label} — session 50 example)")
     return True
 
 
@@ -196,9 +217,22 @@ def create_task_files():
 # Lessons Learned
 
 <!-- Claude logs every correction here so the same mistake never happens twice. -->
-<!-- Read at every session start. -->
-<!-- Add new lessons at the bottom. Claude reads top-to-bottom, so older lessons load first. -->
-<!-- Starter lessons below apply universally — /learn will add project-specific ones. -->
+<!-- Read at every session start. Apply every rule before touching code. -->
+
+<!-- WHAT MAKES A GOOD LESSON vs A BAD ONE:
+     Good: specific, has a trigger condition, tells you exactly what to do differently
+       ✓  "When using fetch() inside useEffect, add the controller to the dependency array
+           or you'll get stale closure bugs on fast re-renders"
+       ✓  "Always call db.rollback() in the except block — SQLAlchemy doesn't auto-rollback
+           on exception, the connection stays in a broken state"
+
+     Bad: too vague to act on, or just restates a general principle
+       ✗  "Be more careful with async code"
+       ✗  "Test before shipping"
+       ✗  "Remember to handle errors"
+
+     Rule of thumb: if the lesson could apply to any project by any developer, it's too vague.
+     Good lessons are specific to YOUR stack, YOUR patterns, YOUR recurring mistakes. -->
 
 | Date | What went wrong | Rule to prevent it |
 |------|----------------|-------------------|
@@ -632,8 +666,12 @@ When the user types **"Install Memory"**, do the following:
 When the user types **"End Session"**, do the following:
 > **Tip:** If this session ran long, type `/compact` first to summarize the conversation before ending.
 1. **Session 1 only:** Check the current session number in `STATUS.md` before incrementing. If it is 0 or 1, this is your first End Session — ask the user: "Before I save your first session — what are **three things** about this codebase Claude should never forget? (Constraints, gotchas, things that trip up AI, patterns unique to your stack.)" Write each answer as a row in `tasks/lessons.md` using today's date. Skip if the user says "nothing yet."
-2. Update `STATUS.md` — increment session number, add one-line entry: date + what changed
-3. Update all relevant memory files in `.claude/memory/` for anything changed this session:
+2. **Extract lessons** — review this session for anything that went wrong, required a correction, or revealed a non-obvious pattern. Write each as a row in `tasks/lessons.md`. A good lesson is specific and actionable:
+   - ✓ Good: "When calling X in this codebase, always Y first — otherwise Z breaks"
+   - ✗ Bad: "Be more careful with async code" (too vague — won't help next session)
+   If nothing went wrong and nothing surprising was discovered, write nothing. Empty sessions don't need forced lessons.
+3. Update `STATUS.md` — increment session number, add one-line entry: date + what changed
+4. Update all relevant memory files in `.claude/memory/` for anything changed this session:
    - JS changed → update `js_functions.md`
    - HTML/CSS changed → update `html_css_reference.md`
    - Backend/API changed → update `backend_reference.md`
@@ -759,7 +797,7 @@ When the user types **"End Session"**, do the following:
 1. **Session 1 only:** Check the current session number in `STATUS.md` before incrementing. If it is 0 or 1, this is your first End Session — ask the user: "Before I save your first session — what are **three things** about this codebase Claude should never forget? (Constraints, gotchas, things that trip up AI, patterns unique to your stack.)" Write each answer as a row in `.claude/memory/lessons.md` using today's date. Skip if the user says "nothing yet."
 2. Update `STATUS.md` — increment session number, add one-line entry: date + what changed
 3. Update `.claude/memory/notes.md` — add or update key functions and current state
-4. Update `.claude/memory/lessons.md` — append any new patterns learned this session (things to do differently, gotchas discovered, approaches that worked well)
+4. **Extract lessons** — append any corrections or non-obvious patterns to `.claude/memory/lessons.md`. Good lessons are specific: "When doing X in this codebase, always Y — otherwise Z." Vague lessons ("be careful with async") help nobody. If nothing surprising happened this session, write nothing.
 5. Update `.claude/memory/decisions.md` — log any new architectural choices made this session
 6. Count lines added to each file and report: "Session N complete. Memory saved: notes.md +N, lessons.md +N, decisions.md +N" (omit files with no changes)
 7. **On sessions 5, 10, 25, and 50 only:** add this line to your report: "⭐ If clankbrain has been useful, a GitHub star helps others find it → https://github.com/YehudaFrankel/clankbrain"
@@ -968,7 +1006,7 @@ type: project
     # tasks/ files
     create_task_files()
     if use_demo:
-        _load_demo_files()
+        _load_demo_files(tech)
 
     # Copy update.py from kit into project
     _copy_update_script()
@@ -1698,7 +1736,7 @@ Best used for: generating scaffolding, large refactors where the goal is clear, 
     # ─── Task Files ───────────────────────────────────────────────────────────
     create_task_files()
     if use_demo:
-        _load_demo_files()
+        _load_demo_files(tech)
 
     # ── HELP.md — in-project self-heal instructions ──
     write("HELP.md", f"""\
