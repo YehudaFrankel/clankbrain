@@ -24,9 +24,10 @@ Memory repo: `https://github.com/yourname/acme-memory` (private)
 ### `End Session`
 1. Run `/learn` — extract patterns from this session
 2. Run `/evolve-check` — check skill health
-3. Update `[MEM]/STATUS.md`
-4. Push memory to GitHub
-5. Report: "Session complete. Memory pushed."
+3. **Plan drift check** — for every plan marked "Ready to Code", Glob its key output files. If they exist → mark `SHIPPED — Session NNN`.
+4. Update `[MEM]/STATUS.md`
+5. Push memory to GitHub
+6. Report: "Session complete. Memory pushed."
 
 ## Key Files
 | File | Purpose |

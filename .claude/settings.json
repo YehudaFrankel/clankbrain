@@ -238,7 +238,8 @@
           {
             "type": "command",
             "command": "python tools/memory.py --stop-check",
-            "timeout": 5
+            "timeout": 20,
+            "statusMessage": "Checking memory + plan drift…"
           }
         ]
       }

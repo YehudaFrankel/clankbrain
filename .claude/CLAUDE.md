@@ -27,9 +27,10 @@ Then read `[MEM]\STATUS.md` and report: "Ready. Last change: [summary]. What are
 2. Run `/evolve-check` — scan skill scores, flag 🔴/🟡 skills
 3. Run `/evolve` only when `/evolve-check` flags 🔴 or 🟡
 4. Update `[MEM]\tasks\skill_usage.md`
-5. Update `[MEM]\STATUS.md` — increment session number, one-line summary
-6. Commit source changes
-7. Push memory: `powershell.exe -File "memory.ps1" push`
+5. **Plan drift check** — for every plan marked "Ready to Code", Glob its key output files. If they exist → update Status to `SHIPPED — Session NNN`. Takes 30 seconds, prevents stale plans accumulating.
+6. Update `[MEM]\STATUS.md` — increment session number, one-line summary
+7. Commit source changes
+8. Push memory: `powershell.exe -File "memory.ps1" push`
 
 ### `Push Memory`
 Run: `powershell -File "memory.ps1" push`

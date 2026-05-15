@@ -980,6 +980,11 @@ def _stop_open_plans(memory_dir):
             if not m:
                 continue
             status = m.group(1).strip()
+            # Drift check: "Ready to Code" plans may already be shipped
+            if status == 'Ready to Code':
+                name = plan_file.stem.replace('-', ' ').title()
+                open_plans.append((name, 'DRIFT CHECK', -1))
+                continue
             if status not in ('Draft', 'On Hold'):
                 continue
             open_q = len(re.findall(r'^- \[ \] .+', text, re.MULTILINE))
@@ -1072,8 +1077,11 @@ def cmd_stop_check():
     if _stop_has_unsaved(memory_dir):
         messages.append('Memory has unsaved changes. Type "End Session" to save.')
     for name, status, count in _stop_open_plans(memory_dir):
-        q = 'question' if count == 1 else 'questions'
-        messages.append(f'Open plan: {name} ({status}) \u2014 {count} {q} unresolved.')
+        if status == 'DRIFT CHECK':
+            messages.append(f'DRIFT CHECK: Plan "{name}" is marked "Ready to Code" \u2014 verify not already shipped before End Session.')
+        else:
+            q = 'question' if count == 1 else 'questions'
+            messages.append(f'Open plan: {name} ({status}) \u2014 {count} {q} unresolved.')
     _, pct, _ = _journal_estimate_tokens()
     if pct >= 80:
         messages.append(f'Context at {pct}% — type /compact NOW before it fills up.')
