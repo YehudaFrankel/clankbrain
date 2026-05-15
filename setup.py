@@ -175,6 +175,9 @@ def _load_demo_files(tech=""):
     elif "go" in tech_lower:
         variant = demo_dir / "go"
         label = "Go"
+    elif "ruby" in tech_lower or "rails" in tech_lower:
+        variant = demo_dir / "ruby-rails"
+        label = "Ruby on Rails"
     else:
         variant = demo_dir          # default: TypeScript/React
         label = "TypeScript/React"
