@@ -156,6 +156,10 @@ Next session, Claude loads these lessons automatically — before you write a si
 
 ---
 
+→ [See a full session example — Start Session through End Session, with regret guard firing and a lesson extracted](demo/example-session.md)
+
+---
+
 ## After 8 sessions
 
 ```
