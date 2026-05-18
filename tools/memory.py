@@ -1097,6 +1097,36 @@ def cmd_stop_check():
                 messages.append(f'{edit_count} file save(s) this session.')
     except Exception:
         pass
+    # Lesson age check — flag lessons older than 60 days for internalization review
+    try:
+        import re as _re
+        from datetime import datetime as _dt, timedelta as _td
+        lessons_file = memory_dir / 'tasks' / 'lessons.md'
+        if not lessons_file.exists():
+            lessons_file = memory_dir / '.claude' / 'memory' / 'lessons.md'
+        if lessons_file.exists():
+            content = lessons_file.read_text(encoding='utf-8', errors='ignore')
+            today = _dt.now()
+            old_lessons = []
+            for m in _re.finditer(r'##\s*\[?(\d{4}-\d{2}-\d{2})\]?\s*[-—]\s*(.+)', content):
+                try:
+                    lesson_date = _dt.strptime(m.group(1), '%Y-%m-%d')
+                    age_days = (today - lesson_date).days
+                    if age_days >= 60:
+                        title = m.group(2).strip()[:60]
+                        old_lessons.append(title)
+                except Exception:
+                    pass
+            if old_lessons:
+                noun = 'lesson' if len(old_lessons) == 1 else 'lessons'
+                sample = old_lessons[:3]
+                messages.append(
+                    f'{len(old_lessons)} {noun} are 60+ days old — consider archiving if internalized: '
+                    + '; '.join(sample) + (f' (+{len(old_lessons)-3} more)' if len(old_lessons) > 3 else '')
+                )
+    except Exception:
+        pass
+
     if messages:
         print(json.dumps({'systemMessage': ' | '.join(messages)}))
 
