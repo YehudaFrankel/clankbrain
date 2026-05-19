@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Plan</title><link rel="stylesheet" href="_base.css"></head>
+<body><div class="terminal">
+  <div class="bar"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span class="path">claude-code · your-project</span></div>
+  <div class="body"><span class="muted">$ /plan fix login bug — first submit always fails</span>
+
+<span class="amber bold">Plan</span>
+
+<span class="bold">Problem</span>
+submitForm() calls validateUser() before the session token is set.
+First submit after page load always fails the auth check.
+
+<span class="bold">All Related Functions</span>
+- submitForm    — src/js/auth.js:84
+- validateUser  — src/js/auth.js:112
+
+<span class="bold">Before</span>  src/js/auth.js:84
+  validateUser(token);
+  token = getSessionToken();
+
+<span class="bold">After</span>
+  token = getSessionToken();
+  validateUser(token);
+
+<span class="bold">Why this will work</span>
+getSessionToken() reads from localStorage — must run first or
+validateUser receives undefined and rejects every request.
+
+<span class="bold">Scope</span>
+- Files: src/js/auth.js  ·  Lines changed: 2 reordered
+- Affected: login flow only — no other callers
+
+<span class="bold">Evaluation</span>
+- Confidence: High  ·  Verdict: Proceed
+
+<span class="bold">Challenge</span>
+Root may be async init — fixing order treats the symptom.
+Checked: no async init present. Order fix is correct.
+
+<span class="bold">Rollback</span>  git restore src/js/auth.js
+
+<span class="amber">Proceed?</span></div>
+</div></body></html>

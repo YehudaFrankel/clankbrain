@@ -1,0 +1,52 @@
+/* Shared styles for all screenshot pages */
+:root {
+  --bg:     #1c1508;
+  --s1:     #261b0a;
+  --border: #3d2e14;
+  --amber:  #d4890a;
+  --green:  #6dba78;
+  --red:    #c85040;
+  --text:   #e8dcc0;
+  --muted:  #9a8a6a;
+  --mono:   'SF Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  font-family: var(--mono);
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.terminal {
+  background: #0e0a04;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  width: 640px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.bar {
+  padding: .55rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--s1);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.dot { width:10px;height:10px;border-radius:50%;display:inline-block; }
+.dr{background:var(--red);} .dy{background:var(--amber);} .dg{background:var(--green);}
+.path { margin-left:.5rem; font-size:.7rem; color:var(--muted); }
+.body {
+  padding: 1.4rem 1.6rem;
+  font-size: .8rem;
+  line-height: 1.9;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+.amber { color: var(--amber); }
+.green { color: var(--green); }
+.muted { color: var(--muted); }
+.red   { color: var(--red); }
+.bold  { font-weight: 700; }

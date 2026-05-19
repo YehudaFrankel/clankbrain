@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Regret Guard</title><link rel="stylesheet" href="_base.css"></head>
+<body><div class="terminal">
+  <div class="bar"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span class="path">claude-code · your-project</span></div>
+  <div class="body"><span class="muted">$ let's cache the API responses in localStorage to speed things up</span>
+
+<span class="red">⚠ This approach is in regret.md:</span>
+<span class="red">  "localStorage API cache" — tried session 12, caused stale data</span>
+<span class="red">  bugs that were silent until production. Rejected permanently.</span>
+
+Proposing alternative: in-memory cache with TTL instead.
+
+<span class="bold">Alternative Plan</span>
+
+<span class="bold">Problem</span>
+API responses are slow. In-memory cache with 60s TTL
+avoids stale data while eliminating repeat fetches.
+
+<span class="bold">After</span>  src/js/api.js
+  var cache = {};
+  function fetchWithCache(url) {
+    var now = Date.now();
+    if (cache[url] &amp;&amp; now - cache[url].ts &lt; 60000) {
+      return Promise.resolve(cache[url].data);
+    }
+    return fetch(url).then(function(r) { return r.json(); })
+      .then(function(data) {
+        cache[url] = { data: data, ts: now };
+        return data;
+      });
+  }
+
+<span class="amber">Proceed with in-memory cache?</span></div>
+</div></body></html>

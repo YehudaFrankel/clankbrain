@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clankbrain — See it in action</title>
+<style>
+  :root {
+    --bg:     #1c1508;
+    --s1:     #261b0a;
+    --s2:     #2f220e;
+    --border: #3d2e14;
+    --amber:  #d4890a;
+    --amber2: #f5a623;
+    --green:  #6dba78;
+    --red:    #c85040;
+    --text:   #e8dcc0;
+    --muted:  #9a8a6a;
+    --mono:   'SF Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .logo {
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: .06em;
+  }
+
+  .badge {
+    font-size: .7rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: .2rem .6rem;
+    border-radius: 20px;
+  }
+
+  .terminal {
+    background: #0e0a04;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  }
+
+  .term-bar {
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--s1);
+  }
+
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .dot-r { background: var(--red); }
+  .dot-y { background: var(--amber); }
+  .dot-g { background: var(--green); }
+
+  .term-path {
+    margin-left: .5rem;
+    font-size: .72rem;
+    color: var(--muted);
+  }
+
+  .term-body {
+    padding: 1.4rem 1.6rem;
+    font-size: .8rem;
+    line-height: 1.9;
+    min-height: 320px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .term-footer {
+    border-top: 1px solid var(--border);
+    padding: .7rem 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .step-dots {
+    display: flex;
+    gap: .4rem;
+  }
+
+  .step-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background .3s;
+  }
+
+  .step-dot.active { background: var(--amber); }
+  .step-dot.done   { background: var(--green); }
+
+  .step-label {
+    font-size: .7rem;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: var(--amber);
+    vertical-align: text-bottom;
+    animation: blink .9s step-end infinite;
+    margin-left: 1px;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .cta {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+
+  .cta a {
+    color: var(--amber);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1px;
+    transition: color .2s, border-color .2s;
+  }
+
+  .cta a:hover { color: var(--amber2); border-color: var(--amber2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">⬡ CLANKBRAIN</div>
+    <div class="badge">sessions compound · open source · MIT</div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="term-path">claude-code · your-project · session 45</span>
+    </div>
+    <div class="term-body" id="term"></div>
+    <div class="term-footer">
+      <div class="step-dots" id="dots">
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div class="step-label" id="step-label">Start Session</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    Two commands. Sessions compound, not reset. &nbsp;
+    <a href="https://clankbrain.vercel.app/#install">Install Clankbrain →</a>
+  </div>
+</div>
+
+<script>
+var STEPS = [
+  {
+    label: 'Start Session',
+    pause: 3000,
+    lines: [
+      '\x1b[muted]# pulling memory from GitHub...\x1b[/]',
+      '\x1b[green]✓ 3 lessons loaded · 7 rejected approaches blocked · session 45\x1b[/]',
+      '',
+      '\x1b[amber]Ready.\x1b[/] Last change: Session 44 — fixed pagination bug',
+      '        (page state lost on filter change, debounce added).',
+      '',
+      '\x1b[muted]👁 Noticed: auth.js touched 3 sessions in a row — worth a review.\x1b[/]',
+      '',
+      'What are we working on?',
+    ]
+  },
+  {
+    label: 'Plan a change',
+    pause: 4000,
+    lines: [
+      '\x1b[muted]$ /plan fix login bug — first submit always fails\x1b[/]',
+      '',
+      '\x1b[amber]Plan\x1b[/]',
+      '',
+      'Problem',
+      'submitForm() calls validateUser() before token is set.',
+      'First submit after page load always fails auth check.',
+      '',
+      'Before  src/js/auth.js:84',
+      '  validateUser(token);',
+      '  token = getSessionToken();',
+      '',
+      'After',
+      '  token = getSessionToken();',
+      '  validateUser(token);',
+      '',
+      'Challenge',
+      'Root may be async init — order fix treats symptom.',
+      'Checked: no async init. This is the right fix.',
+      '',
+      '\x1b[amber]Proceed?\x1b[/]',
+    ]
+  },
+  {
+    label: 'Approve',
+    pause: 2500,
+    lines: [
+      '\x1b[muted]$ yes\x1b[/]',
+      '',
+      'Editing src/js/auth.js...',
+      '',
+      '\x1b[green]✓ Verified auth.js:84-86\x1b[/]',
+      '  token = getSessionToken();   \x1b[green]← moved up\x1b[/]',
+      '  validateUser(token);',
+      '',
+      '\x1b[muted]Running smoke test...\x1b[/]',
+      '\x1b[green]✓ Login: pass · Session: pass · API auth: pass\x1b[/]',
+    ]
+  },
+  {
+    label: 'End Session',
+    pause: 5000,
+    lines: [
+      '\x1b[muted]$ End Session\x1b[/]',
+      '',
+      'Extracted 2 lessons:',
+      '',
+      '  \x1b[green]1.\x1b[/] Token must be set before validateUser() — first',
+      '     request always fails if order is wrong.',
+      '',
+      '  \x1b[green]2.\x1b[/] auth.js touched 3 sessions — schedule review.',
+      '',
+      '\x1b[green]✓ memory pushed to GitHub\x1b[/]',
+      '\x1b[green]✓ session 45 complete\x1b[/]',
+      '',
+      '\x1b[amber]Session 46 starts where this one ended.\x1b[/]',
+    ]
+  }
+];
+
+function colorize(line) {
+  return line
+    .replace(/\x1b\[muted\](.*?)\x1b\[\/\]/g, '<span style="color:var(--muted)">$1</span>')
+    .replace(/\x1b\[amber\](.*?)\x1b\[\/\]/g, '<span style="color:var(--amber)">$1</span>')
+    .replace(/\x1b\[green\](.*?)\x1b\[\/\]/g, '<span style="color:var(--green)">$1</span>');
+}
+
+var cur = 0;
+var lineIdx = 0;
+var term = document.getElementById('term');
+var label = document.getElementById('step-label');
+
+function updateDots() {
+  var dots = document.querySelectorAll('.step-dot');
+  for (var i = 0; i < dots.length; i++) {
+    dots[i].className = 'step-dot';
+    if (i < cur) dots[i].classList.add('done');
+    else if (i === cur) dots[i].classList.add('active');
+  }
+  label.textContent = STEPS[cur].label;
+}
+
+function nextLine() {
+  var step = STEPS[cur];
+  if (lineIdx >= step.lines.length) {
+    setTimeout(function() {
+      cur = (cur + 1) % STEPS.length;
+      lineIdx = 0;
+      term.innerHTML = '';
+      updateDots();
+      setTimeout(nextLine, 400);
+    }, step.pause);
+    return;
+  }
+  var line = step.lines[lineIdx];
+  term.innerHTML += colorize(line) + '\n';
+  term.scrollTop = term.scrollHeight;
+  lineIdx++;
+  setTimeout(nextLine, lineIdx === 1 ? 200 : 60);
+}
+
+updateDots();
+setTimeout(nextLine, 800);
+</script>
+</body>
+</html>
