@@ -22,8 +22,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "[YOUR_PROJECT_PATH]/mem
 ```
 Then:
 1. Read `[MEM]\STATUS.md` — report: "Ready. Last change: [summary]. What are we working on?"
-2. Read `[MEM]\tasks\velocity.md` Calibration Notes section — if patterns exist, apply them silently when estimating task length this session
-3. Add one Start Session observation if anything in recent changes warrants attention (Middle Path rule)
+2. Read `[MEM]\tasks\velocity.md` Calibration Notes section — apply patterns silently when estimating task length
+3. Add one Start Session observation if anything warrants attention (Middle Path rule)
+4. If session number is 5, 10, 20, or 50: suggest running `progress report` — "You've hit session [N] — want a quick progress report to see how the system is compounding?"
 
 ### `End Session`
 1. Run `/learn` — extract lessons and decisions from this session. Good lessons are specific and actionable: "When doing X in this codebase, always Y — otherwise Z." Vague lessons ("be more careful") help nobody. If nothing surprising happened, extract nothing.
@@ -34,6 +35,13 @@ Then:
 6. Update `[MEM]\STATUS.md` — increment session number, one-line summary
 7. Commit source changes
 8. Push memory: `powershell.exe -File "memory.ps1" push`
+
+### `Fast Close` (2-step end session)
+When you're short on time or just want to save and stop:
+1. Run `/learn` — extract lessons from this session
+2. Push memory: `powershell.exe -File "memory.ps1" push`
+
+That's it. STATUS.md and skill_usage.md can wait until next session. Use Full End Session when you have time; use Fast Close when you don't. Skipping End Session entirely is the only bad option.
 
 ### `Push Memory`
 Run: `powershell -File "memory.ps1" push`

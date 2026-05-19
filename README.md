@@ -24,7 +24,7 @@ Start Session   ->  reads memory, applies past lessons, picks up where you left 
 End Session     ->  extracts lessons, saves everything to memory
 ```
 
-**New here?** After install, type `tour` for a 5-minute interactive walkthrough. Or open [CHEATSHEET.md](docs/CHEATSHEET.md) — the whole kit fits on one page.
+**New here?** After install, type `tour` for a 5-minute interactive walkthrough. Or follow **[FIRST5.md](docs/FIRST5.md)** — a guided path through your first 5 sessions, one per real work block. Session 5 is when the compounding becomes visible.
 
 ---
 
