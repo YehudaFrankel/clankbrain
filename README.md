@@ -202,6 +202,8 @@ The value compounds with consistency. The more sessions you log, the smarter Cla
 
 ### Live dashboard (`_tools/dashboard/`)
 
+<p align="center"><img src="dashboard-demo.png" alt="Clankbrain dashboard" width="320" /></p>
+
 A real-time status panel that runs alongside Claude Code in your browser:
 
 ```bash
