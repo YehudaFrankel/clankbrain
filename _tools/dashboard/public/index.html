@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEV DASHBOARD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="logo">&#9651; DEV DASHBOARD</div>
+    <div class="meta">
+      <span id="sessionBadge" class="session-badge">S—</span>
+      <span id="lastUpdated" class="muted small">—</span>
+    </div>
+  </header>
+
+  <div class="row">
+    <div class="pill" id="healthPill">
+      <span class="dot" id="healthDot"></span>
+      <span id="healthLabel">SERVER</span>
+    </div>
+    <div class="pill" id="gitPill">
+      <span class="dot" id="gitDot"></span>
+      <span id="gitLabel">GIT</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">LAST CHANGE</div>
+    <div id="lastChange" class="change-text">Loading...</div>
+    <div id="lastCommit" class="muted small commit-text">—</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">SAVED PROMPTS</div>
+    <div class="actions" id="savedPromptsArea"></div>
+    <div id="copyMsg" class="copy-msg"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">QUICK PROMPT</div>
+    <div class="qp-form">
+      <input type="text" id="qpTarget" class="qp-input" placeholder="Target  (e.g. auth flow)">
+      <input type="text" id="qpAction" class="qp-input" placeholder="Action  (e.g. trace the bug where login fails)">
+      <div class="qp-row">
+        <input type="text" id="qpSaveName" class="qp-input qp-name" placeholder="Save as (optional)">
+        <button type="button" class="btn btn-send" onclick="sendQuickPrompt()">&#9654; Send</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>

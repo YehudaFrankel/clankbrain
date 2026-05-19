@@ -60,7 +60,17 @@
    Run /evolve on flagged skills now? [y/N]
    ```
 
-5. **Stop.** Do not patch anything. Do not modify any files. Do not call /evolve automatically.
+5. **Check `tasks/skill_usage.md` for stale skills:**
+   Read the Last Used column. For any skill where Last Used date is more than 10 sessions ago OR shows "unknown":
+   > "**[skill]** hasn't been used in 10+ sessions. Options:
+   >  **a)** Keep — schedule it for next relevant session
+   >  **b)** Deprecate — delete SKILL.md and remove from skill_usage.md
+   >  **c)** Skip for now"
+   
+   If user picks **b**: delete the skill file and remove its row from skill_usage.md.
+   Do NOT silently leave stale skills — unused skills add noise to the system prompt and confuse trigger matching.
+
+6. **Stop.** Do not patch anything else. Do not modify any files beyond what the user explicitly confirms above.
 
 ---
 

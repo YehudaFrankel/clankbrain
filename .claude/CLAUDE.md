@@ -20,7 +20,10 @@ Run manually if hook fails:
 ```
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "[YOUR_PROJECT_PATH]/memory.ps1" pull
 ```
-Then read `[MEM]\STATUS.md` and report: "Ready. Last change: [summary]. What are we working on?"
+Then:
+1. Read `[MEM]\STATUS.md` — report: "Ready. Last change: [summary]. What are we working on?"
+2. Read `[MEM]\tasks\velocity.md` Calibration Notes section — if patterns exist, apply them silently when estimating task length this session
+3. Add one Start Session observation if anything in recent changes warrants attention (Middle Path rule)
 
 ### `End Session`
 1. Run `/learn` — extract lessons and decisions from this session. Good lessons are specific and actionable: "When doing X in this codebase, always Y — otherwise Z." Vague lessons ("be more careful") help nobody. If nothing surprising happened, extract nothing.
