@@ -991,6 +991,208 @@ footer {
 </div>
 </div><!-- /hero-section -->
 
+<!-- PLAYGROUND -->
+<section id="playground" style="background:var(--s1); border-top:1px solid var(--border);">
+  <div class="wrap-sm">
+    <div class="sec-label">see it in action</div>
+    <h2>Two commands. <span class="h2-amber">Everything compounds.</span></h2>
+    <p class="sec-desc">Click through a real session — the same workflow that runs on production codebases.</p>
+
+    <div style="margin-top:2rem;">
+      <!-- Step indicators -->
+      <div style="display:flex; gap:.5rem; margin-bottom:1.5rem; flex-wrap:wrap;" id="pg-steps">
+        <div class="pg-step active" data-step="0">1 · Start Session</div>
+        <div class="pg-step" data-step="1">2 · Plan a change</div>
+        <div class="pg-step" data-step="2">3 · Approve</div>
+        <div class="pg-step" data-step="3">4 · End Session</div>
+      </div>
+
+      <!-- Terminal -->
+      <div style="background:#0e0a04; border:1px solid var(--border2); border-radius:8px; overflow:hidden;">
+        <div style="padding:.5rem 1rem; border-bottom:1px solid var(--border); display:flex; gap:.4rem; align-items:center;">
+          <span style="width:10px;height:10px;border-radius:50%;background:#c85040;display:inline-block;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#d4890a;display:inline-block;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#6dba78;display:inline-block;"></span>
+          <span style="margin-left:.5rem;font-size:.7rem;color:var(--muted);font-family:var(--mono);">claude-code · your-project</span>
+        </div>
+        <div id="pg-term" style="padding:1.2rem 1.4rem; font-family:var(--mono); font-size:.78rem; line-height:1.8; min-height:220px; color:var(--text); white-space:pre-wrap;"></div>
+      </div>
+
+      <!-- Action button -->
+      <div style="margin-top:1.2rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+        <button id="pg-btn" onclick="pgNext()" style="background:var(--amber);color:#1c1508;border:none;padding:.7rem 1.6rem;border-radius:6px;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;">Start Session →</button>
+        <span id="pg-hint" style="font-size:.78rem;color:var(--muted);">Click to begin the walkthrough</span>
+      </div>
+
+      <!-- Install CTA — hidden until step 4 complete -->
+      <div id="pg-cta" style="display:none; margin-top:1.5rem; padding:1.2rem 1.4rem; background:var(--s2); border:1px solid var(--border2); border-radius:8px; text-align:center;">
+        <div style="font-size:.85rem; color:var(--text); margin-bottom:.8rem;">That's the whole workflow. Two commands. Every session compounds.</div>
+        <a href="#install" class="btn btn-primary" style="display:inline-block;">Install Clankbrain →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.pg-step {
+  padding:.35rem .9rem;
+  border-radius:20px;
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.04em;
+  border:1px solid var(--border);
+  color:var(--muted);
+  cursor:default;
+  transition:all .2s;
+}
+.pg-step.active {
+  background:var(--amber);
+  color:#1c1508;
+  border-color:var(--amber);
+}
+.pg-step.done {
+  border-color:var(--green);
+  color:var(--green);
+}
+</style>
+
+<script>
+(function() {
+  var step = -1;
+  var typing = false;
+
+  var steps = [
+    {
+      btn: 'Plan a change →',
+      hint: 'Session loaded — Claude knows your codebase',
+      lines: [
+        '<span style="color:var(--muted)"># pulling memory from GitHub...</span>',
+        '<span style="color:var(--green)">✓ 3 lessons loaded · 7 rejected approaches blocked · session 45</span>',
+        '',
+        '<span style="color:var(--amber)">Ready.</span> Last change: Session 44 — fixed pagination bug (page state',
+        '        lost on filter change, debounce added to search handler).',
+        '',
+        '<span style="color:var(--muted)">👁 Noticed: auth.js has been touched 3 sessions in a row — worth a review.</span>',
+        '',
+        'What are we working on?',
+      ]
+    },
+    {
+      btn: 'Approve →',
+      hint: 'Claude checks past decisions before proposing',
+      lines: [
+        '<span style="color:var(--muted)">$ /plan fix the login bug where first submit always fails</span>',
+        '',
+        '<span style="color:var(--amber)">Plan</span>',
+        '',
+        '<span style="color:var(--text);font-weight:bold;">Problem</span>',
+        'submitForm() calls validateUser() before the session token is set.',
+        'First submit after page load always fails auth check.',
+        '',
+        '<span style="color:var(--text);font-weight:bold;">Before</span>  src/js/auth.js:84',
+        '  validateUser(token);',
+        '  token = getSessionToken();',
+        '',
+        '<span style="color:var(--text);font-weight:bold;">After</span>',
+        '  token = getSessionToken();',
+        '  validateUser(token);',
+        '',
+        '<span style="color:var(--text);font-weight:bold;">Challenge</span>',
+        'Root cause may be async init — fixing call order treats the symptom.',
+        'Checked: no async init. Order fix is the right approach.',
+        '',
+        '<span style="color:var(--amber)">Proceed?</span>',
+      ]
+    },
+    {
+      btn: 'End Session →',
+      hint: 'Edit applied and verified',
+      lines: [
+        '<span style="color:var(--muted)">$ yes</span>',
+        '',
+        'Editing src/js/auth.js...',
+        '',
+        '<span style="color:var(--green)">✓ Verified auth.js:84-86</span>',
+        '  token = getSessionToken();   <span style="color:var(--green)">← moved up</span>',
+        '  validateUser(token);',
+        '',
+        'First submit after page load now passes auth check.',
+        'No other callers affected.',
+        '',
+        '<span style="color:var(--muted)">Running smoke test...</span>',
+        '<span style="color:var(--green)">✓ Login flow: pass · Session valid: pass · API auth: pass</span>',
+      ]
+    },
+    {
+      btn: null,
+      hint: '',
+      lines: [
+        '<span style="color:var(--muted)">$ End Session</span>',
+        '',
+        '<span style="color:var(--muted)">/learn</span>',
+        '',
+        'Extracted 2 lessons:',
+        '',
+        '  <span style="color:var(--green)">1.</span> Token must be set before validateUser() — reading from localStorage',
+        '     after the call means first request always fails.',
+        '',
+        '  <span style="color:var(--green)">2.</span> auth.js touched 3 sessions in a row — add to next review cycle.',
+        '',
+        '<span style="color:var(--green)">✓ memory pushed to GitHub</span>',
+        '<span style="color:var(--green)">✓ session 45 complete</span>',
+        '',
+        '<span style="color:var(--amber)">Session 46 will start where this one ended.</span>',
+      ]
+    }
+  ];
+
+  function pgNext() {
+    if (typing) return;
+    step++;
+    updateStepIndicators();
+    var s = steps[step];
+    var term = document.getElementById('pg-term');
+    var btn = document.getElementById('pg-btn');
+    var hint = document.getElementById('pg-hint');
+    term.innerHTML = '';
+    typing = true;
+    btn.disabled = true;
+    btn.style.opacity = '.5';
+    typeLines(term, s.lines, 0, function() {
+      typing = false;
+      if (s.btn) {
+        btn.textContent = s.btn;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        hint.textContent = s.hint;
+      } else {
+        btn.style.display = 'none';
+        hint.textContent = '';
+        document.getElementById('pg-cta').style.display = 'block';
+      }
+    });
+  }
+
+  function typeLines(term, lines, idx, done) {
+    if (idx >= lines.length) { done(); return; }
+    term.innerHTML += lines[idx] + '\n';
+    term.scrollTop = term.scrollHeight;
+    setTimeout(function() { typeLines(term, lines, idx + 1, done); }, 55);
+  }
+
+  function updateStepIndicators() {
+    var indicators = document.querySelectorAll('.pg-step');
+    for (var i = 0; i < indicators.length; i++) {
+      indicators[i].classList.remove('active', 'done');
+      if (i < step) { indicators[i].classList.add('done'); }
+      else if (i === step) { indicators[i].classList.add('active'); }
+    }
+  }
+
+  window.pgNext = pgNext;
+})();
+</script>
+
 <!-- INSTALL -->
 <section id="install">
   <div class="wrap-sm">
