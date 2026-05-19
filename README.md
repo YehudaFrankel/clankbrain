@@ -2,7 +2,7 @@
 
 <p align="center"><img src="logo.jpeg" alt="Clankbrain" width="160" /></p>
 
-[![v2.11.1](https://img.shields.io/badge/version-2.11.1-blue?style=flat-square)](https://github.com/YehudaFrankel/clankbrain/releases) [![MIT License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE) [![Claude Code + Codex](https://img.shields.io/badge/Claude-Code-orange?style=flat-square)](https://claude.ai/claude-code) [![Discussions](https://img.shields.io/badge/community-discussions-purple?style=flat-square)](https://github.com/YehudaFrankel/clankbrain/discussions)
+[![v2.12.0](https://img.shields.io/badge/version-2.12.0-blue?style=flat-square)](https://github.com/YehudaFrankel/clankbrain/releases) [![MIT License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE) [![Claude Code + Codex](https://img.shields.io/badge/Claude-Code-orange?style=flat-square)](https://claude.ai/claude-code) [![Discussions](https://img.shields.io/badge/community-discussions-purple?style=flat-square)](https://github.com/YehudaFrankel/clankbrain/discussions)
 
 ![Session demo](demo.gif)
 
@@ -199,6 +199,29 @@ The value compounds with consistency. The more sessions you log, the smarter Cla
 - **Team sync** — share what you learn with your whole team. Manager runs `Setup Team` once, teammates run `Join Team` once, every Start Session pulls the latest silently. Personal memory stays local.
 - **Drift detection** — catches undocumented changes after every file edit (Full mode).
 - **Progress reports** — real numbers built from your actual session history.
+
+### Live dashboard (`_tools/dashboard/`)
+
+A real-time status panel that runs alongside Claude Code in your browser:
+
+```bash
+cd _tools/dashboard && node server.js
+# open http://localhost:3030
+```
+
+Shows: session number (from STATUS.md), git status (clean/dirty, branch, last commit), server health check (optional — set `HEALTH_URL`), last change summary, saved prompts (server-side, roams via git), and a quick prompt builder that generates structured briefings for Claude Code.
+
+Saved prompts persist in `prompts.json` — commit it and they follow you across machines.
+
+### Middle Path — scoped pushback
+
+By default Claude executes what you ask. Middle Path adds three bounded permissions:
+
+1. **Pre-plan challenge** — if a proposed approach contradicts a settled decision or regret entry, Claude surfaces the conflict before showing the plan (not after)
+2. **Start Session observation** — one concrete observation about recent changes, maximum one line, never repeated
+3. **Architecture flag** — if a feature would create a 3rd approach to something that already has 2, Claude asks which one to standardize on
+
+No lobbying. One observation, stated once, then Claude proceeds with whatever you decide.
 
 ### Workflow layer (21 built-in skills)
 
@@ -405,6 +428,7 @@ Open a fresh conversation and type `Update Kit`. This re-downloads and repairs a
 
 | Version | What changed |
 |---------|-------------|
+| v2.12.0 | Dashboard shipped (`_tools/dashboard/`) — live session status, git state, server health, saved prompts (server-side), quick prompt builder with structured template. Middle Path added to CLAUDE.md — 3 scoped pushback rules (pre-plan challenge, Start Session observation, architecture flag). Challenge section added to every plan format (devil's advocate, mandatory). `evolve-check` now detects stale skills (10+ sessions unused) and offers deprecate/keep. Start Session now reads `velocity.md` calibration notes and applies them silently. `regret-top.md` entries 8-10 added: skip-the-plan trap, schema-before-INSERT, treating bug fixes as exempt from planning. |
 | v2.11.1 | Fix: `setup.py` now downloads `update.py` from GitHub when installing clankbrain standalone (single-file copy). Previously, if only `setup.py` was copied into a new project, `update.py` was silently skipped — leaving the `Update Kit` command broken until the user ran it manually. |
 | v2.11.0 | `rules/regret.md` added — 7 rejected approaches ship with the kit and load on every session (`alwaysApply: true`). `NESTED_ASYNC_CALLBACKS` guard added to `guard-patterns.md`. HTML builder pattern added to `work-rules.md`. Three rules distilled from 225 real sessions on a production codebase. |
 | v2.10.0 | Karpathy principles rule added (`rules/karpathy-principles.md`) — 4 behavioral guidelines from Andrej Karpathy's LLM coding insights: think before coding, simplicity first, surgical changes, goal-driven execution. Ships as an always-load rule. |
