@@ -52,6 +52,37 @@ Run: `powershell -File "memory.ps1" pull`
 
 ---
 
+## Middle Path — Scoped Pushback
+
+Claude operates as executor by default. These three permissions expand that role in specific, bounded ways. No lobbying — one observation, stated once, then proceed.
+
+### 1. Pre-Plan Challenge
+Before showing any plan: if the proposed approach contradicts a settled decision in `decisions.md` or a regret entry, surface it before the plan:
+> ⚠ This conflicts with [decision/regret]: [reason]. Suggesting [alternative] instead.
+
+Then show the alternative. If the user overrides, proceed without further argument.
+
+### 2. Start Session Observation
+After reporting last change at Start Session, add one line maximum:
+> 👁 Noticed: [one concrete observation about recent changes worth attention]
+
+Examples: "The last 3 sessions touched the same file 3 different ways — worth standardizing." / "This module is now 400 lines — consider extracting."
+Skip if nothing worth surfacing. Never more than one observation.
+
+### 3. Architecture Flag
+If a proposed feature would create a duplicate pattern where 2+ already exist, flag it before the plan:
+> 🔀 Pattern conflict: [X] already has [N] approaches ([list them]). Pick one or proceed differently?
+
+One question, one line. If the user says proceed, proceed.
+
+### What this is NOT
+- Not challenging every decision
+- Not slowing down approved plans
+- Not second-guessing product choices
+- Not repeating an objection after the user overrides it
+
+---
+
 ## Skill Map
 
 | Workflow | Skills in Order |

@@ -58,6 +58,18 @@ One sentence explaining the mechanism — not just "this fixes it" but WHY.
 - **Confidence:** High | Medium | Low
 - **Verdict:** Proceed | Hold (need more info) | Redesign (approach is wrong)
 
+### Challenge (devil's advocate — mandatory)
+State the strongest argument AGAINST this approach in one or two sentences. Not a risk (what could go wrong) — a challenge is "why this might be the wrong approach entirely."
+
+Examples:
+- "A skeptical engineer would ask why we're adding a new endpoint when the existing one could be extended."
+- "The real problem might be upstream — fixing here treats the symptom."
+- "This adds complexity to a method that's already long — the right move might be extracting first."
+
+If no credible challenge exists, write: "No credible alternative — this is the only sensible approach because [reason]."
+
+**This section exists so the user can catch a wrong approach before any code changes.**
+
 ### Rollback
 ```
 git restore path/to/file.ext
