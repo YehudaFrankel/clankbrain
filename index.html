@@ -959,7 +959,7 @@ footer {
       <span class="h1-amber">Clankbrain</span> fixes that.
     </h1>
     <p class="hero-sub">
-      You re-explain your codebase every session. Your agent forgets your decisions, your mistakes, your patterns. Clankbrain gives it a <em>living memory</em> — decisions, lessons, patterns that grow with your project — plus <em>20+ built-in workflows</em> for debugging, code review, refactoring, design, security, and more.
+      You re-explain your codebase every session. Your agent forgets your decisions, your mistakes, your patterns. Clankbrain gives it a <em>living memory</em> — decisions, lessons, patterns that grow with your project — plus <em>23+ built-in workflows</em> for debugging, code review, refactoring, design, security, and more.
     </p>
     <p style="font-size:.85rem; color:var(--amber); margin-bottom:1.25rem; letter-spacing:.02em;">Two commands: <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">Start Session</code> → work → <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">End Session</code>. That's the whole interface.</p>
     <div class="hero-btns">
@@ -1245,7 +1245,7 @@ footer {
       <div class="istep">
         <div class="istep-n">// 04</div>
         <div class="istep-title">Type: End Session</div>
-        <div class="istep-desc">/learn extracts lessons. Memory saved. Next session starts smarter.</div>
+        <div class="istep-desc">/learn extracts lessons. Session changes doc written (SQL run, files changed, pending work). Memory saved. Next session starts smarter.</div>
       </div>
     </div>
 
@@ -1267,7 +1267,7 @@ footer {
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">API key or database required</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">zero dependencies — stdlib Python only</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">no structured development workflows</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">20+ built-in workflows: debug · review · refactor · design · security</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">23+ built-in workflows: debug · review · refactor · design · security</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">unofficial / proprietary internals</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">official Anthropic hooks + skills APIs</div>
     </div>
@@ -1484,6 +1484,8 @@ footer {
         <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so the same bug never takes time twice. <em>Auto-chains to verification-loop after the fix.</em></td></tr>
         <tr><td class="td-cmd">guard</td><td class="td-trig">guard check, scan for issues, did I miss anything</td><td class="td-desc">Scans recently changed files against a library of known error patterns, flags violations before they ship. After any bug fix, extracts the root cause as a new permanent rule.</td></tr>
         <tr><td class="td-cmd">product-risk</td><td class="td-trig">/product-risk, validate this idea, is this worth building</td><td class="td-desc">Four Big Risks (Value, Usability, Feasibility, Viability). <strong>Evaluate</strong> mode scores existing products Red/Yellow/Green. <strong>Create</strong> mode validates an idea, then generates working HTML/CSS/JS prototypes + full project scaffolding. Kill gate: refuses to build if 2+ risks are red.</td></tr>
+        <tr><td class="td-cmd">scan-conventions</td><td class="td-trig">scan conventions, generate conventions, bootstrap conventions</td><td class="td-desc">Reads 3–5 real methods from your codebase, extracts actual conventions (variable style, SQL patterns, error handling, naming, INSERT strategy), writes coding-conventions.md in ~10 min. Works on any stack. Run once on project start.</td></tr>
+        <tr><td class="td-cmd">map-codebase</td><td class="td-trig">map codebase, generate code map, map my project</td><td class="td-desc">Scans all endpoints, public methods, DB tables, HTML pages and JS functions. Writes code-map.md + java_function_index.md + js_function_index.md. Run once — never grep blindly for a method again.</td></tr>
       </tbody>
     </table>
     </div>
