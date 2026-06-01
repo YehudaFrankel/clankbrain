@@ -225,7 +225,7 @@ By default Claude executes what you ask. Middle Path adds three bounded permissi
 
 No lobbying. One observation, stated once, then Claude proceeds with whatever you decide.
 
-### Workflow layer (21 built-in skills)
+### Workflow layer (23 built-in skills)
 
 Every development activity has a structured skill — not just memory, but a repeatable way to do the work right:
 
@@ -236,10 +236,33 @@ Every development activity has a structured skill — not just memory, but a rep
 | **Debug** | `fix-bug` — structured root-cause flow; `debug-session` — reproduce → isolate → fix → verify; `guard` — scans for known error patterns |
 | **Code quality** | `code-review` — antipattern checklist; `verification-loop` — post-change verification; `security-check` — auth/injection/secrets audit |
 | **Scaffolded** | `new-feature` — plan → implement → update memory; `environment-check` — env config sweep; `run-verification` — layer-by-layer checklist; `refactor` — safe restructure flow |
+| **Onboarding** | `scan-conventions` — reads real code, writes coding-conventions.md in 10 min; `map-codebase` — maps all endpoints + methods + tables into a navigable code-map.md |
 | **Meta** | `skill-creator` — build new skills; `mode` — switch tool access modes; `evolve` + `evolve-check` — skills self-improve from feedback |
 | **Kit** | `tour` — 5-min interactive walkthrough; `kit-health` — confirms install worked |
 
 Skills compound with memory: `fix-bug` auto-runs `guard`, which extracts the root cause as a new permanent rule. Every bug fixed once becomes impossible to ship twice.
+
+### Session changes doc
+
+Every `End Session` writes a `sessions/session_NNN_changes.md` — a plain-text record of everything that changed:
+
+```
+SESSION 42 — CHANGES SUMMARY
+==============================
+SQL — RUN AGAINST DATABASE
+  ALTER TABLE users ADD last_login DATETIME NULL   ← ALREADY RUN
+  INSERT INTO app_config (key, value) VALUES (...)
+
+CODE CHANGES
+  + src/auth/sessionManager.js   — new token refresh logic
+  * src/api/userEndpoint.java    — duplicate check by UserID added
+  - src/legacy/oldLogin.js       — removed (replaced by sessionManager)
+
+PENDING
+  Email notification on token expiry — spec written, not coded
+```
+
+Never lose track of what SQL was run, what was deployed, or what's still pending. Searchable history across every session.
 
 ---
 

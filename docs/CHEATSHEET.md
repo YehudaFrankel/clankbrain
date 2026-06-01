@@ -9,12 +9,21 @@ The whole kit fits on one page. Print it, screenshot it, keep it open.
 | Type this | What it does |
 |-----------|--------------|
 | `Start Session` | Loads memory, tells you what changed last time |
-| `End Session` | Saves what you learned to memory |
+| `End Session` | Saves what you learned + writes session changes doc |
 | `/learn` | Pulls lessons + decisions out of this conversation |
 | `/plan [thing]` | Walks you through planning before you build |
 | `/recall [topic]` | Asks memory "what do we know about X?" |
 
 That's it. Everything else runs automatically.
+
+## First time on a new project
+
+| Type this | What it does |
+|-----------|--------------|
+| `scan-conventions` | Reads your real code, writes coding-conventions.md in ~10 min |
+| `map-codebase` | Maps all endpoints + methods + tables into code-map.md |
+
+Run these once. Never explain your codebase again.
 
 ---
 
