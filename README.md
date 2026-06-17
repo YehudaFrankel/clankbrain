@@ -10,7 +10,7 @@ Every session, your coding agent wakes up a stranger.
 
 You re-explain the stack. Re-describe what you were building. Re-establish why certain approaches won't work here. Then it fumbles through the same debug flow, the same code review, the same refactor — because it has no structured way to do any of it.
 
-Clankbrain fixes both. It gives Claude Code a **living memory** — decisions, mistakes, patterns, lessons that compound across sessions — and **20+ built-in workflows** for every development task: debugging, code review, refactoring, frontend design, security audits, and more.
+Clankbrain fixes both. It gives Claude Code a **living memory** — decisions, mistakes, patterns, lessons that compound across sessions — and **37 built-in workflows** for every development task: debugging, code review, refactoring, frontend design, security audits, and more.
 
 Session 1: the agent learns your stack.
 Session 10: it knows every mistake you've made, every approach you've rejected, every shortcut that works in your codebase.
@@ -174,7 +174,7 @@ Next session, Claude loads these lessons automatically — before you write a si
   -> 8 sessions in. Compounding is happening.
 ```
 
-From a real project — 160 sessions on a production Java/SQL Server codebase, not a demo.
+From a real project — 275 sessions on a production Java/SQL Server codebase, not a demo.
 
 ---
 
@@ -439,7 +439,7 @@ Claude stops at every `BREAKPOINT` and waits for your explicit "continue". Add y
 
 Clankbrain compounds with use — but only if you use it. Run `Start Session` / `End Session` every session, `/evolve` every few weeks, and Claude gets measurably better at your specific codebase over time.
 
-Tested across 160 real sessions on a production codebase. Not a demo project.
+Tested across 275 real sessions on a production codebase. Not a demo project.
 
 ---
 

@@ -158,6 +158,21 @@ def _write_gitignore():
         print("  Created .gitignore — HANDOFF.md excluded")
 
 
+def _write_gitattributes():
+    """Add *.md merge=union to .gitattributes — prevents merge conflicts on memory files across machines."""
+    gitattributes = ROOT / ".gitattributes"
+    entry = "*.md merge=union\n"
+    if gitattributes.exists():
+        content = gitattributes.read_text(encoding="utf-8")
+        if "merge=union" in content:
+            return  # already there
+        gitattributes.write_text(content.rstrip("\n") + "\n" + entry, encoding="utf-8")
+        print("  Updated .gitattributes — added *.md merge=union")
+    else:
+        gitattributes.write_text(entry, encoding="utf-8")
+        print("  Created .gitattributes — memory files will never have merge conflicts")
+
+
 def _load_demo_files(tech=""):
     """Copy pre-populated demo memory files matching the detected stack."""
     demo_dir = HERE / "demo"
@@ -1767,8 +1782,9 @@ After it completes, open a fresh Claude Code or Codex conversation and type `Sta
 Open an issue: https://github.com/YehudaFrankel/clankbrain/issues
 """)
 
-    # ── .gitignore ──
+    # ── .gitignore + .gitattributes ──
     _write_gitignore()
+    _write_gitattributes()
 
     # ── MEMORY.md ──
     write(".claude/memory/MEMORY.md", f"""# Memory Index

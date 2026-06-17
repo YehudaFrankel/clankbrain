@@ -188,5 +188,5 @@ You will see real numbers built from your actual sessions — lessons accumulate
 
 ---
 
-*Built by Yehuda Frankel. Tested across 160+ real sessions on a production codebase.*
+*Built by Yehuda Frankel. Tested across 275+ real sessions on a production codebase.*
 *[github.com/YehudaFrankel/clankbrain](https://github.com/YehudaFrankel/clankbrain)*

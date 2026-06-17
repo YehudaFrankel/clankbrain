@@ -1,6 +1,6 @@
 # The Learning Loop in Practice — A Real Case Study
 
-This is a real example from 160 sessions on a Java/SQL production codebase.
+This is a real example from 275 sessions on a Java/SQL production codebase.
 The skill is `new-endpoint`. It failed at the same step twice. `/evolve` patched it.
 
 ---

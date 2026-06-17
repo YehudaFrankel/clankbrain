@@ -121,5 +121,5 @@ That's the whole rollout.
 
 ---
 
-*Built by Yehuda Frankel. Tested across 160+ real sessions on a production codebase.*
+*Built by Yehuda Frankel. Tested across 275+ real sessions on a production codebase.*
 *[github.com/YehudaFrankel/clankbrain](https://github.com/YehudaFrankel/clankbrain)*
