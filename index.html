@@ -959,7 +959,7 @@ footer {
       <span class="h1-amber">Clankbrain</span> fixes that.
     </h1>
     <p class="hero-sub">
-      You re-explain your codebase every session. Your agent forgets your decisions, your mistakes, your patterns. Clankbrain gives it a <em>living memory</em> — decisions, lessons, patterns that grow with your project — plus <em>23+ built-in workflows</em> for debugging, code review, refactoring, design, security, and more.
+      You re-explain your codebase every session. Your agent forgets your decisions, your mistakes, your patterns. Clankbrain gives it a <em>living memory</em> — decisions, lessons, patterns that grow with your project — plus <em>37 built-in workflows</em> for debugging, code review, refactoring, design, security, and more.
     </p>
     <p style="font-size:.85rem; color:var(--amber); margin-bottom:1.25rem; letter-spacing:.02em;">Two commands: <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">Start Session</code> → work → <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">End Session</code>. That's the whole interface.</p>
     <div class="hero-btns">
@@ -1281,7 +1281,7 @@ footer {
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">API key or database required</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">zero dependencies — stdlib Python only</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">no structured development workflows</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">23+ built-in workflows: debug · review · refactor · design · security</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">37 built-in workflows: debug · review · refactor · design · security</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">unofficial / proprietary internals</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">official Anthropic hooks + skills APIs</div>
     </div>
@@ -1470,7 +1470,7 @@ footer {
 <canvas id="hexBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.15;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">agentic toolkit</div>
-    <h2>21 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
+    <h2>37 skills ship ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
     <p class="sec-desc">
       Skills live in <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">.claude/skills/</code> as markdown files.
       Chain them with <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">## Auto-Chain</code>.
@@ -1582,7 +1582,7 @@ footer {
 <canvas id="radarBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
   <div class="wrap-sm" style="position:relative;z-index:1;">
     <div class="sec-label">proof of concept</div>
-    <h2>160 sessions.<br><span class="h2-amber">One living environment.</span></h2>
+    <h2>275 sessions.<br><span class="h2-amber">One living environment.</span></h2>
     <p class="sec-desc">
       Built and validated on a production project — Java backend, vanilla JS, SQL Server.
       These numbers are from the actual engineering environment this kit grew out of.
@@ -1598,9 +1598,9 @@ footer {
       <div class="stats-body" id="stats-term-body">
         <span class="st-cmd">cat</span> <span style="color:var(--text)">stats.md</span><br>
         <span class="tdim">────────────────────────────────────────</span><br>
-        <span class="st-key">sessions logged         </span><span class="st-val">160</span><br>
-        <span class="st-key">skills in active use    </span><span class="st-val">23+</span><br>
-        <span class="st-key">sessions, zero data lost</span><span class="st-val">160</span><br>
+        <span class="st-key">sessions logged         </span><span class="st-val">275</span><br>
+        <span class="st-key">skills in active use    </span><span class="st-val">37</span><br>
+        <span class="st-key">sessions, zero data lost</span><span class="st-val">275</span><br>
         <span class="st-key">memory files tracked    </span><span class="st-val">20+</span><br>
         <span class="st-key">decisions preserved     </span><span class="st-val">15+</span><br>
         <span class="st-key">rejected approaches logged</span><span class="st-val">12</span><br>
@@ -1908,7 +1908,7 @@ const outputs = [
   { delay: 1000, html: '<span class="tok">✓ lessons.md — 34 patterns applied</span>' },
   { delay: 1400, html: '<span class="tok">✓ decisions.md — 15 settled decisions</span>' },
   { delay: 1900, html: '<span class="tmut">// last session: skill chaining + autonomous hooks</span>' },
-  { delay: 2500, html: '<span class="twarn">→ 160 sessions · zero re-explanations needed</span>' },
+  { delay: 2500, html: '<span class="twarn">→ 275 sessions · zero re-explanations needed</span>' },
   { delay: 3200, html: '<span class="tgap"></span><span class="tp">yf@clankbrain ~ $</span> <span class="cursor"></span>' },
 ];
 
@@ -2577,9 +2577,9 @@ function initStatsAnim() {
   if (!body) return;
 
   var LINES = [
-    { key: 'sessions logged         ', val: '160' },
-    { key: 'skills in active use    ', val: '23+' },
-    { key: 'sessions, zero data lost', val: '160' },
+    { key: 'sessions logged         ', val: '275' },
+    { key: 'skills in active use    ', val: '37' },
+    { key: 'sessions, zero data lost', val: '275' },
     { key: 'memory files tracked    ', val: '20+' },
     { key: 'decisions preserved     ', val: '15+' },
     { key: 'rejected approaches logged', val: '12' },
