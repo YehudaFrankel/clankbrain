@@ -231,6 +231,12 @@
           },
           {
             "type": "command",
+            "command": "python tools/memory.py --update-date",
+            "timeout": 5,
+            "statusMessage": "Updating session date…"
+          },
+          {
+            "type": "command",
             "command": "python tools/memory.py --journal",
             "timeout": 10,
             "statusMessage": "Capturing session journal..."

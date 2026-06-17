@@ -10,6 +10,7 @@ Usage:
   python tools/memory.py --precompact                 # PreCompact hook
   python tools/memory.py --postcompact                # PostCompact hook (re-inject memory after compaction)
   python tools/memory.py --stop-failure               # StopFailure hook (capture interruption state)
+  python tools/memory.py --update-date                # Stop hook (auto-update currentDate in MEMORY.md)
   python tools/memory.py --stop-check                 # Stop hook (unsaved + plans)
   python tools/memory.py --journal                    # Stop hook (session journal)
   python tools/memory.py --capture-correction         # UserPromptSubmit hook (correction detection)
@@ -1069,6 +1070,52 @@ def cmd_subagent_stop():
         f.write(line)
 
 
+def cmd_update_date():
+    """Auto-update currentDate in MEMORY.md on every Stop. Never requires manual action."""
+    memory_dir = find_memory_dir()
+    if not memory_dir:
+        return
+    memory_md = memory_dir / 'MEMORY.md'
+    if not memory_md.exists():
+        return
+    today = datetime.now().strftime('%Y-%m-%d')
+    # Try to read session number from STATUS.md
+    session_label = ''
+    status_file = ROOT / 'STATUS.md'
+    if not status_file.exists():
+        status_file = memory_dir / 'STATUS.md'
+    if status_file.exists():
+        try:
+            for line in status_file.read_text(encoding='utf-8').splitlines():
+                m = re.search(r'[Ss]ession\s+(\d+)', line)
+                if m:
+                    session_label = f' (Session {m.group(1)})'
+                    break
+        except Exception:
+            pass
+    new_date_line = f"Today's date is {today}.{session_label}"
+    content = memory_md.read_text(encoding='utf-8')
+    # Replace existing currentDate value line, or append the block if missing
+    if "# currentDate" in content:
+        lines = content.splitlines()
+        out = []
+        i = 0
+        while i < len(lines):
+            out.append(lines[i])
+            if lines[i].strip() == '# currentDate':
+                i += 1
+                # skip the old value line(s) — any non-header lines immediately after
+                while i < len(lines) and lines[i].strip() and not lines[i].startswith('#'):
+                    i += 1
+                out.append(new_date_line)
+                continue
+            i += 1
+        memory_md.write_text('\n'.join(out) + '\n', encoding='utf-8')
+    else:
+        with open(memory_md, 'a', encoding='utf-8') as f:
+            f.write(f'\n# currentDate\n{new_date_line}\n')
+
+
 def cmd_stop_check():
     memory_dir = find_memory_dir()
     if not memory_dir.exists():
@@ -1124,6 +1171,42 @@ def cmd_stop_check():
                     f'{len(old_lessons)} {noun} are 60+ days old — consider archiving if internalized: '
                     + '; '.join(sample) + (f' (+{len(old_lessons)-3} more)' if len(old_lessons) > 3 else '')
                 )
+    except Exception:
+        pass
+
+    # Skill scoring nudge — fire if any skill was logged in skill_usage.md today
+    try:
+        today_str = datetime.now().strftime('%Y-%m-%d')
+        skill_usage = memory_dir / 'tasks' / 'skill_usage.md'
+        skill_scores = memory_dir / 'tasks' / 'skill_scores.md'
+        if skill_usage.exists():
+            usage_lines = skill_usage.read_text(encoding='utf-8').splitlines()
+            used_today = []
+            for line in usage_lines:
+                if today_str in line:
+                    # Extract skill name from table row: | date | skill-name | ...
+                    parts = [p.strip() for p in line.strip('|').split('|')]
+                    if len(parts) >= 2 and parts[1]:
+                        skill_name = parts[1].strip()
+                        if skill_name and skill_name not in used_today:
+                            used_today.append(skill_name)
+            if used_today:
+                # Check which already have a score entry for today
+                already_scored = set()
+                if skill_scores.exists():
+                    for line in skill_scores.read_text(encoding='utf-8').splitlines():
+                        if today_str in line:
+                            parts = [p.strip() for p in line.strip('|').split('|')]
+                            if len(parts) >= 2:
+                                already_scored.add(parts[1].strip())
+                unscored = [s for s in used_today if s not in already_scored]
+                if unscored:
+                    skill_list = ', '.join(f'/{s}' for s in unscored[:4])
+                    messages.append(
+                        f'Skills used this session: {skill_list}. '
+                        f'Score each: did it work? Append a row to tasks/skill_scores.md — '
+                        f'Y/N, one line per skill. Keeps the self-improving loop running.'
+                    )
     except Exception:
         pass
 
@@ -3247,6 +3330,7 @@ def cmd_init():
                 'StopFailure':  [{'hooks': [{'type': 'command', 'command': f'{hook_prefix} --stop-failure','timeout': 10}]}],
                 'Stop':         [{'hooks': [
                     {'type': 'command', 'command': f'{hook_prefix} --process-corrections', 'timeout': 5},
+                    {'type': 'command', 'command': f'{hook_prefix} --update-date',         'timeout': 5,  'statusMessage': 'Updating session date...'},
                     {'type': 'command', 'command': f'{hook_prefix} --journal',             'timeout': 10, 'statusMessage': 'Saving session journal...'},
                     {'type': 'command', 'command': f'{hook_prefix} --stop-check',          'timeout': 5},
                 ]}],
@@ -3457,6 +3541,8 @@ def main():
         cmd_postcompact()
     elif '--stop-failure' in ARGS:
         cmd_stop_failure()
+    elif '--update-date' in ARGS:
+        cmd_update_date()
     elif '--subagent-start' in ARGS:
         cmd_subagent_start()
     elif '--subagent-stop' in ARGS:
