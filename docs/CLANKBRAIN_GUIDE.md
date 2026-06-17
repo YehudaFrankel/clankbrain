@@ -29,6 +29,15 @@ Think of it like hiring a contractor vs a full-time employee. A contractor needs
 
 **How it works:** There's an index file called `MEMORY.md` that lists all memory files with one-line descriptions. Claude reads the index first, then decides which files to open. It doesn't read everything — just what's relevant to the current task.
 
+**One practical tip — give Claude a date anchor:** Add a `currentDate` line to your `MEMORY.md` index and update it at every End Session:
+
+```
+# currentDate
+Today's date is 2026-06-17. (Session 275)
+```
+
+`MEMORY.md` is loaded into every session automatically. This one line gives Claude persistent time-sense across cold starts — it can tell you how long ago a session was, flag stale plans, and reason about session cadence. Without it, Claude has no idea what day it is or how many sessions have passed.
+
 **Why it matters:** Without this, you repeat yourself every session. With it, Claude already knows your team's rules, your codebase quirks, and your preferences before you type a word.
 
 ---
@@ -73,6 +82,26 @@ Think of it like hiring a contractor vs a full-time employee. A contractor needs
 | `/plan` | Creates a structured implementation plan |
 | `/smoke-test` | Runs end-to-end tests on what you just built |
 | `/act` | Reads open plans and proposes the single best next action |
+
+**How the self-improving loop actually works:**
+
+Each time a skill fires, `/learn` asks: "Did it work, or did it need a correction?" The answer goes into `skill_scores.md` as a binary log:
+
+```
+| date     | skill         | step     | what it was used for       | Y/N | severity | what failed (if Y)                         |
+|----------|---------------|----------|---------------------------|-----|----------|--------------------------------------------|
+| 2026-06-17 | plan-before-edit | step 2 | HFmtListLines revert plan | N   | -        | -                                          |
+| 2026-06-03 | plan-before-edit | step 2 | 3 plan cycles             | Y   | major    | Step 2: user had to restate the full plan  |
+```
+
+`/evolve-check` reads this log and classifies each skill:
+- **RED (URGENT)** — 3+ unpatched failures, or 2 in a row on the same step
+- **YELLOW (WATCH)** — 2 unpatched failures — ready to fix
+- **GREEN (STABLE)** — 0–1 unpatched failures
+
+When a skill hits RED or YELLOW, `/evolve` opens the SKILL.md, finds the step that failed, rewrites exactly that step, and marks the `skill_scores.md` rows as patched. The next run starts fresh from that fix.
+
+After ~275 sessions, this keeps the system converging rather than drifting. A skill that keeps failing on step 3 gets a better step 3 — not a rewrite from scratch.
 
 **Why it matters:** Skills turn Claude's best behaviors into one-word commands. The system improves itself — `/evolve` rewrites skills that keep failing, automatically.
 

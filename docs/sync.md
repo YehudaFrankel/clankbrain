@@ -32,6 +32,34 @@ Sync Status    <-  check if anything is unpushed
 
 Or from terminal: `python sync.py push` / `python sync.py pull`
 
+### Preventing merge conflicts across machines
+
+If you edit memory files on two different machines before syncing, git will report merge conflicts in your markdown files. This happens more than you'd expect — one machine has a session's lessons, another has a different session's lessons.
+
+**Permanent fix — add this to your memory repo once:**
+
+```
+# .gitattributes in your memory repo root
+*.md merge=union
+```
+
+Then change your pull command from `git pull --rebase` to `git pull --no-rebase` (or `git pull --no-rebase origin main`).
+
+**Why this works:** The `union` merge driver keeps ALL additions from both sides without conflicts. It's exactly right for append-only memory files — you never lose entries from either machine. The `--no-rebase` flag is required because rebase ignores `.gitattributes` merge drivers entirely.
+
+**What this prevents:** Without it, a session on Machine A that added 3 lessons + a session on Machine B that added 2 different lessons = merge conflict on both files. With it, the pull automatically keeps all 5 entries, no conflict.
+
+**One-time setup:**
+```bash
+cd /path/to/your-memory-repo
+echo "*.md merge=union" > .gitattributes
+git add .gitattributes
+git commit -m "Prevent merge conflicts on memory files"
+git push
+```
+
+Then update your sync script to use `pull --no-rebase` instead of `pull --rebase` or `pull`.
+
 ### On a new machine
 
 ```bash
