@@ -667,18 +667,19 @@ When the user types **"Estimate: [task description]"**, do the following:
 ### `Install Memory`
 When the user types **"Install Memory"**, do the following:
 
-1. **Analyze the codebase** — scan all JS, CSS, and backend files to understand what's here:
+1. **Ensure tools are installed** — check if `tools/memory.py` exists. If missing, run `python update.py` (or `python -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/install.py').read().decode())"` if `update.py` is also missing). The hooks in `.claude/settings.json` depend on this file — without it, Claude stops after every prompt.
+2. **Analyze the codebase** — scan all JS, CSS, and backend files to understand what's here:
    - Find all top-level JS functions across all JS files
    - Find all CSS classes (with project prefix) across all CSS files
    - Find all API endpoints / backend methods
-2. **Copy bundle to system path** — copy all `.claude/memory/*.md` files to the system memory path:
+3. **Copy bundle to system path** — copy all `.claude/memory/*.md` files to the system memory path:
    - **Mac/Linux:** `~/.claude/projects/[encoded]/memory/`
    - **Windows:** `%USERPROFILE%\\.claude\\projects\\[encoded]\\memory\\`
    - **How to encode:** replace every `/`, `\\`, and `:` with `-`
    - Example: `/home/user/myproject` → `home-user-myproject`
    - Example: `D:\\projects\\myapp` → `D--projects-myapp`
-3. **Fill any gaps** — if `js_functions.md`, `html_css_reference.md`, or `backend_reference.md` are missing entries found in step 1, add them now
-4. **Report** — "Memory installed. [N] JS functions, [N] CSS classes documented. Ready."
+4. **Fill any gaps** — if `js_functions.md`, `html_css_reference.md`, or `backend_reference.md` are missing entries found in step 2, add them now
+5. **Report** — "Memory installed. [N] JS functions, [N] CSS classes documented. Ready."
 
 ### `End Session`
 When the user types **"End Session"**, do the following:
