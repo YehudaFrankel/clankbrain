@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.10.0 (2026-08-28) — Feedback memories + comment-changes rule
+
+### Added
+- **Feedback memory type** — documented in MEMORY.md. Corrections and confirmations from the user saved as persistent rules (`feedback_*.md`). Each prevents the same mistake from recurring across sessions.
+- **`rules/comment-changes.md`** — every code change must have a clear short comment. Auto-loaded via CLAUDE.md.
+
+### Changed
+- **CLAUDE.md** — added `@rules/comment-changes.md` to auto-loaded rules.
+- **MEMORY.md** — added Feedback Memories section with format guide and examples.
+
 ## v2.9.0 (2026-05-11) — Full install ships 21 skills; Lite ships 5
 
 ### Changed

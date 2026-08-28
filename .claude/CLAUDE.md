@@ -105,5 +105,6 @@ One question, one line. If the user says proceed, proceed.
 ---
 
 @rules/plan-before-edit.md
+@rules/comment-changes.md
 @rules/regret.md
 @rules/regret-top.md

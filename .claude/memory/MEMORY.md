@@ -18,6 +18,16 @@
 - [Complexity Profile](complexity_profile.md) — Auto-generated on first Start Session. Stack, complexity score, recommended skills. Rescan: delete and run Start Session.
 - [Global Lessons](~/.claude/global-lessons.md) — Cross-project discoveries. Loaded last, after all project-specific files.
 
+## Feedback Memories
+Corrections and confirmations from the user that shape future behavior. Save these when the user corrects your approach or confirms a non-obvious choice. Each prevents the same mistake from recurring.
+
+Format: `feedback_<topic>.md` with frontmatter `type: feedback`. Lead with the rule, then **Why:** and **How to apply:**.
+
+Example entries (create as needed):
+- `feedback_always_comment_changes.md` — Every code change gets a short comment
+- `feedback_var_names_match_fields.md` — Variable names must match DB column names exactly
+- `feedback_commit_frequently.md` — Commit after each logical change, not at end of session
+
 # Memory Loading Order
 Project-specific files load first. Global lessons load last.
 This ensures project context surfaces before cross-project patterns.
