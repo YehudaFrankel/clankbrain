@@ -151,6 +151,43 @@
 
     .checkbox-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); }
 
+    .help-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--muted);
+      font-size: 0.6rem;
+      font-weight: 700;
+      cursor: help;
+      position: relative;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .help-icon .tip {
+      display: none;
+      position: absolute;
+      bottom: 22px;
+      right: -8px;
+      width: 220px;
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.4;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .help-icon:hover .tip { display: block; }
+
     .generate-btn {
       width: 100%;
       padding: 12px;
@@ -461,25 +498,25 @@
       <div class="form-group">
         <label>Include</label>
         <div class="checkbox-grid">
-          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit</label>
-          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules</label>
-          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review (deep)</label>
-          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review</label>
-          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules</label>
-          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style</label>
-          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files</label>
-          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system</label>
+          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit <span class="help-icon">?<span class="tip">Requires a full plan (Before/After code, scope, risks, rollback) before any edit. Claude waits for your explicit approval. Checks the regret log to avoid re-proposing rejected approaches.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules <span class="help-icon">?<span class="tip">Language-specific naming conventions: variables, functions, files, classes, constants. Enforced in every code review.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review <span class="help-icon">?<span class="tip">Deep language-specific code review checklist. Checks correctness, conventions, security, and simplicity. Goes beyond generic linting — catches framework-specific gotchas.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review <span class="help-icon">?<span class="tip">Security audit skill for your stack. Checks: SQL injection, XSS, auth, secrets, dependencies, file uploads, error exposure. Severity-rated findings.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules <span class="help-icon">?<span class="tip">What needs tests, what doesn't. Test naming, structure, and coverage expectations for your testing framework.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style <span class="help-icon">?<span class="tip">Conventional commit format: feat/fix/refactor/docs/test/chore. Subject under 72 chars, imperative mood, body explains WHY not WHAT.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Files Claude should never restructure — only minimal edits. Includes framework config, lock files, migrations, env files, plus any you specify.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Full persistent memory: lessons.md (what you learned), decisions.md (locked choices), STATUS.md (session tracking), regret log, skill scores, velocity tracker. Pre-populated with starter knowledge for your language.</span></span></label>
         </div>
         <div class="hint" style="margin-top:8px; margin-bottom:0;">Always included:</div>
         <div class="checkbox-grid" style="margin-top:4px; opacity:0.6;">
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback</label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Start Session loads your memory and reports last change. End Session runs /learn, updates status, commits. The ritual that makes memory compound.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">Extracts lessons, decisions, and regrets from each session. Logs to memory files. Scores each skill's effectiveness (Y/N). The engine that captures knowledge.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">Tracks rejected approaches with reasons. Plan-before-edit checks this before every plan — prevents Claude from re-proposing things that already failed.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Binary Y/N log for each skill use: did it need correction? Tracks severity and what failed. /evolve reads this to patch weak skills automatically.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking <span class="help-icon">?<span class="tip">Estimated vs actual sessions per task. Claude reads this before giving estimates — calibrates over time based on real history, not guesses.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Think before coding. Simplicity first. Surgical changes. Goal-driven execution. Four principles that prevent over-engineering and scope creep.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude challenges bad plans (conflicts with decisions/regrets), flags duplicate patterns, and surfaces one observation per session. Bounded — never lobbies or slows down.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Default Sonnet for routine work (5x cheaper). Switch to Opus only for: multi-file cross-cutting, unknown root causes, or architecture decisions. Biggest cost lever.</span></span></label>
         </div>
       </div>
 
