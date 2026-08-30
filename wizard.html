@@ -404,14 +404,13 @@
       <h2>Your project</h2>
 
       <div class="form-group">
-        <label for="projectName">Project name</label>
-        <input type="text" id="projectName" placeholder="my-app" oninput="updatePreview()">
+        <label for="projectName">Project name <span style="color:var(--accent)">*</span></label>
+        <input type="text" id="projectName" placeholder="my-app" value="my-app" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
-        <label for="language">Language</label>
+        <label for="language">Language <span style="color:var(--accent)">*</span></label>
         <select id="language" onchange="updatePreview()">
-          <option value="">Select...</option>
           <option value="javascript">JavaScript / TypeScript</option>
           <option value="python">Python</option>
           <option value="java">Java</option>
@@ -428,18 +427,17 @@
 
       <div class="form-group">
         <label for="framework">Framework</label>
-        <input type="text" id="framework" placeholder="e.g. Next.js, Django, Spring Boot" oninput="updatePreview()">
+        <input type="text" id="framework" placeholder="e.g. Next.js, Django, Spring Boot" value="Next.js" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
         <label for="database">Database</label>
-        <input type="text" id="database" placeholder="e.g. PostgreSQL, MongoDB, none" oninput="updatePreview()">
+        <input type="text" id="database" placeholder="e.g. PostgreSQL, MongoDB, none" value="PostgreSQL" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
         <label for="projectType">Type</label>
         <select id="projectType" onchange="updatePreview()">
-          <option value="">Select...</option>
           <option value="web-app">Web application</option>
           <option value="api">API / Backend service</option>
           <option value="cli">CLI tool</option>
@@ -720,6 +718,9 @@
     function closeResult() {
       document.getElementById('resultOverlay').className = 'result-overlay';
     }
+
+    // Show preview immediately on load with pre-filled defaults
+    updatePreview();
   </script>
 </body>
 </html>
