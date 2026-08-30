@@ -57,6 +57,24 @@ var LANG = {
       'No memory leaks from closures or timers',
       'Array methods used correctly (map returns, forEach does not)',
       'Strict equality (===) used, not loose (==)'
+    ],
+    starterLessons: [
+      { title: 'Floating promises cause silent failures', problem: 'Calling an async function without await means errors are swallowed silently.', solution: 'Always await async calls, or attach .catch() if fire-and-forget is intentional.' },
+      { title: '== vs === causes type coercion bugs', problem: '0 == "" is true, null == undefined is true. Loose equality hides bugs.', solution: 'Always use === and !== for comparison.' },
+      { title: 'Array.forEach cannot be broken out of', problem: 'return inside forEach does not exit the loop or the outer function.', solution: 'Use for...of or for loop when you need early exit.' },
+      { title: 'Object spread is shallow', problem: 'Nested objects are shared by reference after spread: {...obj} does not deep clone.', solution: 'Use structuredClone() for deep copies, or explicitly spread nested objects.' },
+      { title: 'import order matters for circular dependencies', problem: 'Circular imports can cause undefined values at import time.', solution: 'Restructure to break the cycle, or use lazy imports inside functions.' }
+    ],
+    starterDecisions: [
+      { title: 'async/await over callbacks', detail: 'All async code uses async/await. No raw callbacks except event handlers.' },
+      { title: 'Named exports over default exports', detail: 'Named exports enable better refactoring, auto-import, and grep-ability.' },
+      { title: 'Error boundaries at API layer', detail: 'Validate and sanitize at the API boundary. Internal code trusts validated input.' }
+    ],
+    starterRegrets: [
+      ['moment.js for dates', 'Massive bundle size. Use date-fns or Temporal API.'],
+      ['Nested ternary expressions', 'Unreadable after 2 levels. Use if/else or early returns.'],
+      ['index.js barrel files that re-export everything', 'Breaks tree-shaking and makes imports slow. Import directly from source.'],
+      ['Storing derived state in useState', 'Causes sync bugs. Compute derived values during render instead.']
     ]
   },
   python: {
@@ -93,6 +111,24 @@ var LANG = {
       'No circular imports',
       'f-strings used consistently (not % or .format)',
       'Docstrings on public classes and functions'
+    ],
+    starterLessons: [
+      { title: 'Mutable default arguments persist across calls', problem: 'def f(items=[]): items shared across all calls without explicit arg.', solution: 'Use None as default: def f(items=None): items = items or []' },
+      { title: 'bare except catches SystemExit and KeyboardInterrupt', problem: 'except: catches everything including Ctrl+C and sys.exit().', solution: 'Always except Exception or a specific type.' },
+      { title: 'String concatenation in loops is O(n^2)', problem: 'Building strings with += in a loop creates a new string each iteration.', solution: 'Use list append + "".join() or io.StringIO.' },
+      { title: 'datetime.now() without timezone is naive', problem: 'Naive datetimes cause bugs when comparing across timezones.', solution: 'Always use datetime.now(timezone.utc) or pass tz explicitly.' },
+      { title: 'requirements.txt without pinned versions causes drift', problem: 'package>=1.0 can install 2.0 which breaks your code.', solution: 'Pin exact versions: package==1.2.3. Use pip freeze.' }
+    ],
+    starterDecisions: [
+      { title: 'Type hints on all public functions', detail: 'Every public function has parameter and return type hints.' },
+      { title: 'f-strings for formatting', detail: 'No % formatting, no .format(). f-strings only.' },
+      { title: 'pathlib over os.path', detail: 'All file path operations use pathlib.Path.' }
+    ],
+    starterRegrets: [
+      ['os.path for file operations', 'Verbose and error-prone. pathlib.Path is cleaner and cross-platform.'],
+      ['print() for logging', 'No levels, no formatting, no file output. Use logging module.'],
+      ['requests library for async code', 'Blocks the event loop. Use httpx or aiohttp for async HTTP.'],
+      ['Global variables for configuration', 'Hard to test, hard to trace. Use dataclass config or env vars with pydantic.']
     ]
   },
   java: {
@@ -129,6 +165,24 @@ var LANG = {
       'No public fields — use getters',
       'Exception messages are descriptive',
       'Thread safety considered for shared state'
+    ],
+    starterLessons: [
+      { title: 'NullPointerException is the #1 runtime error', problem: 'Returning null from methods causes NPE at the caller.', solution: 'Return Optional<T> instead of null. Use @Nullable annotations.' },
+      { title: 'String concatenation in loops creates garbage', problem: 's += "text" creates a new String object each iteration.', solution: 'Use StringBuilder for loops. String concat is fine for single expressions.' },
+      { title: 'Checked exceptions force callers to handle errors', problem: 'Declaring throws on every method pushes error handling up the stack.', solution: 'Use unchecked (Runtime) exceptions for programming errors. Checked for recoverable.' },
+      { title: 'equals() and hashCode() must be consistent', problem: 'Overriding equals without hashCode breaks HashMap/HashSet.', solution: 'Always override both together. Use IDE generation or Objects.hash().' },
+      { title: 'SimpleDateFormat is not thread-safe', problem: 'Shared SimpleDateFormat instances corrupt dates under concurrency.', solution: 'Use DateTimeFormatter (immutable, thread-safe) from java.time.' }
+    ],
+    starterDecisions: [
+      { title: 'Optional over null returns', detail: 'Public methods return Optional<T>, never null.' },
+      { title: 'java.time over java.util.Date', detail: 'All date/time code uses java.time (LocalDate, Instant, ZonedDateTime).' },
+      { title: 'Constructor injection over field injection', detail: 'Dependencies injected via constructor, not @Autowired on fields.' }
+    ],
+    starterRegrets: [
+      ['java.util.Date and Calendar', 'Mutable, thread-unsafe, bad API. Use java.time.'],
+      ['Checked exceptions for business logic', 'Forces try/catch everywhere. Use RuntimeException subclasses.'],
+      ['Singleton pattern via static getInstance()', 'Untestable. Use DI framework (Spring) instead.'],
+      ['Raw JDBC without a connection pool', 'Connection leak risk. Use HikariCP or framework-managed pools.']
     ]
   },
   go: {
@@ -140,7 +194,21 @@ var LANG = {
     installCmd: 'go mod download', lockFile: 'go.sum', envFile: '.env',
     conventions: ['Accept interfaces, return structs.', 'Handle errors explicitly.', 'Short names in small scopes, descriptive in larger.', 'One function, one job.', 'Table-driven tests.', 'Group imports: stdlib, external, internal.', 'Use context.Context for cancellation.', 'Channels over shared memory for concurrency.'],
     securityChecks: ['Parameterized queries with database/sql', 'Validate input at handlers', 'crypto/rand not math/rand', 'Timeouts on HTTP clients/servers', 'html/template over text/template', 'Pin module versions', 'Never log secrets'],
-    reviewChecks: ['All errors checked — no _ for error returns', 'defer used for cleanup', 'No goroutine leaks', 'Mutex used for shared state', 'Context passed through call chain', 'Exported types documented', 'Race detector clean (go test -race)']
+    reviewChecks: ['All errors checked — no _ for error returns', 'defer used for cleanup', 'No goroutine leaks', 'Mutex used for shared state', 'Context passed through call chain', 'Exported types documented', 'Race detector clean (go test -race)'],
+    starterLessons: [
+      { title: 'Ignoring errors with _ causes silent failures', problem: 'result, _ := doSomething() — the error is discarded.', solution: 'Always check errors. If truly ignorable, add a comment explaining why.' },
+      { title: 'Goroutine leaks from unbuffered channels', problem: 'A goroutine blocked on a channel send with no receiver leaks forever.', solution: 'Use buffered channels or context cancellation to prevent goroutine leaks.' },
+      { title: 'nil slice vs empty slice behave differently in JSON', problem: 'nil marshals to null, []Type{} marshals to []. API consumers see different shapes.', solution: 'Initialize slices as []Type{} when they will be marshaled to JSON.' }
+    ],
+    starterDecisions: [
+      { title: 'Accept interfaces, return structs', detail: 'Function parameters use interfaces for flexibility. Return concrete types.' },
+      { title: 'Table-driven tests', detail: 'All unit tests use table-driven pattern with subtests.' }
+    ],
+    starterRegrets: [
+      ['init() functions for setup', 'Hard to test, implicit ordering. Use explicit initialization.'],
+      ['Global variables for config', 'Untestable. Pass config as a struct parameter.'],
+      ['panic() for error handling', 'Crashes the program. Return errors instead.']
+    ]
   },
   rust: {
     name: 'Rust', ext: '.rs', comment: '//',
@@ -151,7 +219,18 @@ var LANG = {
     installCmd: 'cargo build', lockFile: 'Cargo.lock', envFile: '.env',
     conventions: ['Use Result<T, E> for fallible ops.', 'Prefer &str over String for params.', 'Derive macros generously.', 'Minimize unsafe.', 'Use iterators over manual loops.', 'Make invalid states unrepresentable.', 'Doc comments on public items.', 'thiserror for libs, anyhow for apps.'],
     securityChecks: ['Minimize unsafe blocks', 'Parameterized queries', 'Validate input', 'Pin dependencies', 'Constant-time comparison for secrets', 'Handle integer overflow', 'Never log secrets'],
-    reviewChecks: ['No unwrap() in library code', 'Clippy warnings resolved', 'No unnecessary clones', 'Lifetimes explicit where needed', 'Error types implement std::error::Error', 'Unsafe blocks documented with safety comment', 'Tests cover error paths']
+    reviewChecks: ['No unwrap() in library code', 'Clippy warnings resolved', 'No unnecessary clones', 'Lifetimes explicit where needed', 'Error types implement std::error::Error', 'Unsafe blocks documented with safety comment', 'Tests cover error paths'],
+    starterLessons: [
+      { title: 'unwrap() in production code panics on None/Err', problem: 'option.unwrap() crashes when None. result.unwrap() crashes on Err.', solution: 'Use ? operator, match, or unwrap_or_default(). Reserve unwrap() for tests.' },
+      { title: 'String vs &str — ownership matters', problem: 'Functions taking String force callers to clone.', solution: 'Accept &str for read-only, return String when ownership transfers.' }
+    ],
+    starterDecisions: [
+      { title: 'thiserror for library errors, anyhow for apps', detail: 'Libraries define typed errors with thiserror. Applications use anyhow for convenience.' }
+    ],
+    starterRegrets: [
+      ['unwrap() in library code', 'Panics the caller. Use Result and ? operator.'],
+      ['Clone derive on large structs', 'Hidden expensive copies. Use references or Arc.']
+    ]
   },
   csharp: {
     name: 'C#', ext: '.cs', comment: '//',
@@ -162,7 +241,18 @@ var LANG = {
     installCmd: 'dotnet restore', lockFile: '*.csproj', envFile: 'appsettings.json',
     conventions: ['PascalCase public, _camelCase private.', 'var for obvious types.', 'LINQ over manual loops.', 'async/await for I/O.', 'Nullable reference types enabled.', 'Records for immutable data.', 'ILogger<T> for logging.', 'Dependency injection everywhere.'],
     securityChecks: ['Parameterized queries with EF Core', 'Data Annotations or FluentValidation', 'ASP.NET Identity for auth', 'HTTPS + HSTS', 'Anti-forgery tokens', 'User Secrets for dev secrets', 'Sanitize output'],
-    reviewChecks: ['Async methods return Task', 'IDisposable implemented correctly', 'Null checks with pattern matching', 'No string concatenation in loops', 'ConfigureAwait(false) in libraries', 'Record types for DTOs', 'No magic strings']
+    reviewChecks: ['Async methods return Task', 'IDisposable implemented correctly', 'Null checks with pattern matching', 'No string concatenation in loops', 'ConfigureAwait(false) in libraries', 'Record types for DTOs', 'No magic strings'],
+    starterLessons: [
+      { title: 'async void is fire-and-forget with no error handling', problem: 'Exceptions in async void crash the process — no way to catch them.', solution: 'Always return Task. async void only for event handlers.' },
+      { title: 'IDisposable not disposed leaks resources', problem: 'DB connections, file handles, HTTP clients leak without Dispose.', solution: 'Use using statement or using declaration for all IDisposable.' }
+    ],
+    starterDecisions: [
+      { title: 'Nullable reference types enabled', detail: 'Project-wide nullable enabled in .csproj. No null without ?.' }
+    ],
+    starterRegrets: [
+      ['HttpClient created per request', 'Socket exhaustion. Use IHttpClientFactory or singleton.'],
+      ['string concatenation in loops', 'O(n^2). Use StringBuilder or string.Join.']
+    ]
   },
   ruby: {
     name: 'Ruby', ext: '.rb', comment: '#',
@@ -173,7 +263,12 @@ var LANG = {
     installCmd: 'bundle install', lockFile: 'Gemfile.lock', envFile: '.env',
     conventions: ['Follow Ruby Style Guide.', 'frozen_string_literal comment.', 'Symbols for hash keys.', 'Guard clauses for early returns.', 'Methods under 15 lines.', 'Meaningful names.', 'each/map/select over for.', 'Bundler for deps.'],
     securityChecks: ['Parameterized queries', 'Strong parameters', 'CSRF protection', 'No raw HTML rendering', 'Pin gem versions', 'Rails credentials', 'Validate uploads'],
-    reviewChecks: ['No rescue without exception type', 'Frozen string literals', 'No N+1 queries', 'Scopes over class methods for queries', 'Service objects for business logic', 'No callbacks for complex logic', 'Rubocop clean']
+    reviewChecks: ['No rescue without exception type', 'Frozen string literals', 'No N+1 queries', 'Scopes over class methods for queries', 'Service objects for business logic', 'No callbacks for complex logic', 'Rubocop clean'],
+    starterLessons: [
+      { title: 'N+1 queries are the #1 Rails performance killer', problem: 'posts.each { |p| p.comments } fires a query per post.', solution: 'Use .includes(:comments) for eager loading.' }
+    ],
+    starterDecisions: [{ title: 'Service objects for business logic', detail: 'Controllers call service objects. No business logic in models or controllers.' }],
+    starterRegrets: [['Fat models with callbacks', 'Hard to test, surprising side effects. Use service objects.'], ['rescue => e (bare rescue)', 'Catches everything. Always specify the exception class.']]
   },
   php: {
     name: 'PHP', ext: '.php', comment: '//',
@@ -184,7 +279,12 @@ var LANG = {
     installCmd: 'composer install', lockFile: 'composer.lock', envFile: '.env',
     conventions: ['PSR-12 standard.', 'Type declarations everywhere.', 'Null coalescing over isset().', 'Named arguments for clarity.', 'Enums over class constants.', 'Thin controllers.', 'Constructor injection.', 'match() over switch().'],
     securityChecks: ['Prepared statements with PDO', 'Validate input', 'password_hash/verify', 'CSRF protection', 'No eval() or include with user input', 'display_errors=Off in prod', 'HTTPS + secure cookies'],
-    reviewChecks: ['Strict types declared', 'No mixed return types', 'Dependency injection used', 'No static methods for testable code', 'Query builder over raw SQL', 'Middleware for cross-cutting concerns', 'PHPStan at level 6+']
+    reviewChecks: ['Strict types declared', 'No mixed return types', 'Dependency injection used', 'No static methods for testable code', 'Query builder over raw SQL', 'Middleware for cross-cutting concerns', 'PHPStan at level 6+'],
+    starterLessons: [
+      { title: 'SQL injection via string interpolation', problem: '"SELECT * FROM users WHERE id = $id" — unescaped user input.', solution: 'Always use prepared statements with PDO or query builder.' }
+    ],
+    starterDecisions: [{ title: 'Strict types in every file', detail: 'declare(strict_types=1) at the top of every PHP file.' }],
+    starterRegrets: [['mysql_* functions', 'Deprecated and insecure. Use PDO.'], ['Global functions for business logic', 'Untestable. Use classes with dependency injection.']]
   },
   swift: {
     name: 'Swift', ext: '.swift', comment: '//',
@@ -195,7 +295,12 @@ var LANG = {
     installCmd: 'swift package resolve', lockFile: 'Package.resolved', envFile: '.env',
     conventions: ['let over var.', 'guard for early exits.', 'Structs over classes.', 'Protocols for abstraction.', 'No abbreviations.', 'if let or guard let for optionals.', 'Result type for errors.', 'Swift API Design Guidelines.'],
     securityChecks: ['Keychain for secrets', 'Validate server certs', 'App Transport Security', 'Sanitize input', 'Parameterized Core Data queries', 'No hardcoded keys', 'Data protection on files'],
-    reviewChecks: ['No force unwraps (!)', 'Codable for serialization', 'Combine/async-await for async', 'Access control (private/internal/public)', 'Protocol conformance tested', 'No retain cycles (weak/unowned)', 'SwiftLint clean']
+    reviewChecks: ['No force unwraps (!)', 'Codable for serialization', 'Combine/async-await for async', 'Access control (private/internal/public)', 'Protocol conformance tested', 'No retain cycles (weak/unowned)', 'SwiftLint clean'],
+    starterLessons: [
+      { title: 'Force unwrap (!) crashes on nil', problem: 'value! panics at runtime if value is nil.', solution: 'Use guard let, if let, or ?? for safe unwrapping.' }
+    ],
+    starterDecisions: [{ title: 'Structs over classes by default', detail: 'Use structs for data. Classes only when reference semantics are needed.' }],
+    starterRegrets: [['Force unwrapping optionals', 'Runtime crash. Use guard let or if let.'], ['Massive view controllers', 'Untestable. Use MVVM or coordinator pattern.']]
   },
   kotlin: {
     name: 'Kotlin', ext: '.kt', comment: '//',
@@ -206,7 +311,12 @@ var LANG = {
     installCmd: './gradlew build', lockFile: 'gradle.lockfile', envFile: 'application.yml',
     conventions: ['val over var.', 'Data classes for DTOs.', 'Sealed classes for hierarchies.', 'Extension functions over utils.', 'Scope functions appropriately.', 'Coroutines for async.', 'Null safety — avoid !!.', 'Expression bodies when clear.'],
     securityChecks: ['Parameterized queries', 'Validate at controllers', 'BCrypt for passwords', 'CORS explicit', 'Spring Security', 'Never log secrets', 'Pin versions'],
-    reviewChecks: ['No !! operator', 'Coroutine scope managed', 'Data classes for value objects', 'Sealed classes for state', 'No Java-style getters/setters', 'Extension functions not overused', 'Detekt clean']
+    reviewChecks: ['No !! operator', 'Coroutine scope managed', 'Data classes for value objects', 'Sealed classes for state', 'No Java-style getters/setters', 'Extension functions not overused', 'Detekt clean'],
+    starterLessons: [
+      { title: '!! operator is a NullPointerException waiting to happen', problem: 'value!! crashes if value is null. Same as Java NPE.', solution: 'Use safe calls (?.), elvis (?:), or let/also scope functions.' }
+    ],
+    starterDecisions: [{ title: 'Coroutines over callbacks', detail: 'All async code uses coroutines. No callback-based async.' }],
+    starterRegrets: [['!! for null assertions', 'Runtime NPE. Use ?. and ?: operators.'], ['Java-style static utility classes', 'Use extension functions or top-level functions.']]
   },
   other: {
     name: 'Custom', ext: '', comment: '#',
@@ -217,7 +327,10 @@ var LANG = {
     installCmd: '# install', lockFile: '', envFile: '.env',
     conventions: ['Define naming conventions.', 'Small focused functions.', 'Meaningful names.', 'Handle errors explicitly.', 'Test critical paths.', 'Document public APIs.', 'Review before merge.', 'Update dependencies.'],
     securityChecks: ['Validate input', 'Parameterized queries', 'No hardcoded secrets', 'HTTPS everywhere', 'Sanitize output', 'Review dependencies', 'Least privilege'],
-    reviewChecks: ['Error handling complete', 'No dead code', 'No hardcoded values', 'Tests cover happy + error paths', 'Documentation current', 'No duplicated logic', 'Performance considered']
+    reviewChecks: ['Error handling complete', 'No dead code', 'No hardcoded values', 'Tests cover happy + error paths', 'Documentation current', 'No duplicated logic', 'Performance considered'],
+    starterLessons: [],
+    starterDecisions: [],
+    starterRegrets: []
   }
 };
 
@@ -269,9 +382,9 @@ function generateFiles(body) {
     if (c === 'memory-system') {
       files['memory/MEMORY.md'] = generateMemoryIndex(body);
       files['memory/STATUS.md'] = generateStatus(body, lang);
-      files['memory/lessons.md'] = generateLessonsFile();
-      files['memory/decisions.md'] = generateDecisionsFile();
-      files['memory/tasks/regret.md'] = generateRegretFile();
+      files['memory/lessons.md'] = generateLessonsFile(lang);
+      files['memory/decisions.md'] = generateDecisionsFile(lang);
+      files['memory/tasks/regret.md'] = generateRegretFile(lang);
       files['memory/tasks/skill_scores.md'] = generateSkillScoresFile();
       files['memory/tasks/skill_usage.md'] = generateSkillUsageFile();
       files['memory/tasks/velocity.md'] = generateVelocityFile();
@@ -283,7 +396,12 @@ function generateFiles(body) {
   files['skills/learn/SKILL.md'] = generateLearnSkill();
   files['skills/start-session/SKILL.md'] = generateStartSessionSkill(body);
   files['skills/end-session/SKILL.md'] = generateEndSessionSkill(body);
+  files['skills/evolve-check/SKILL.md'] = generateEvolveCheckSkill();
+  files['skills/evolve/SKILL.md'] = generateEvolveSkill();
   files['rules/karpathy-principles.md'] = generateKarpathyPrinciples();
+
+  // Sync instructions
+  files['SYNC.md'] = generateSyncGuide(body);
 
   return files;
 }
@@ -649,16 +767,44 @@ function generateStatus(body, lang) {
   return s;
 }
 
-function generateLessonsFile() {
-  return '# Lessons Learned\n\n_Extracted patterns, mistakes, and solutions. Append after each session via `/learn`._\n\n_Format:_\n```\n## [YYYY-MM-DD] - [title]\n**Context:** what you were doing\n**Problem:** what went wrong\n**Solution:** what works\n**Apply when:** trigger conditions\n```\n';
+function generateLessonsFile(lang) {
+  var s = '# Lessons Learned\n\n';
+  s += '_Extracted patterns, mistakes, and solutions. Append after each session via `/learn`._\n\n';
+  s += '_Format:_\n```\n## [YYYY-MM-DD] - [title]\n**Context:** what you were doing\n**Problem:** what went wrong\n**Solution:** what works\n**Apply when:** trigger conditions\n```\n\n';
+  s += '## [' + new Date().toISOString().split('T')[0] + '] - Starter lessons for ' + lang.name + '\n\n';
+  if (lang.starterLessons) {
+    for (var i = 0; i < lang.starterLessons.length; i++) {
+      s += '### ' + lang.starterLessons[i].title + '\n';
+      s += '**Problem:** ' + lang.starterLessons[i].problem + '\n';
+      s += '**Solution:** ' + lang.starterLessons[i].solution + '\n\n';
+    }
+  }
+  return s;
 }
 
-function generateDecisionsFile() {
-  return '# Settled Decisions\n\n_Architectural choices that are locked. Read before proposing changes to these areas._\n\n_Add decisions here as they are made. Once added, don\'t re-litigate without explicit discussion._\n';
+function generateDecisionsFile(lang) {
+  var s = '# Settled Decisions\n\n';
+  s += '_Architectural choices that are locked. Read before proposing changes._\n\n';
+  if (lang.starterDecisions) {
+    for (var i = 0; i < lang.starterDecisions.length; i++) {
+      s += '## ' + lang.starterDecisions[i].title + '\n';
+      s += lang.starterDecisions[i].detail + '\n\n';
+    }
+  }
+  return s;
 }
 
-function generateRegretFile() {
-  return '# Rejected Approaches\n\n_Read before suggesting a solution. These were tried, evaluated, and discarded._\n\n| Approach | Why Rejected |\n|----------|-------------|\n| _(none yet)_ | _(session 1)_ |\n\n_Add entries as approaches are tried and rejected. This prevents re-proposing the same mistakes._\n';
+function generateRegretFile(lang) {
+  var s = '# Rejected Approaches\n\n';
+  s += '_Read before suggesting a solution. These were tried, evaluated, and discarded._\n\n';
+  s += '| Approach | Why Rejected |\n|----------|-------------|\n';
+  if (lang.starterRegrets) {
+    for (var i = 0; i < lang.starterRegrets.length; i++) {
+      s += '| ' + lang.starterRegrets[i][0] + ' | ' + lang.starterRegrets[i][1] + ' |\n';
+    }
+  }
+  s += '\n_Add entries as approaches are tried and rejected._\n';
+  return s;
 }
 
 function generateSkillScoresFile() {
@@ -684,5 +830,73 @@ function generateVelocityFile() {
   s += '| Task | Estimated | Actual | Notes |\n';
   s += '|------|-----------|--------|-------|\n';
   s += '| _(none yet)_ | - | - | - |\n';
+  return s;
+}
+
+// --- Evolve-Check Skill ---
+
+function generateEvolveCheckSkill() {
+  var s = '# Skill: evolve-check\n\n';
+  s += '**Trigger:** `/evolve-check` or at End Session\n\n';
+  s += '**Description:** Scan skill scores and flag skills that need attention.\n\n';
+  s += '**Allowed Tools:** Read, Grep\n\n---\n\n';
+  s += '## Steps\n\n';
+  s += '1. Read `memory/tasks/skill_scores.md`\n';
+  s += '2. For each skill, count recent Y vs N entries\n';
+  s += '3. Flag status:\n';
+  s += '   - **URGENT** - 2+ consecutive Y or 50%+ Y in last 5 uses\n';
+  s += '   - **WATCH** - 1 Y in last 5 uses\n';
+  s += '   - **STABLE** - all N in last 5 uses\n';
+  s += '   - **DATA MISSING** - fewer than 3 entries\n';
+  s += '4. Report each skill with status\n';
+  s += '5. If any URGENT: recommend running `/evolve`\n';
+  return s;
+}
+
+// --- Evolve Skill ---
+
+function generateEvolveSkill() {
+  var s = '# Skill: evolve\n\n';
+  s += '**Trigger:** `/evolve` or when evolve-check flags URGENT/WATCH\n\n';
+  s += '**Description:** Improve skills based on accumulated failure data.\n\n';
+  s += '**Allowed Tools:** Read, Edit, Write, Grep\n\n---\n\n';
+  s += '## Steps\n\n';
+  s += '1. Read `memory/tasks/skill_scores.md` - find all Y entries\n';
+  s += '2. Read `memory/lessons.md` - find related lessons\n';
+  s += '3. For each skill with unpatched failures:\n';
+  s += '   a. Read the SKILL.md\n';
+  s += '   b. Identify what step failed (from "What Failed" column)\n';
+  s += '   c. Add a check or warning to prevent recurrence\n';
+  s += '   d. Set "Skill Patched" to today\'s date in skill_scores\n';
+  s += '4. Check lessons.md for patterns appearing 3+ times - flag as new skill candidates\n';
+  s += '5. Report: "Patched N skills. Candidates: [list]"\n\n';
+  s += '## Rules\n\n';
+  s += '- Never delete skill content - only add guards\n';
+  s += '- Every patch references the specific failure\n';
+  s += '- Run every 5 sessions, or when evolve-check flags URGENT\n';
+  return s;
+}
+
+// --- Sync Guide ---
+
+function generateSyncGuide(body) {
+  var s = '# Cross-Machine Sync\n\n';
+  s += 'Your `.claude/` folder is part of your project. Sync = sync your code.\n\n';
+  s += '## Option 1: Commit with your project (recommended)\n\n';
+  s += '```\ngit add .claude/\ngit commit -m "Update Claude Code setup"\ngit push\n```\n';
+  s += 'On another machine: `git pull` and everything is there.\n\n';
+  s += '## Option 2: Separate memory repo (advanced)\n\n';
+  s += 'For private memory on a public repo:\n';
+  s += '1. `gh repo create claude-memory --private`\n';
+  s += '2. Move `.claude/memory/` to the private repo\n';
+  s += '3. Symlink it back: `ln -s ~/claude-memory/' + body.projectName + ' .claude/memory`\n';
+  s += '4. Add pull/push to Start/End Session skills\n\n';
+  s += '## What gets synced\n\n';
+  s += '| Folder | Purpose |\n|--------|--------|\n';
+  s += '| `CLAUDE.md` | Project context |\n';
+  s += '| `rules/` | Convention enforcement |\n';
+  s += '| `skills/` | Workflows |\n';
+  s += '| `memory/` | Lessons, decisions, status |\n';
+  s += '| `memory/tasks/` | Scores, velocity, regrets |\n';
   return s;
 }
