@@ -463,12 +463,23 @@
         <div class="checkbox-grid">
           <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit</label>
           <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules</label>
-          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing</label>
+          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review (deep)</label>
+          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review</label>
+          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules</label>
           <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style</label>
-          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review</label>
-          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security</label>
-          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory</label>
           <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files</label>
+          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system</label>
+        </div>
+        <div class="hint" style="margin-top:8px; margin-bottom:0;">Always included:</div>
+        <div class="checkbox-grid" style="margin-top:4px; opacity:0.6;">
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback</label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection</label>
         </div>
       </div>
 
