@@ -372,6 +372,12 @@
         <textarea id="additionalContext" placeholder="e.g. We use Prettier for formatting, deploy via GitHub Actions, the API follows REST conventions..."></textarea>
       </div>
 
+      <div class="form-group">
+        <label for="apiKey">Anthropic API key</label>
+        <div class="hint">Your key is sent directly to Anthropic and never stored. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--accent)">Get a key</a></div>
+        <input type="password" id="apiKey" placeholder="sk-ant-...">
+      </div>
+
       <button class="generate-btn" id="generateBtn" onclick="generate()">Generate my setup</button>
       <div class="error-msg" id="errorMsg"></div>
     </div>
@@ -418,6 +424,7 @@
       var teamSize = document.getElementById('teamSize').value;
       var protectedFiles = document.getElementById('protectedFiles').value.trim();
       var additionalContext = document.getElementById('additionalContext').value.trim();
+      var apiKey = document.getElementById('apiKey').value.trim();
       var conventions = getCheckedConventions();
 
       var errorMsg = document.getElementById('errorMsg');
@@ -439,6 +446,11 @@
         errorMsg.className = 'error-msg visible';
         return;
       }
+      if (!apiKey) {
+        errorMsg.textContent = 'Please enter your Anthropic API key.';
+        errorMsg.className = 'error-msg visible';
+        return;
+      }
 
       var btn = document.getElementById('generateBtn');
       btn.disabled = true;
@@ -456,7 +468,8 @@
         teamSize: teamSize,
         protectedFiles: protectedFiles,
         additionalContext: additionalContext,
-        conventions: conventions
+        conventions: conventions,
+        apiKey: apiKey
       };
 
       fetch('/api/generate', {

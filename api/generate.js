@@ -5,14 +5,15 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  var apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
-
   var body = req.body;
   if (!body || !body.projectName || !body.language || !body.projectType) {
     return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Use user-provided key, fall back to server key
+  var apiKey = body.apiKey || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.status(400).json({ error: 'Please provide your Anthropic API key' });
   }
 
   var prompt = buildPrompt(body);
