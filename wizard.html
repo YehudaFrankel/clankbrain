@@ -9,7 +9,6 @@
     :root {
       --bg: #0f0f0f;
       --card: #1a1a1a;
-      --card-hover: #222;
       --text: #e8e8e8;
       --muted: #888;
       --accent: #d97706;
@@ -19,6 +18,11 @@
       --input-bg: #141414;
       --success: #10b981;
       --success-glow: rgba(16, 185, 129, 0.15);
+      --preview-bg: #0c0c0c;
+      --code-green: #6dba78;
+      --code-blue: #7aafed;
+      --code-orange: #e8955a;
+      --code-muted: #5a5a5a;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,190 +35,92 @@
       min-height: 100vh;
     }
 
-    .container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 40px 20px 60px;
-    }
-
     /* Nav */
     .nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 48px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .nav-logo {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-decoration: none;
-    }
+    .nav-logo { font-size: 1rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+    .nav-right { display: flex; gap: 12px; align-items: center; }
 
     .nav-link {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.85rem;
-      padding: 6px 14px;
+      font-size: 0.8rem;
+      padding: 5px 12px;
       border: 1px solid var(--border);
       border-radius: 6px;
       transition: all 0.2s;
     }
 
-    .nav-link:hover {
-      color: var(--text);
-      border-color: var(--accent);
-    }
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
 
     /* Hero */
     .hero {
       text-align: center;
-      margin-bottom: 48px;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      background: var(--accent-glow);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 20px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      border: 1px solid rgba(217, 119, 6, 0.25);
+      padding: 40px 20px 32px;
     }
 
     .hero h1 {
-      font-size: 2.4rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted);
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    /* Features */
-    .features {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 40px;
-    }
-
-    .feature {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px;
-      transition: border-color 0.2s;
-    }
-
-    .feature:hover { border-color: #444; }
-
-    .feature-icon { font-size: 1.3rem; margin-bottom: 6px; }
-
-    .feature h3 { font-size: 0.85rem; font-weight: 600; margin-bottom: 2px; }
-
-    .feature p { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
-
-    /* Step indicators */
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
-
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .step.active { color: var(--accent); }
-    .step.done { color: var(--success); }
-
-    .step-dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.7rem;
-    }
-
-    .step.active .step-dot {
-      border-color: var(--accent);
-      background: var(--accent-glow);
-      color: var(--accent);
-    }
-
-    .step.done .step-dot {
-      border-color: var(--success);
-      background: var(--success-glow);
-      color: var(--success);
-    }
-
-    .step-line {
-      width: 40px;
-      height: 2px;
-      background: var(--border);
-    }
-
-    /* Form Card */
-    .wizard-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 32px;
-      margin-bottom: 24px;
-    }
-
-    .wizard-card h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
       color: var(--text);
     }
 
-    .form-group { margin-bottom: 20px; }
+    .hero p { font-size: 0.95rem; color: var(--muted); }
+    .hero p span { color: var(--accent); font-weight: 600; }
+
+    /* Main layout */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: calc(100vh - 200px);
+    }
+
+    /* Form side */
+    .form-side {
+      padding: 24px 32px;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      max-height: calc(100vh - 160px);
+    }
+
+    .form-side h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-group { margin-bottom: 16px; }
 
     .form-group label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 500;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       color: var(--text);
     }
 
-    .form-group .hint {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 5px;
-    }
+    .form-group .hint { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
 
     select, input[type="text"], textarea {
       width: 100%;
-      padding: 10px 12px;
+      padding: 8px 10px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
       background: var(--input-bg);
       color: var(--text);
       font-family: inherit;
@@ -224,291 +130,287 @@
     select:focus, input:focus, textarea:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
+      box-shadow: 0 0 0 2px var(--accent-glow);
     }
 
     select { cursor: pointer; }
     select option { background: var(--card); }
-    textarea { resize: vertical; min-height: 72px; }
+    textarea { resize: vertical; min-height: 56px; }
 
-    .checkbox-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
+    .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 
     .checkbox-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.83rem;
+      gap: 6px;
+      font-size: 0.78rem;
       color: var(--text);
-      padding: 6px 8px;
-      border-radius: 6px;
-      transition: background 0.15s;
+      padding: 4px 6px;
+      border-radius: 4px;
     }
 
-    .checkbox-item:hover { background: rgba(255,255,255,0.03); }
+    .checkbox-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); }
 
-    .checkbox-item input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--accent);
-    }
-
-    /* Button */
     .generate-btn {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: var(--accent);
       color: #000;
       border: none;
-      border-radius: 10px;
-      font-size: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
-      letter-spacing: 0.01em;
+      margin-top: 8px;
     }
 
-    .generate-btn:hover {
-      background: var(--accent-hover);
-      box-shadow: 0 0 24px var(--accent-glow);
-    }
-
+    .generate-btn:hover { background: var(--accent-hover); box-shadow: 0 0 20px var(--accent-glow); }
     .generate-btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-    /* Status */
-    .status { text-align: center; padding: 40px 20px; display: none; }
-    .status.visible { display: block; }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto 16px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .status-text { font-size: 0.95rem; color: var(--muted); }
-
-    /* Result */
-    .result { display: none; }
-    .result.visible { display: block; }
-
-    .result-card {
-      background: var(--card);
-      border: 1px solid var(--success);
-      border-radius: 14px;
-      padding: 36px;
-      text-align: center;
-      box-shadow: 0 0 40px var(--success-glow);
-    }
-
-    .result-check {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--success-glow);
-      border: 2px solid var(--success);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 1.5rem;
-    }
-
-    .result-card h2 { color: var(--success); font-size: 1.3rem; margin-bottom: 6px; }
-    .result-card .result-sub { color: var(--muted); margin-bottom: 24px; font-size: 0.9rem; }
-
-    .download-btn {
-      display: inline-block;
-      padding: 14px 40px;
-      background: var(--success);
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .download-btn:hover { background: #34d399; box-shadow: 0 0 24px var(--success-glow); }
-
-    .file-list {
-      text-align: left;
-      margin-top: 24px;
-      padding: 16px;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: 'SF Mono', 'Consolas', 'Fira Code', monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      max-height: 180px;
-      overflow-y: auto;
-    }
-
-    .file-list div { padding: 3px 0; }
-    .file-list div::before { content: ''; color: var(--success); margin-right: 6px; }
-
-    /* Next Steps */
-    .next-steps {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
-      margin-top: 20px;
-      text-align: left;
-      display: none;
-    }
-
-    .next-steps.visible { display: block; }
-
-    .next-steps h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    .next-step-item {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 14px;
-      align-items: flex-start;
-    }
-
-    .next-step-num {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--accent-glow);
-      border: 1px solid rgba(217, 119, 6, 0.3);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .next-step-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .next-step-text strong { color: var(--text); }
-
-    .next-step-code {
-      display: block;
-      margin-top: 6px;
-      padding: 8px 12px;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-family: 'SF Mono', 'Consolas', monospace;
-      font-size: 0.8rem;
-      color: var(--accent);
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 40px 0 0;
-      color: var(--muted);
-      font-size: 0.78rem;
-    }
-
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-
-    /* Error */
     .error-msg {
       background: rgba(220, 38, 38, 0.1);
       border: 1px solid rgba(220, 38, 38, 0.3);
       color: #ef4444;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-top: 8px;
       display: none;
     }
 
     .error-msg.visible { display: block; }
 
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 1.7rem; }
-      .features { grid-template-columns: 1fr; }
+    /* Preview side */
+    .preview-side {
+      background: var(--preview-bg);
+      padding: 0;
+      overflow-y: auto;
+      max-height: calc(100vh - 160px);
+      position: relative;
+    }
+
+    .preview-header {
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .preview-title {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .preview-badge {
+      font-size: 0.65rem;
+      color: var(--accent);
+      background: var(--accent-glow);
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(217, 119, 6, 0.25);
+    }
+
+    .preview-content {
+      padding: 20px;
+      font-family: 'SF Mono', 'Consolas', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--muted);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .preview-content .ph { color: var(--code-muted); font-style: italic; }
+    .preview-content .h1 { color: var(--text); font-weight: 700; font-size: 0.95rem; }
+    .preview-content .h2 { color: var(--text); font-weight: 600; font-size: 0.85rem; margin-top: 12px; }
+    .preview-content .accent { color: var(--accent); }
+    .preview-content .green { color: var(--code-green); }
+    .preview-content .blue { color: var(--code-blue); }
+    .preview-content .dim { color: var(--code-muted); }
+    .preview-content .rule { color: var(--code-orange); }
+
+    .preview-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      color: var(--code-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 40px;
+      line-height: 1.8;
+    }
+
+    /* Result overlay */
+    .result-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-overlay.visible { display: flex; }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--success);
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 0 60px var(--success-glow);
+    }
+
+    .result-check {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--success-glow);
+      border: 2px solid var(--success);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.5rem;
+      color: var(--success);
+    }
+
+    .result-card h2 { color: var(--success); font-size: 1.2rem; margin-bottom: 6px; }
+    .result-card .result-sub { color: var(--muted); margin-bottom: 20px; font-size: 0.85rem; }
+
+    .download-btn {
+      display: inline-block;
+      padding: 12px 36px;
+      background: var(--success);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .download-btn:hover { background: #34d399; }
+
+    .result-steps {
+      text-align: left;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .result-steps h4 { font-size: 0.8rem; color: var(--text); margin-bottom: 10px; }
+
+    .result-step {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      align-items: flex-start;
+    }
+
+    .result-step-num {
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .result-step code {
+      background: rgba(217, 119, 6, 0.1);
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+    }
+
+    .result-close {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-decoration: underline;
+    }
+
+    .file-list {
+      text-align: left;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--preview-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'SF Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--code-muted);
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .file-list div { padding: 2px 0; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--code-muted);
+      font-size: 0.72rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    /* Mobile */
+    @media (max-width: 800px) {
+      .main { grid-template-columns: 1fr; }
+      .form-side { border-right: none; border-bottom: 1px solid var(--border); max-height: none; padding: 20px 16px; }
+      .preview-side { max-height: 400px; }
+      .hero h1 { font-size: 1.3rem; }
       .checkbox-grid { grid-template-columns: 1fr; }
-      .container { padding: 24px 16px 40px; }
-      .steps { display: none; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav class="nav">
-      <a href="https://clankbrain.vercel.app/" class="nav-logo">clankbrain</a>
+  <nav class="nav">
+    <a href="https://clankbrain.vercel.app/" class="nav-logo">clankbrain</a>
+    <div class="nav-right">
       <a href="https://github.com/YehudaFrankel/clankbrain" class="nav-link">GitHub</a>
-    </nav>
-
-    <div class="hero">
-      <div class="hero-badge">Free &middot; Instant &middot; No API Key</div>
-      <h1>Set up Claude Code in 2 minutes</h1>
-      <p>Answer a few questions about your project. Get a complete .claude/ folder — rules, skills, memory — ready to drop in.</p>
     </div>
+  </nav>
 
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon">&#x1f4cb;</div>
-        <h3>CLAUDE.md</h3>
-        <p>Context, commands, and conventions for your stack</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">&#x1f6e1;</div>
-        <h3>Rules</h3>
-        <p>Plan-before-edit, naming, protected files</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">&#x26a1;</div>
-        <h3>Skills</h3>
-        <p>Code review and security checklists</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">&#x1f9e0;</div>
-        <h3>Memory</h3>
-        <p>Lessons, decisions, status tracking</p>
-      </div>
-    </div>
+  <div class="hero">
+    <h1>Stop re-explaining your stack every session.</h1>
+    <p>Fill in your project details. Watch your <span>CLAUDE.md</span> build in real time. Download and drop in.</p>
+  </div>
 
-    <div class="steps" id="stepsIndicator">
-      <div class="step active" id="step1"><div class="step-dot">1</div> Configure</div>
-      <div class="step-line"></div>
-      <div class="step" id="step2"><div class="step-dot">2</div> Generate</div>
-      <div class="step-line"></div>
-      <div class="step" id="step3"><div class="step-dot">3</div> Download</div>
-    </div>
-
-    <div class="wizard-card" id="wizardForm">
-      <h2>Tell us about your project</h2>
+  <div class="main">
+    <!-- Form -->
+    <div class="form-side">
+      <h2>Your project</h2>
 
       <div class="form-group">
         <label for="projectName">Project name</label>
-        <input type="text" id="projectName" placeholder="my-app">
+        <input type="text" id="projectName" placeholder="my-app" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
-        <label for="language">Primary language</label>
-        <select id="language">
+        <label for="language">Language</label>
+        <select id="language" onchange="updatePreview()">
           <option value="">Select...</option>
           <option value="javascript">JavaScript / TypeScript</option>
           <option value="python">Python</option>
@@ -526,17 +428,17 @@
 
       <div class="form-group">
         <label for="framework">Framework</label>
-        <input type="text" id="framework" placeholder="e.g. Next.js, Django, Spring Boot, Express">
+        <input type="text" id="framework" placeholder="e.g. Next.js, Django, Spring Boot" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
         <label for="database">Database</label>
-        <input type="text" id="database" placeholder="e.g. PostgreSQL, MongoDB, SQLite, none">
+        <input type="text" id="database" placeholder="e.g. PostgreSQL, MongoDB, none" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
-        <label for="projectType">Project type</label>
-        <select id="projectType">
+        <label for="projectType">Type</label>
+        <select id="projectType" onchange="updatePreview()">
           <option value="">Select...</option>
           <option value="web-app">Web application</option>
           <option value="api">API / Backend service</option>
@@ -544,162 +446,228 @@
           <option value="mobile">Mobile app</option>
           <option value="library">Library / Package</option>
           <option value="monorepo">Monorepo</option>
-          <option value="fullstack">Full stack (frontend + backend)</option>
+          <option value="fullstack">Full stack</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="teamSize">Team size</label>
+        <label for="teamSize">Team</label>
         <select id="teamSize">
-          <option value="solo">Solo developer</option>
-          <option value="small">Small team (2-5)</option>
-          <option value="medium">Medium team (6-20)</option>
-          <option value="large">Large team (20+)</option>
+          <option value="solo">Solo</option>
+          <option value="small">2-5</option>
+          <option value="medium">6-20</option>
+          <option value="large">20+</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>What do you want?</label>
-        <div class="hint">Select what to include in your setup</div>
+        <label>Include</label>
         <div class="checkbox-grid">
-          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked> Plan before edit</label>
-          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked> Naming conventions</label>
-          <label class="checkbox-item"><input type="checkbox" value="testing"> Testing rules</label>
-          <label class="checkbox-item"><input type="checkbox" value="commit-style"> Commit style</label>
-          <label class="checkbox-item"><input type="checkbox" value="code-review" checked> Code review skill</label>
-          <label class="checkbox-item"><input type="checkbox" value="security"> Security review skill</label>
-          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked> Memory system</label>
-          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked> Protected files</label>
+          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit</label>
+          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules</label>
+          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing</label>
+          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style</label>
+          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review</label>
+          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security</label>
+          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory</label>
+          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files</label>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="protectedFiles">Protected files (optional)</label>
-        <div class="hint">Files Claude should never restructure - one per line</div>
-        <textarea id="protectedFiles" placeholder="e.g.&#10;src/config/database.js&#10;migrations/&#10;.env"></textarea>
+        <label for="protectedFiles">Protected files <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+        <textarea id="protectedFiles" placeholder="One per line" oninput="updatePreview()"></textarea>
       </div>
 
       <div class="form-group">
-        <label for="additionalContext">Anything else? (optional)</label>
-        <textarea id="additionalContext" placeholder="e.g. We use Prettier, deploy via GitHub Actions, the API follows REST conventions..."></textarea>
+        <label for="additionalContext">Extra context <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+        <textarea id="additionalContext" placeholder="Anything else Claude should know..." oninput="updatePreview()"></textarea>
       </div>
 
-      <button class="generate-btn" id="generateBtn" onclick="generate()">Generate my setup</button>
+      <button class="generate-btn" id="generateBtn" onclick="generate()">Generate &amp; Download</button>
       <div class="error-msg" id="errorMsg"></div>
     </div>
 
-    <div class="status" id="loadingStatus">
-      <div class="spinner"></div>
-      <div class="status-text">Generating your setup...</div>
+    <!-- Live Preview -->
+    <div class="preview-side">
+      <div class="preview-header">
+        <span class="preview-title">Live Preview</span>
+        <span class="preview-badge">updates as you type</span>
+      </div>
+      <div id="previewContent" class="preview-content">
+        <div class="preview-empty">
+          Type a project name and<br>select a language to see<br>your CLAUDE.md build live.
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="result" id="resultSection">
-      <div class="result-card">
-        <div class="result-check">&#10003;</div>
-        <h2>Your setup is ready</h2>
-        <p class="result-sub">Download and extract into your project root.</p>
-        <button class="download-btn" id="downloadBtn" onclick="downloadZip()">Download .claude/ folder</button>
-        <div class="file-list" id="fileList"></div>
+  <!-- Result Overlay -->
+  <div class="result-overlay" id="resultOverlay">
+    <div class="result-card">
+      <div class="result-check">&#10003;</div>
+      <h2>Ready to go</h2>
+      <p class="result-sub" id="resultFileCount"></p>
+      <button class="download-btn" onclick="downloadZip()">Download .claude/ folder</button>
+      <div class="file-list" id="fileList"></div>
+      <div class="result-steps">
+        <h4>Next steps</h4>
+        <div class="result-step"><span class="result-step-num">1.</span> Extract the zip into your project root</div>
+        <div class="result-step"><span class="result-step-num">2.</span> Open Claude Code: <code>cd your-project && claude</code></div>
+        <div class="result-step"><span class="result-step-num">3.</span> Start coding. Claude knows your stack now.</div>
+        <div class="result-step"><span class="result-step-num">4.</span> Lessons accumulate in <code>.claude/memory/</code> each session</div>
       </div>
+      <button class="result-close" onclick="closeResult()">Close</button>
     </div>
+  </div>
 
-    <div class="next-steps" id="nextSteps">
-      <h3>What to do next</h3>
-      <div class="next-step-item">
-        <div class="next-step-num">1</div>
-        <div class="next-step-text">
-          <strong>Extract the zip</strong> into your project root. You should have a <code>.claude/</code> folder next to your <code>src/</code> or <code>package.json</code>.
-        </div>
-      </div>
-      <div class="next-step-item">
-        <div class="next-step-num">2</div>
-        <div class="next-step-text">
-          <strong>Open Claude Code</strong> in your project directory. It will automatically read <code>.claude/CLAUDE.md</code> and all rules.
-          <span class="next-step-code">cd your-project && claude</span>
-        </div>
-      </div>
-      <div class="next-step-item">
-        <div class="next-step-num">3</div>
-        <div class="next-step-text">
-          <strong>Start coding.</strong> Claude now knows your stack, conventions, and rules. Try: "review this file" or make a change and see the plan-before-edit workflow in action.
-        </div>
-      </div>
-      <div class="next-step-item">
-        <div class="next-step-num">4</div>
-        <div class="next-step-text">
-          <strong>The system learns.</strong> After each session, lessons and decisions accumulate in <code>.claude/memory/</code>. Each session is smarter than the last.
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <a href="https://github.com/YehudaFrankel/clankbrain">GitHub</a> &middot; Built by <a href="https://github.com/YehudaFrankel">Yehuda Frankel</a> &middot; Free forever
-    </div>
+  <div class="footer">
+    <a href="https://github.com/YehudaFrankel/clankbrain">GitHub</a> &middot; Built by <a href="https://github.com/YehudaFrankel">Yehuda Frankel</a> &middot; Free forever
   </div>
 
   <script>
     var generatedFiles = null;
 
-    function getCheckedConventions() {
-      var checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
-      var checked = [];
-      for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          checked.push(checkboxes[i].value);
+    var LANG_DATA = {
+      javascript: { name: 'JavaScript', test: 'jest', testCmd: 'npm test', devCmd: 'npm run dev', buildCmd: 'npm run build', installCmd: 'npm install', lint: 'eslint', format: 'prettier' },
+      python: { name: 'Python', test: 'pytest', testCmd: 'pytest', devCmd: 'python manage.py runserver', buildCmd: 'python -m build', installCmd: 'pip install -r requirements.txt', lint: 'ruff', format: 'black' },
+      java: { name: 'Java', test: 'JUnit 5', testCmd: 'mvn test', devCmd: 'mvn spring-boot:run', buildCmd: 'mvn package', installCmd: 'mvn install', lint: 'checkstyle', format: 'google-java-format' },
+      go: { name: 'Go', test: 'go test', testCmd: 'go test ./...', devCmd: 'go run .', buildCmd: 'go build', installCmd: 'go mod download', lint: 'golangci-lint', format: 'gofmt' },
+      rust: { name: 'Rust', test: 'cargo test', testCmd: 'cargo test', devCmd: 'cargo run', buildCmd: 'cargo build --release', installCmd: 'cargo build', lint: 'clippy', format: 'rustfmt' },
+      csharp: { name: 'C#', test: 'xUnit', testCmd: 'dotnet test', devCmd: 'dotnet run', buildCmd: 'dotnet build', installCmd: 'dotnet restore', lint: 'dotnet format', format: 'dotnet format' },
+      ruby: { name: 'Ruby', test: 'RSpec', testCmd: 'bundle exec rspec', devCmd: 'rails server', buildCmd: 'rake build', installCmd: 'bundle install', lint: 'rubocop', format: 'rubocop' },
+      php: { name: 'PHP', test: 'PHPUnit', testCmd: 'vendor/bin/phpunit', devCmd: 'php artisan serve', buildCmd: 'composer build', installCmd: 'composer install', lint: 'phpstan', format: 'php-cs-fixer' },
+      swift: { name: 'Swift', test: 'XCTest', testCmd: 'swift test', devCmd: 'swift run', buildCmd: 'swift build', installCmd: 'swift package resolve', lint: 'swiftlint', format: 'swift-format' },
+      kotlin: { name: 'Kotlin', test: 'JUnit 5', testCmd: './gradlew test', devCmd: './gradlew bootRun', buildCmd: './gradlew build', installCmd: './gradlew build', lint: 'ktlint', format: 'ktlint' },
+      other: { name: 'Custom', test: 'project-specific', testCmd: '# test command', devCmd: '# dev command', buildCmd: '# build command', installCmd: '# install', lint: 'project-specific', format: 'project-specific' }
+    };
+
+    function getChecked() {
+      var cbs = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
+      var r = [];
+      for (var i = 0; i < cbs.length; i++) {
+        if (cbs[i].checked) { r.push(cbs[i].value); }
+      }
+      return r;
+    }
+
+    function updatePreview() {
+      var name = document.getElementById('projectName').value.trim();
+      var langKey = document.getElementById('language').value;
+      var framework = document.getElementById('framework').value.trim();
+      var database = document.getElementById('database').value.trim();
+      var projectType = document.getElementById('projectType').value;
+      var protectedFiles = document.getElementById('protectedFiles').value.trim();
+      var additionalContext = document.getElementById('additionalContext').value.trim();
+      var conventions = getChecked();
+      var el = document.getElementById('previewContent');
+
+      if (!name && !langKey) {
+        el.innerHTML = '<div class="preview-empty">Type a project name and<br>select a language to see<br>your CLAUDE.md build live.</div>';
+        return;
+      }
+
+      var lang = LANG_DATA[langKey] || null;
+      var s = '';
+
+      // CLAUDE.md
+      s += '<span class="h1"># ' + (name || 'my-project') + '</span>\n\n';
+
+      if (projectType) {
+        var types = {'web-app':'A web application.','api':'A backend API service.','cli':'A command-line tool.','mobile':'A mobile application.','library':'A reusable library.','monorepo':'A monorepo with multiple packages.','fullstack':'A full-stack application.'};
+        s += '<span class="h2">## What This Project Is</span>\n';
+        s += (types[projectType] || '') + '\n\n';
+      }
+
+      s += '<span class="h2">## Tech Stack</span>\n';
+      s += '<span class="accent">- Language:</span> ' + (lang ? lang.name : 'Select a language...') + '\n';
+      if (framework) { s += '<span class="accent">- Framework:</span> ' + framework + '\n'; }
+      if (database) { s += '<span class="accent">- Database:</span> ' + database + '\n'; }
+      if (lang) {
+        s += '<span class="accent">- Testing:</span> ' + lang.test + '\n';
+        s += '<span class="accent">- Linting:</span> ' + lang.lint + '\n';
+      }
+      s += '\n';
+
+      if (lang) {
+        s += '<span class="h2">## Commands</span>\n';
+        s += '<span class="dim">```</span>\n';
+        s += '<span class="green">Install:</span>  ' + lang.installCmd + '\n';
+        s += '<span class="green">Dev:</span>      ' + lang.devCmd + '\n';
+        s += '<span class="green">Build:</span>    ' + lang.buildCmd + '\n';
+        s += '<span class="green">Test:</span>     ' + lang.testCmd + '\n';
+        s += '<span class="green">Lint:</span>     ' + lang.lint + ' .\n';
+        s += '<span class="dim">```</span>\n\n';
+      }
+
+      if (additionalContext) {
+        s += '<span class="h2">## Additional Context</span>\n';
+        s += additionalContext + '\n\n';
+      }
+
+      // Rules
+      if (conventions.length > 0) {
+        s += '<span class="h2">## Rules</span>\n';
+        for (var i = 0; i < conventions.length; i++) {
+          var c = conventions[i];
+          if (c === 'plan-before-edit') { s += '<span class="rule">@rules/plan-before-edit.md</span>\n'; }
+          if (c === 'naming-conventions') { s += '<span class="rule">@rules/naming-conventions.md</span>\n'; }
+          if (c === 'testing') { s += '<span class="rule">@rules/testing.md</span>\n'; }
+          if (c === 'commit-style') { s += '<span class="rule">@rules/commit-style.md</span>\n'; }
+          if (c === 'protected-files') { s += '<span class="rule">@rules/protected-files.md</span>\n'; }
+        }
+        s += '\n';
+      }
+
+      // Files generated
+      s += '<span class="dim">---</span>\n';
+      s += '<span class="dim">Files that will be generated:</span>\n';
+      s += '<span class="blue">  CLAUDE.md</span>\n';
+      for (var j = 0; j < conventions.length; j++) {
+        var cv = conventions[j];
+        if (cv === 'plan-before-edit') { s += '<span class="blue">  rules/plan-before-edit.md</span>\n'; }
+        if (cv === 'naming-conventions') { s += '<span class="blue">  rules/naming-conventions.md</span>\n'; }
+        if (cv === 'testing') { s += '<span class="blue">  rules/testing.md</span>\n'; }
+        if (cv === 'commit-style') { s += '<span class="blue">  rules/commit-style.md</span>\n'; }
+        if (cv === 'protected-files') { s += '<span class="blue">  rules/protected-files.md</span>\n'; }
+        if (cv === 'code-review') { s += '<span class="blue">  skills/code-review/SKILL.md</span>\n'; }
+        if (cv === 'security') { s += '<span class="blue">  skills/security-review/SKILL.md</span>\n'; }
+        if (cv === 'memory-system') {
+          s += '<span class="blue">  memory/MEMORY.md</span>\n';
+          s += '<span class="blue">  memory/STATUS.md</span>\n';
+          s += '<span class="blue">  memory/lessons.md</span>\n';
+          s += '<span class="blue">  memory/decisions.md</span>\n';
         }
       }
-      return checked;
+
+      el.innerHTML = s;
     }
 
     function generate() {
       var projectName = document.getElementById('projectName').value.trim();
       var language = document.getElementById('language').value;
-      var framework = document.getElementById('framework').value.trim();
-      var database = document.getElementById('database').value.trim();
       var projectType = document.getElementById('projectType').value;
-      var teamSize = document.getElementById('teamSize').value;
-      var protectedFiles = document.getElementById('protectedFiles').value.trim();
-      var additionalContext = document.getElementById('additionalContext').value.trim();
-      var conventions = getCheckedConventions();
-
       var errorMsg = document.getElementById('errorMsg');
       errorMsg.className = 'error-msg';
 
-      if (!projectName) {
-        errorMsg.textContent = 'Please enter a project name.';
-        errorMsg.className = 'error-msg visible';
-        return;
-      }
-      if (!language) {
-        errorMsg.textContent = 'Please select a primary language.';
-        errorMsg.className = 'error-msg visible';
-        return;
-      }
-      if (!projectType) {
-        errorMsg.textContent = 'Please select a project type.';
-        errorMsg.className = 'error-msg visible';
-        return;
-      }
+      if (!projectName) { errorMsg.textContent = 'Enter a project name.'; errorMsg.className = 'error-msg visible'; return; }
+      if (!language) { errorMsg.textContent = 'Select a language.'; errorMsg.className = 'error-msg visible'; return; }
+      if (!projectType) { errorMsg.textContent = 'Select a project type.'; errorMsg.className = 'error-msg visible'; return; }
 
       var btn = document.getElementById('generateBtn');
       btn.disabled = true;
       btn.textContent = 'Generating...';
 
-      document.getElementById('wizardForm').style.display = 'none';
-      document.getElementById('loadingStatus').className = 'status visible';
-      document.getElementById('step1').className = 'step done';
-      document.getElementById('step2').className = 'step active';
-
       var payload = {
         projectName: projectName,
         language: language,
-        framework: framework,
-        database: database,
+        framework: document.getElementById('framework').value.trim(),
+        database: document.getElementById('database').value.trim(),
         projectType: projectType,
-        teamSize: teamSize,
-        protectedFiles: protectedFiles,
-        additionalContext: additionalContext,
-        conventions: conventions
+        teamSize: document.getElementById('teamSize').value,
+        protectedFiles: document.getElementById('protectedFiles').value.trim(),
+        additionalContext: document.getElementById('additionalContext').value.trim(),
+        conventions: getChecked()
       };
 
       fetch('/api/generate', {
@@ -708,38 +676,27 @@
         body: JSON.stringify(payload)
       })
       .then(function(res) {
-        if (!res.ok) {
-          return res.json().then(function(data) {
-            throw new Error(data.error || 'Generation failed');
-          });
-        }
+        if (!res.ok) { return res.json().then(function(d) { throw new Error(d.error || 'Failed'); }); }
         return res.json();
       })
       .then(function(data) {
         generatedFiles = data.files;
-        document.getElementById('loadingStatus').className = 'status';
-        document.getElementById('step2').className = 'step done';
-        document.getElementById('step3').className = 'step active';
-
+        var fileNames = Object.keys(data.files);
+        document.getElementById('resultFileCount').textContent = fileNames.length + ' files generated';
         var fileList = document.getElementById('fileList');
         fileList.innerHTML = '';
-        var fileNames = Object.keys(data.files);
         for (var i = 0; i < fileNames.length; i++) {
           var div = document.createElement('div');
           div.textContent = '.claude/' + fileNames[i];
           fileList.appendChild(div);
         }
-
-        document.getElementById('resultSection').className = 'result visible';
-        document.getElementById('nextSteps').className = 'next-steps visible';
+        document.getElementById('resultOverlay').className = 'result-overlay visible';
+        btn.disabled = false;
+        btn.textContent = 'Generate & Download';
       })
       .catch(function(err) {
-        document.getElementById('loadingStatus').className = 'status';
-        document.getElementById('wizardForm').style.display = 'block';
-        document.getElementById('step2').className = 'step';
-        document.getElementById('step1').className = 'step active';
         btn.disabled = false;
-        btn.textContent = 'Generate my setup';
+        btn.textContent = 'Generate & Download';
         errorMsg.textContent = err.message;
         errorMsg.className = 'error-msg visible';
       });
@@ -747,22 +704,21 @@
 
     function downloadZip() {
       if (!generatedFiles) { return; }
-
       var form = document.createElement('form');
       form.method = 'POST';
       form.action = '/api/download';
-
       var input = document.createElement('input');
       input.type = 'hidden';
       input.name = 'files';
       input.value = JSON.stringify(generatedFiles);
       form.appendChild(input);
-
       document.body.appendChild(form);
       form.submit();
       document.body.removeChild(form);
+    }
 
-      document.getElementById('step3').className = 'step done';
+    function closeResult() {
+      document.getElementById('resultOverlay').className = 'result-overlay';
     }
   </script>
 </body>
