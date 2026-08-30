@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clankbrain Wizard - Generate Your Claude Code Setup</title>
+  <meta name="description" content="Generate a complete Claude Code setup for your project in under 2 minutes. Rules, skills, memory structure - all tailored to your stack.">
+  <style>
+    :root {
+      --bg: #fafaf9;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --border: #e5e5e5;
+      --input-bg: #f9fafb;
+      --success: #059669;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .feature {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .feature-icon { font-size: 1.5rem; margin-bottom: 8px; }
+
+    .feature h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+
+    .feature p { font-size: 0.85rem; color: var(--muted); }
+
+    .wizard-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .wizard-card h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 24px; }
+
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-group .hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: var(--input-bg);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .generate-btn:hover { background: var(--accent-hover); }
+    .generate-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+
+    .status { text-align: center; padding: 20px; display: none; }
+    .status.visible { display: block; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status-text { font-size: 0.95rem; color: var(--muted); }
+
+    .result { display: none; }
+    .result.visible { display: block; }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--success);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .result-card h2 { color: var(--success); font-size: 1.3rem; margin-bottom: 8px; }
+    .result-card p { color: var(--muted); margin-bottom: 20px; }
+
+    .download-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .download-btn:hover { background: #047857; }
+
+    .file-list {
+      text-align: left;
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--input-bg);
+      border-radius: 8px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .file-list div { padding: 2px 0; }
+
+    .footer {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    .error-msg {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .features { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .container { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">&#8592; Back to Clankbrain</a>
+
+    <div class="hero">
+      <h1><span>Clankbrain</span> Wizard</h1>
+      <p>Generate a complete Claude Code setup for your project in under 2 minutes.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">&#x1f4cb;</div>
+        <h3>CLAUDE.md</h3>
+        <p>Project context and conventions tailored to your stack</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1f6e1;</div>
+        <h3>Rules</h3>
+        <p>Convention enforcement and plan-before-edit workflow</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x26a1;</div>
+        <h3>Skills</h3>
+        <p>Reusable workflows for deploy, test, and review</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1f9e0;</div>
+        <h3>Memory</h3>
+        <p>Persistent learning structure across sessions</p>
+      </div>
+    </div>
+
+    <div class="wizard-card" id="wizardForm">
+      <h2>Tell us about your project</h2>
+
+      <div class="form-group">
+        <label for="projectName">Project name</label>
+        <input type="text" id="projectName" placeholder="my-app">
+      </div>
+
+      <div class="form-group">
+        <label for="language">Primary language</label>
+        <select id="language">
+          <option value="">Select...</option>
+          <option value="javascript">JavaScript / TypeScript</option>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+          <option value="go">Go</option>
+          <option value="rust">Rust</option>
+          <option value="csharp">C# / .NET</option>
+          <option value="ruby">Ruby</option>
+          <option value="php">PHP</option>
+          <option value="swift">Swift</option>
+          <option value="kotlin">Kotlin</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="framework">Framework</label>
+        <input type="text" id="framework" placeholder="e.g. Next.js, Django, Spring Boot, Express">
+      </div>
+
+      <div class="form-group">
+        <label for="database">Database</label>
+        <input type="text" id="database" placeholder="e.g. PostgreSQL, MongoDB, SQLite, none">
+      </div>
+
+      <div class="form-group">
+        <label for="projectType">Project type</label>
+        <select id="projectType">
+          <option value="">Select...</option>
+          <option value="web-app">Web application</option>
+          <option value="api">API / Backend service</option>
+          <option value="cli">CLI tool</option>
+          <option value="mobile">Mobile app</option>
+          <option value="library">Library / Package</option>
+          <option value="monorepo">Monorepo</option>
+          <option value="fullstack">Full stack (frontend + backend)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="teamSize">Team size</label>
+        <select id="teamSize">
+          <option value="solo">Solo developer</option>
+          <option value="small">Small team (2-5)</option>
+          <option value="medium">Medium team (6-20)</option>
+          <option value="large">Large team (20+)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>What matters most?</label>
+        <div class="hint">Select the conventions you want enforced</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked> Plan before edit</label>
+          <label class="checkbox-item"><input type="checkbox" value="naming-conventions"> Naming conventions</label>
+          <label class="checkbox-item"><input type="checkbox" value="testing"> Testing requirements</label>
+          <label class="checkbox-item"><input type="checkbox" value="commit-style"> Commit message style</label>
+          <label class="checkbox-item"><input type="checkbox" value="code-review"> Code review checklist</label>
+          <label class="checkbox-item"><input type="checkbox" value="security"> Security review</label>
+          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked> Memory system</label>
+          <label class="checkbox-item"><input type="checkbox" value="protected-files"> Protected files</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="protectedFiles">Protected files (optional)</label>
+        <div class="hint">Files Claude should never restructure - one per line</div>
+        <textarea id="protectedFiles" placeholder="e.g.&#10;src/config/database.js&#10;migrations/&#10;.env"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="additionalContext">Anything else Claude should know? (optional)</label>
+        <textarea id="additionalContext" placeholder="e.g. We use Prettier for formatting, deploy via GitHub Actions, the API follows REST conventions..."></textarea>
+      </div>
+
+      <button class="generate-btn" id="generateBtn" onclick="generate()">Generate my setup</button>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <div class="status" id="loadingStatus">
+      <div class="spinner"></div>
+      <div class="status-text">Generating your Claude Code setup with Claude...</div>
+    </div>
+
+    <div class="result" id="resultSection">
+      <div class="result-card">
+        <h2>Your setup is ready</h2>
+        <p>Download the zip and extract it into your project root.</p>
+        <button class="download-btn" id="downloadBtn" onclick="downloadZip()">Download .claude/ folder</button>
+        <div class="file-list" id="fileList"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <a href="https://github.com/YehudaFrankel/clankbrain">GitHub</a> &middot; Built by <a href="https://github.com/YehudaFrankel">Yehuda Frankel</a>
+    </div>
+  </div>
+
+  <script>
+    var generatedFiles = null;
+
+    function getCheckedConventions() {
+      var checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
+      var checked = [];
+      for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+          checked.push(checkboxes[i].value);
+        }
+      }
+      return checked;
+    }
+
+    function generate() {
+      var projectName = document.getElementById('projectName').value.trim();
+      var language = document.getElementById('language').value;
+      var framework = document.getElementById('framework').value.trim();
+      var database = document.getElementById('database').value.trim();
+      var projectType = document.getElementById('projectType').value;
+      var teamSize = document.getElementById('teamSize').value;
+      var protectedFiles = document.getElementById('protectedFiles').value.trim();
+      var additionalContext = document.getElementById('additionalContext').value.trim();
+      var conventions = getCheckedConventions();
+
+      var errorMsg = document.getElementById('errorMsg');
+      errorMsg.className = 'error-msg';
+      errorMsg.textContent = '';
+
+      if (!projectName) {
+        errorMsg.textContent = 'Please enter a project name.';
+        errorMsg.className = 'error-msg visible';
+        return;
+      }
+      if (!language) {
+        errorMsg.textContent = 'Please select a primary language.';
+        errorMsg.className = 'error-msg visible';
+        return;
+      }
+      if (!projectType) {
+        errorMsg.textContent = 'Please select a project type.';
+        errorMsg.className = 'error-msg visible';
+        return;
+      }
+
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+
+      document.getElementById('wizardForm').style.display = 'none';
+      document.getElementById('loadingStatus').className = 'status visible';
+
+      var payload = {
+        projectName: projectName,
+        language: language,
+        framework: framework,
+        database: database,
+        projectType: projectType,
+        teamSize: teamSize,
+        protectedFiles: protectedFiles,
+        additionalContext: additionalContext,
+        conventions: conventions
+      };
+
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) {
+        if (!res.ok) {
+          return res.json().then(function(data) {
+            throw new Error(data.error || 'Generation failed');
+          });
+        }
+        return res.json();
+      })
+      .then(function(data) {
+        generatedFiles = data.files;
+        document.getElementById('loadingStatus').className = 'status';
+
+        var fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        var fileNames = Object.keys(data.files);
+        for (var i = 0; i < fileNames.length; i++) {
+          var div = document.createElement('div');
+          div.textContent = '.claude/' + fileNames[i];
+          fileList.appendChild(div);
+        }
+
+        document.getElementById('resultSection').className = 'result visible';
+      })
+      .catch(function(err) {
+        document.getElementById('loadingStatus').className = 'status';
+        document.getElementById('wizardForm').style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Generate my setup';
+        errorMsg.textContent = err.message;
+        errorMsg.className = 'error-msg visible';
+      });
+    }
+
+    function downloadZip() {
+      if (!generatedFiles) { return; }
+
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/api/download';
+
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'files';
+      input.value = JSON.stringify(generatedFiles);
+      form.appendChild(input);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    }
+  </script>
+</body>
+</html>

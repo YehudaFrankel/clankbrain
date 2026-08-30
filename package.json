@@ -15,5 +15,9 @@
   "homepage": "https://clankbrain.vercel.app",
   "engines": {
     "node": ">=14"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "jszip": "^3.10.1"
   }
 }
