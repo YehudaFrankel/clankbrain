@@ -170,11 +170,8 @@
 
     .help-icon .tip {
       display: none;
-      position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
+      position: fixed;
+      width: 240px;
       background: #222;
       border: 1px solid #444;
       border-radius: 6px;
@@ -183,8 +180,9 @@
       font-weight: 400;
       color: var(--text);
       line-height: 1.4;
-      z-index: 50;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      z-index: 1000;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      pointer-events: none;
     }
 
     .help-icon:hover .tip { display: block; }
@@ -499,25 +497,26 @@
       <div class="form-group">
         <label>Include</label>
         <div class="checkbox-grid">
-          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit <span class="help-icon">?<span class="tip">Requires a full plan (Before/After code, scope, risks, rollback) before any edit. Claude waits for your explicit approval. Checks the regret log to avoid re-proposing rejected approaches.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules <span class="help-icon">?<span class="tip">Language-specific naming conventions: variables, functions, files, classes, constants. Enforced in every code review.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review <span class="help-icon">?<span class="tip">Deep language-specific code review checklist. Checks correctness, conventions, security, and simplicity. Goes beyond generic linting — catches framework-specific gotchas.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review <span class="help-icon">?<span class="tip">Security audit skill for your stack. Checks: SQL injection, XSS, auth, secrets, dependencies, file uploads, error exposure. Severity-rated findings.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules <span class="help-icon">?<span class="tip">What needs tests, what doesn't. Test naming, structure, and coverage expectations for your testing framework.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style <span class="help-icon">?<span class="tip">Conventional commit format: feat/fix/refactor/docs/test/chore. Subject under 72 chars, imperative mood, body explains WHY not WHAT.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Files Claude should never restructure — only minimal edits. Includes framework config, lock files, migrations, env files, plus any you specify.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Full persistent memory: lessons.md (what you learned), decisions.md (locked choices), STATUS.md (session tracking), regret log, skill scores, velocity tracker. Pre-populated with starter knowledge for your language.</span></span></label>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit <span class="help-icon">?<span class="tip">Claude shows you exactly what it will change before touching any file. You review and say "go" before anything happens. Prevents surprises.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules <span class="help-icon">?<span class="tip">Consistent names across your project. Variables, functions, files, classes all follow your language's best practices automatically.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review <span class="help-icon">?<span class="tip">Say "review this" and Claude checks your code for bugs, bad patterns, and security issues specific to your language. Not generic — tailored to your stack.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review <span class="help-icon">?<span class="tip">Checks your code for common vulnerabilities: SQL injection, exposed secrets, missing auth, unsafe inputs. Flags issues by severity so you fix the critical ones first.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules <span class="help-icon">?<span class="tip">Clear rules on what needs tests and what doesn't. No guessing — Claude knows your test framework and follows your standards.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style <span class="help-icon">?<span class="tip">Clean, consistent commit messages every time. "fix: resolve login timeout" instead of "fixed stuff". Makes your git history actually useful.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Mark files that Claude should never restructure — config files, migrations, env files. Claude can still make small targeted edits, but won't rewrite the whole thing.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Claude remembers what it learned. Mistakes get logged so they don't repeat. Decisions stay decided. Every session builds on the last one instead of starting fresh.</span></span></label>
         </div>
         <div class="hint" style="margin-top:8px; margin-bottom:0;">Always included:</div>
         <div class="checkbox-grid" style="margin-top:4px; opacity:0.6;">
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Start Session loads your memory and reports last change. End Session runs /learn, updates status, commits. The ritual that makes memory compound.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">Extracts lessons, decisions, and regrets from each session. Logs to memory files. Scores each skill's effectiveness (Y/N). The engine that captures knowledge.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">Tracks rejected approaches with reasons. Plan-before-edit checks this before every plan — prevents Claude from re-proposing things that already failed.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Binary Y/N log for each skill use: did it need correction? Tracks severity and what failed. /evolve reads this to patch weak skills automatically.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking <span class="help-icon">?<span class="tip">Estimated vs actual sessions per task. Claude reads this before giving estimates — calibrates over time based on real history, not guesses.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Think before coding. Simplicity first. Surgical changes. Goal-driven execution. Four principles that prevent over-engineering and scope creep.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude challenges bad plans (conflicts with decisions/regrets), flags duplicate patterns, and surfaces one observation per session. Bounded — never lobbies or slows down.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Default Sonnet for routine work (5x cheaper). Switch to Opus only for: multi-file cross-cutting, unknown root causes, or architecture decisions. Biggest cost lever.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Say "Start Session" and Claude loads everything it knows about your project. Say "End Session" and it saves what it learned. Two commands — that's the whole workflow.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">When an approach fails, it goes on the "never again" list. Next time Claude is about to suggest the same bad idea, it catches itself and proposes something better.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Tracks whether each workflow actually works or needs fixing. If a skill keeps causing problems, it gets flagged and improved automatically.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking <span class="help-icon">?<span class="tip">Claude learns how long tasks actually take vs. how long it estimated. Over time, its estimates get more accurate because they're based on your real history.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
         </div>
       </div>
 
@@ -766,6 +765,22 @@
 
     function closeResult() {
       document.getElementById('resultOverlay').className = 'result-overlay';
+    }
+
+    // Position tooltips on hover using fixed positioning
+    var helpIcons = document.querySelectorAll('.help-icon');
+    for (var h = 0; h < helpIcons.length; h++) {
+      helpIcons[h].addEventListener('mouseenter', function(e) {
+        var tip = this.querySelector('.tip');
+        if (!tip) { return; }
+        var rect = this.getBoundingClientRect();
+        tip.style.left = Math.max(8, rect.left - 100) + 'px';
+        tip.style.top = (rect.top - tip.offsetHeight - 8) + 'px';
+        // If goes above viewport, show below instead
+        if (rect.top - tip.offsetHeight - 8 < 0) {
+          tip.style.top = (rect.bottom + 8) + 'px';
+        }
+      });
     }
 
     // Show preview immediately on load with pre-filled defaults
