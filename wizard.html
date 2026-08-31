@@ -137,7 +137,7 @@
     select option { background: var(--card); }
     textarea { resize: vertical; min-height: 56px; }
 
-    .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
 
     .checkbox-item {
       display: flex;
@@ -147,6 +147,7 @@
       color: var(--text);
       padding: 4px 6px;
       border-radius: 4px;
+      white-space: nowrap;
     }
 
     .checkbox-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); }
@@ -520,8 +521,8 @@
           <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Mark files that Claude should never restructure — config files, migrations, env files. Claude can still make small targeted edits, but won't rewrite the whole thing.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Claude remembers what it learned. Mistakes get logged so they don't repeat. Decisions stay decided. Every session builds on the last one instead of starting fresh.</span></span></label>
         </div>
-        <div class="hint" style="margin-top:8px; margin-bottom:0;">Always included:</div>
-        <div class="checkbox-grid" style="margin-top:4px; opacity:0.6;">
+        <div class="hint" style="margin-top:12px; margin-bottom:4px; clear:both;">Always included:</div>
+        <div class="checkbox-grid" style="opacity:0.6;">
           <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Say "Start Session" and Claude loads everything it knows about your project. Say "End Session" and it saves what it learned. Two commands — that's the whole workflow.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">When an approach fails, it goes on the "never again" list. Next time Claude is about to suggest the same bad idea, it catches itself and proposes something better.</span></span></label>
