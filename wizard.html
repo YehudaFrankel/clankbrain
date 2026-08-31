@@ -664,12 +664,87 @@
       var file = input.files[0];
       var reader = new FileReader();
       reader.onload = function(e) {
-        document.getElementById('importExisting').value = e.target.result;
+        var content = e.target.result;
+        document.getElementById('importExisting').value = content;
         document.getElementById('importFileName').textContent = 'Loaded: ' + file.name;
         document.getElementById('importFileName').style.display = 'block';
+        autoDetectFromContent(content);
         updatePreview();
       };
       reader.readAsText(file);
+    }
+
+    function autoDetectFromContent(content) {
+      var lower = content.toLowerCase();
+
+      // Detect language
+      var langMap = {
+        'typescript': 'javascript', 'javascript': 'javascript',
+        'python': 'python', 'django': 'python', 'flask': 'python', 'fastapi': 'python',
+        'java': 'java', 'spring': 'java', 'kotlin': 'kotlin',
+        'golang': 'go', '\\bgo\\b': 'go', 'gin': 'go',
+        'rust': 'rust', 'cargo': 'rust',
+        'c#': 'csharp', 'csharp': 'csharp', '.net': 'csharp', 'dotnet': 'csharp',
+        'ruby': 'ruby', 'rails': 'ruby',
+        'php': 'php', 'laravel': 'php',
+        'swift': 'swift', 'swiftui': 'swift'
+      };
+      var langEl = document.getElementById('language');
+      for (var key in langMap) {
+        if (lower.indexOf(key) >= 0) {
+          langEl.value = langMap[key];
+          updateFrameworkOptions();
+          break;
+        }
+      }
+
+      // Detect framework
+      var fwMap = {
+        'next.js': 'Next.js', 'nextjs': 'Next.js', 'react': 'React', 'express': 'Express',
+        'vue': 'Vue', 'angular': 'Angular', 'svelte': 'Svelte', 'nuxt': 'Nuxt',
+        'django': 'Django', 'flask': 'Flask', 'fastapi': 'FastAPI',
+        'spring boot': 'Spring Boot', 'spring-boot': 'Spring Boot',
+        'rails': 'Rails', 'laravel': 'Laravel',
+        'gin': 'Gin', 'actix': 'Actix',
+        'resin': 'Resin', 'tomcat': 'Tomcat'
+      };
+      var fwEl = document.getElementById('framework');
+      for (var fk in fwMap) {
+        if (lower.indexOf(fk) >= 0) {
+          for (var fi = 0; fi < fwEl.options.length; fi++) {
+            if (fwEl.options[fi].value === fwMap[fk]) {
+              fwEl.value = fwMap[fk];
+              break;
+            }
+          }
+          break;
+        }
+      }
+
+      // Detect database
+      var dbMap = {
+        'postgresql': 'PostgreSQL', 'postgres': 'PostgreSQL',
+        'mysql': 'MySQL', 'mongodb': 'MongoDB', 'mongo': 'MongoDB',
+        'sqlite': 'SQLite', 'redis': 'Redis',
+        'sql server': 'SQL Server', 'mssql': 'SQL Server',
+        'dynamodb': 'DynamoDB', 'firebase': 'Firebase', 'supabase': 'Supabase'
+      };
+      var dbEl = document.getElementById('database');
+      for (var dk in dbMap) {
+        if (lower.indexOf(dk) >= 0) {
+          dbEl.value = dbMap[dk];
+          break;
+        }
+      }
+
+      // Detect project name from # heading
+      var nameMatch = content.match(/^#\s+(.+?)[\r\n]/m);
+      if (nameMatch) {
+        var detectedName = nameMatch[1].trim();
+        if (detectedName.length < 40) {
+          document.getElementById('projectName').value = detectedName;
+        }
+      }
     }
 
     var FRAMEWORK_OPTIONS = {
