@@ -511,21 +511,6 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom:6px;">
-        <label>Setup mode</label>
-        <div style="display:flex; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
-          <button type="button" id="modeLite" onclick="setMode('lite')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--input-bg); color:var(--muted); transition:all 0.2s;">Lite</button>
-          <button type="button" id="modeFull" onclick="setMode('full')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--accent); color:#000; transition:all 0.2s;">Full</button>
-        </div>
-        <div class="hint" id="modeHint">Full setup: 35+ files with compound learning engine, agents, and tools.</div>
-      </div>
-
-      <div class="form-group" style="margin-bottom:6px;">
-        <label>Already have a setup? <span style="color:var(--muted);font-weight:400">(optional)</span> <span class="help-icon">?<span class="tip">Already have a CLAUDE.md, rules, or conventions from any source? Paste them here. The wizard merges your existing work into the generated setup — nothing gets lost or overwritten.</span></span></label>
-        <textarea id="importExisting" placeholder="Paste your existing CLAUDE.md, rules, or conventions here..." oninput="updatePreview()" style="min-height:40px; font-size:0.75rem; font-family:'SF Mono',monospace; display:none;"></textarea>
-        <a href="#" onclick="var t=document.getElementById('importExisting');t.style.display=t.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.72rem; text-decoration:none;">+ Import existing setup</a>
-      </div>
-
       <div class="form-group">
         <label>Include</label>
         <div class="checkbox-grid">
@@ -538,27 +523,47 @@
           <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Mark files that Claude should never restructure — config files, migrations, env files. Claude can still make small targeted edits, but won't rewrite the whole thing.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Claude remembers what it learned. Mistakes get logged so they don't repeat. Decisions stay decided. Every session builds on the last one instead of starting fresh.</span></span></label>
         </div>
-      </div>
-
-      <div class="form-group" style="border-top:1px solid var(--border); padding-top:12px;">
-        <label style="color:var(--muted);">Always included</label>
-        <div class="checkbox-grid" style="opacity:0.55;">
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Say "Start Session" and Claude loads everything it knows about your project. Say "End Session" and it saves what it learned. Two commands — that's the whole workflow.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">When an approach fails, it goes on the "never again" list. Next time Claude is about to suggest the same bad idea, it catches itself and proposes something better.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Tracks whether each workflow actually works or needs fixing. If a skill keeps causing problems, it gets flagged and improved automatically.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking <span class="help-icon">?<span class="tip">Claude learns how long tasks actually take vs. how long it estimated. Over time, its estimates get more accurate because they're based on your real history.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
+        <div class="hint" style="margin-top:6px;">+ 8 always-included features: <a href="#" onclick="var d=document.getElementById('alwaysIncluded');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); text-decoration:none;">show details</a></div>
+        <div id="alwaysIncluded" style="display:none; margin-top:8px; border-top:1px solid var(--border); padding-top:8px;">
+          <div class="checkbox-grid" style="opacity:0.55;">
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Say "Start Session" and Claude loads everything it knows about your project. Say "End Session" and it saves what it learned. Two commands — that's the whole workflow.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">When an approach fails, it goes on the "never again" list. Next time Claude is about to suggest the same bad idea, it catches itself and proposes something better.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Tracks whether each workflow actually works or needs fixing. If a skill keeps causing problems, it gets flagged and improved automatically.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking <span class="help-icon">?<span class="tip">Claude learns how long tasks actually take vs. how long it estimated. Over time, its estimates get more accurate because they're based on your real history.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
+          </div>
         </div>
       </div>
 
       <button class="generate-btn" id="generateBtn" onclick="generate()">Generate &amp; Download</button>
 
-      <div style="margin-top:10px; text-align:center;">
-        <a href="#" onclick="var d=document.getElementById('optionalFields');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">+ Advanced options</a>
+      <div style="margin-top:10px; text-align:center; display:flex; justify-content:center; gap:16px;">
+        <a href="#" onclick="var d=document.getElementById('modeSection');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">Lite / Full mode</a>
+        <a href="#" onclick="var d=document.getElementById('importSection');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">Import existing</a>
+        <a href="#" onclick="var d=document.getElementById('optionalFields');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">Advanced</a>
       </div>
+
+      <div id="modeSection" style="display:none; margin-top:8px;">
+        <div class="form-group">
+          <label>Setup mode</label>
+          <div style="display:flex; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+            <button type="button" id="modeLite" onclick="setMode('lite')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--input-bg); color:var(--muted); transition:all 0.2s;">Lite</button>
+            <button type="button" id="modeFull" onclick="setMode('full')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--accent); color:#000; transition:all 0.2s;">Full</button>
+          </div>
+          <div class="hint" id="modeHint">Full setup: 35+ files with compound learning engine, agents, and tools.</div>
+        </div>
+      </div>
+
+      <div id="importSection" style="display:none; margin-top:8px;">
+        <div class="form-group">
+          <label>Import existing setup <span class="help-icon">?<span class="tip">Already have a CLAUDE.md, rules, or conventions from any source? Paste them here. The wizard merges your existing work into the generated setup — nothing gets lost or overwritten.</span></span></label>
+          <textarea id="importExisting" placeholder="Paste your existing CLAUDE.md, rules, or conventions here..." oninput="updatePreview()" style="min-height:60px; font-size:0.75rem; font-family:'SF Mono',monospace;"></textarea>
+        </div>
+      </div>
+
       <div id="optionalFields" style="display:none; margin-top:8px;">
         <div class="form-group">
           <label for="protectedFiles">Protected files <span style="color:var(--muted);font-weight:400">(one per line)</span> <span class="help-icon">?<span class="tip">List files Claude should never rewrite or restructure — like config files, database migrations, or environment files. Claude can still make small edits to these, but won't reorganize them.</span></span></label>
