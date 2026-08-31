@@ -642,14 +642,33 @@
       <p class="result-sub" id="resultFileCount"></p>
       <button class="download-btn" onclick="downloadZip()">Download .claude/ folder</button>
       <div class="file-list" id="fileList"></div>
-      <div class="result-steps">
-        <h4>Next steps</h4>
-        <div class="result-step"><span class="result-step-num">1.</span> Extract the zip into your project root</div>
-        <div class="result-step"><span class="result-step-num">2.</span> Open Claude Code: <code>cd your-project && claude</code></div>
-        <div class="result-step"><span class="result-step-num">3.</span> Say <code>Start Session</code> — Claude loads your context and memory</div>
-        <div class="result-step"><span class="result-step-num">4.</span> Work. Claude follows your rules, plans before editing, reviews your code.</div>
-        <div class="result-step"><span class="result-step-num">5.</span> Say <code>End Session</code> — lessons saved, status updated, memory preserved</div>
-        <div class="result-step"><span class="result-step-num">6.</span> Next session: <code>Start Session</code> again. Claude remembers everything.</div>
+      <div style="margin-top:20px; text-align:left;">
+        <div style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:12px;">Your workflow from now on:</div>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:6px 12px; font-size:0.8rem; color:var(--muted); align-items:start;">
+          <div style="background:var(--border); color:var(--muted); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700;">1</div>
+          <div>Extract the zip into your project root</div>
+          <div style="background:var(--border); color:var(--muted); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700;">2</div>
+          <div>Open terminal: <code style="background:rgba(217,119,6,0.1); color:var(--accent); padding:2px 6px; border-radius:3px; font-size:0.75rem;">cd your-project && claude</code></div>
+        </div>
+        <div style="margin:16px 0; padding:14px; background:linear-gradient(135deg, rgba(217,119,6,0.06), rgba(5,150,105,0.06)); border:1px solid var(--border); border-radius:8px;">
+          <div style="display:flex; align-items:center; gap:16px; justify-content:center; font-size:0.85rem;">
+            <div style="text-align:center;">
+              <div style="background:var(--accent); color:#fff; padding:6px 14px; border-radius:6px; font-weight:700; font-size:0.8rem; font-family:'SF Mono',monospace;">Start Session</div>
+              <div style="color:var(--muted); font-size:0.7rem; margin-top:4px;">loads memory</div>
+            </div>
+            <div style="color:var(--muted); font-size:1.2rem;">→</div>
+            <div style="text-align:center;">
+              <div style="background:var(--text); color:var(--bg); padding:6px 14px; border-radius:6px; font-weight:700; font-size:0.8rem;">work</div>
+              <div style="color:var(--muted); font-size:0.7rem; margin-top:4px;">Claude follows your rules</div>
+            </div>
+            <div style="color:var(--muted); font-size:1.2rem;">→</div>
+            <div style="text-align:center;">
+              <div style="background:var(--success); color:#fff; padding:6px 14px; border-radius:6px; font-weight:700; font-size:0.8rem; font-family:'SF Mono',monospace;">End Session</div>
+              <div style="color:var(--muted); font-size:0.7rem; margin-top:4px;">saves lessons</div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:10px; font-size:0.72rem; color:var(--muted);">Every session builds on the last. That's the whole system.</div>
+        </div>
       </div>
       <button class="result-close" onclick="closeResult()">Close</button>
     </div>
