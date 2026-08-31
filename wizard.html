@@ -559,8 +559,15 @@
 
       <div id="importSection" style="display:none; margin-top:8px;">
         <div class="form-group">
-          <label>Import existing setup <span class="help-icon">?<span class="tip">Already have a CLAUDE.md, rules, or conventions from any source? Paste them here. The wizard merges your existing work into the generated setup — nothing gets lost or overwritten.</span></span></label>
-          <textarea id="importExisting" placeholder="Paste your existing CLAUDE.md, rules, or conventions here..." oninput="updatePreview()" style="min-height:60px; font-size:0.75rem; font-family:'SF Mono',monospace;"></textarea>
+          <label>Import existing setup <span class="help-icon">?<span class="tip">Already have a CLAUDE.md, rules, or conventions from any source? Upload the file or paste the content. The wizard merges your existing work into the generated setup — nothing gets lost.</span></span></label>
+          <div style="display:flex; gap:8px; margin-bottom:6px;">
+            <label style="flex:1; padding:8px; border:1px dashed var(--border); border-radius:6px; text-align:center; cursor:pointer; font-size:0.75rem; color:var(--muted); transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <input type="file" id="importFile" accept=".md,.txt" onchange="handleFileUpload(this)" style="display:none;">
+              Upload CLAUDE.md or .txt
+            </label>
+          </div>
+          <div id="importFileName" style="display:none; font-size:0.72rem; color:var(--accent); margin-bottom:4px;"></div>
+          <textarea id="importExisting" placeholder="Or paste content here..." oninput="updatePreview()" style="min-height:48px; font-size:0.75rem; font-family:'SF Mono',monospace;"></textarea>
         </div>
       </div>
 
@@ -650,6 +657,19 @@
         }
       }
       updatePreview();
+    }
+
+    function handleFileUpload(input) {
+      if (!input.files || !input.files[0]) { return; }
+      var file = input.files[0];
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('importExisting').value = e.target.result;
+        document.getElementById('importFileName').textContent = 'Loaded: ' + file.name;
+        document.getElementById('importFileName').style.display = 'block';
+        updatePreview();
+      };
+      reader.readAsText(file);
     }
 
     var FRAMEWORK_OPTIONS = {
