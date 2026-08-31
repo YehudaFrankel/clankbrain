@@ -62,11 +62,11 @@
     /* Hero */
     .hero {
       text-align: center;
-      padding: 40px 20px 32px;
+      padding: 20px 20px 16px;
     }
 
     .hero h1 {
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 8px;
@@ -103,7 +103,7 @@
       letter-spacing: 0.05em;
     }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 10px; }
 
     .form-group label {
       display: block;
@@ -117,7 +117,7 @@
 
     select, input[type="text"], textarea {
       width: 100%;
-      padding: 8px 10px;
+      padding: 6px 10px;
       border: 1px solid var(--border);
       border-radius: 6px;
       font-size: 0.85rem;
@@ -462,50 +462,52 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <label for="framework">Framework</label>
-        <select id="framework" onchange="updatePreview()">
-          <option value="">None / Other</option>
-        </select>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="framework">Framework</label>
+          <select id="framework" onchange="updatePreview()">
+            <option value="">None / Other</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="database">Database</label>
+          <select id="database" onchange="updatePreview()">
+            <option value="">None</option>
+            <option value="PostgreSQL" selected>PostgreSQL</option>
+            <option value="MySQL">MySQL</option>
+            <option value="MongoDB">MongoDB</option>
+            <option value="SQLite">SQLite</option>
+            <option value="Redis">Redis</option>
+            <option value="SQL Server">SQL Server</option>
+            <option value="DynamoDB">DynamoDB</option>
+            <option value="Firebase">Firebase</option>
+            <option value="Supabase">Supabase</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="database">Database</label>
-        <select id="database" onchange="updatePreview()">
-          <option value="">None</option>
-          <option value="PostgreSQL" selected>PostgreSQL</option>
-          <option value="MySQL">MySQL</option>
-          <option value="MongoDB">MongoDB</option>
-          <option value="SQLite">SQLite</option>
-          <option value="Redis">Redis</option>
-          <option value="SQL Server">SQL Server</option>
-          <option value="DynamoDB">DynamoDB</option>
-          <option value="Firebase">Firebase</option>
-          <option value="Supabase">Supabase</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="projectType">Type</label>
-        <select id="projectType" onchange="updatePreview()">
-          <option value="web-app">Web application</option>
-          <option value="api">API / Backend service</option>
-          <option value="cli">CLI tool</option>
-          <option value="mobile">Mobile app</option>
-          <option value="library">Library / Package</option>
-          <option value="monorepo">Monorepo</option>
-          <option value="fullstack">Full stack</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="teamSize">Team</label>
-        <select id="teamSize">
-          <option value="solo">Solo</option>
-          <option value="small">2-5</option>
-          <option value="medium">6-20</option>
-          <option value="large">20+</option>
-        </select>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="projectType">Type</label>
+          <select id="projectType" onchange="updatePreview()">
+            <option value="web-app">Web application</option>
+            <option value="api">API / Backend</option>
+            <option value="cli">CLI tool</option>
+            <option value="mobile">Mobile app</option>
+            <option value="library">Library</option>
+            <option value="monorepo">Monorepo</option>
+            <option value="fullstack">Full stack</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="teamSize">Team</label>
+          <select id="teamSize">
+            <option value="solo">Solo</option>
+            <option value="small">2-5</option>
+            <option value="medium">6-20</option>
+            <option value="large">20+</option>
+          </select>
+        </div>
       </div>
 
       <div class="form-group">
@@ -536,17 +538,21 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="protectedFiles">Protected files <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-        <textarea id="protectedFiles" placeholder="One per line" oninput="updatePreview()"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="additionalContext">Extra context <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-        <textarea id="additionalContext" placeholder="Anything else Claude should know..." oninput="updatePreview()"></textarea>
-      </div>
-
       <button class="generate-btn" id="generateBtn" onclick="generate()">Generate &amp; Download</button>
+
+      <div style="margin-top:10px; text-align:center;">
+        <a href="#" onclick="var d=document.getElementById('optionalFields');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">+ Advanced options</a>
+      </div>
+      <div id="optionalFields" style="display:none; margin-top:8px;">
+        <div class="form-group">
+          <label for="protectedFiles">Protected files <span style="color:var(--muted);font-weight:400">(one per line)</span></label>
+          <textarea id="protectedFiles" placeholder="src/config/database.js&#10;migrations/&#10;.env" oninput="updatePreview()" style="min-height:48px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="additionalContext">Extra context</label>
+          <textarea id="additionalContext" placeholder="Anything else Claude should know..." oninput="updatePreview()" style="min-height:48px;"></textarea>
+        </div>
+      </div>
       <div class="error-msg" id="errorMsg"></div>
     </div>
 
