@@ -820,6 +820,30 @@
         }
       }
 
+      // Auto-check convention boxes based on uploaded content
+      var conventionDetect = {
+        'plan-before-edit': ['plan-before-edit', 'plan before edit', 'required plan format'],
+        'naming-conventions': ['naming convention', 'naming rules', 'variable naming'],
+        'code-review': ['code-review', 'code review', 'review checklist', 'java-reviewer'],
+        'security': ['security-review', 'security review', 'security audit', 'OWASP'],
+        'testing': ['testing rule', 'testing require', 'test coverage', 'test framework'],
+        'commit-style': ['commit style', 'commit message', 'conventional commit'],
+        'protected-files': ['protected-files', 'protected files', 'never restructure'],
+        'memory-system': ['memory', 'lessons.md', 'decisions.md', 'STATUS.md', 'MEMORY.md']
+      };
+      var cbs = document.querySelectorAll('.checkbox-grid input[type="checkbox"]:not([disabled])');
+      for (var ci = 0; ci < cbs.length; ci++) {
+        var cbVal = cbs[ci].value;
+        if (conventionDetect[cbVal]) {
+          for (var di = 0; di < conventionDetect[cbVal].length; di++) {
+            if (lower.indexOf(conventionDetect[cbVal][di].toLowerCase()) >= 0) {
+              cbs[ci].checked = true;
+              break;
+            }
+          }
+        }
+      }
+
       // Detect project name from # heading — skip file path headers (--- path ---)
       var lines = content.split('\n');
       for (var ni = 0; ni < lines.length; ni++) {
