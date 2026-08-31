@@ -720,25 +720,82 @@
       }
 
       // Files generated
+      // File count
+      var fileCount = 1; // CLAUDE.md
       s += '<span class="dim">---</span>\n';
-      s += '<span class="dim">Files that will be generated:</span>\n';
-      s += '<span class="blue">  CLAUDE.md</span>\n';
+
+      // Count optional files
       for (var j = 0; j < conventions.length; j++) {
         var cv = conventions[j];
-        if (cv === 'plan-before-edit') { s += '<span class="blue">  rules/plan-before-edit.md</span>\n'; }
-        if (cv === 'naming-conventions') { s += '<span class="blue">  rules/naming-conventions.md</span>\n'; }
-        if (cv === 'testing') { s += '<span class="blue">  rules/testing.md</span>\n'; }
-        if (cv === 'commit-style') { s += '<span class="blue">  rules/commit-style.md</span>\n'; }
-        if (cv === 'protected-files') { s += '<span class="blue">  rules/protected-files.md</span>\n'; }
-        if (cv === 'code-review') { s += '<span class="blue">  skills/code-review/SKILL.md</span>\n'; }
-        if (cv === 'security') { s += '<span class="blue">  skills/security-review/SKILL.md</span>\n'; }
-        if (cv === 'memory-system') {
-          s += '<span class="blue">  memory/MEMORY.md</span>\n';
-          s += '<span class="blue">  memory/STATUS.md</span>\n';
-          s += '<span class="blue">  memory/lessons.md</span>\n';
-          s += '<span class="blue">  memory/decisions.md</span>\n';
-        }
+        if (cv === 'plan-before-edit' || cv === 'naming-conventions' || cv === 'testing' || cv === 'commit-style' || cv === 'protected-files') { fileCount++; }
+        if (cv === 'code-review' || cv === 'security') { fileCount++; }
+        if (cv === 'memory-system') { fileCount += 9; }
       }
+      // Always-included files
+      fileCount += 17; // skills(7) + rules(2) + agents(2) + modes(4) + settings + SYNC.md
+      fileCount += 3; // Python tools
+
+      s += '<span class="dim">' + fileCount + ' files will be generated:</span>\n\n';
+
+      s += '<span class="green">Core</span>\n';
+      s += '<span class="blue">  CLAUDE.md</span>\n';
+      s += '<span class="blue">  SYNC.md</span>\n';
+      s += '<span class="blue">  settings.json</span> <span class="dim">(with hooks)</span>\n\n';
+
+      s += '<span class="green">Rules</span>\n';
+      s += '<span class="blue">  rules/karpathy-principles.md</span>\n';
+      s += '<span class="blue">  rules/feedback-update-codemap.md</span>\n';
+      for (var j2 = 0; j2 < conventions.length; j2++) {
+        var cv2 = conventions[j2];
+        if (cv2 === 'plan-before-edit') { s += '<span class="blue">  rules/plan-before-edit.md</span>\n'; }
+        if (cv2 === 'naming-conventions') { s += '<span class="blue">  rules/naming-conventions.md</span>\n'; }
+        if (cv2 === 'testing') { s += '<span class="blue">  rules/testing.md</span>\n'; }
+        if (cv2 === 'commit-style') { s += '<span class="blue">  rules/commit-style.md</span>\n'; }
+        if (cv2 === 'protected-files') { s += '<span class="blue">  rules/protected-files.md</span>\n'; }
+      }
+
+      s += '\n<span class="green">Skills</span>\n';
+      s += '<span class="blue">  skills/learn/</span>\n';
+      s += '<span class="blue">  skills/start-session/</span>\n';
+      s += '<span class="blue">  skills/end-session/</span>\n';
+      s += '<span class="blue">  skills/evolve-check/</span>\n';
+      s += '<span class="blue">  skills/evolve/</span>\n';
+      s += '<span class="blue">  skills/fix-bug/</span>\n';
+      s += '<span class="blue">  skills/plan/</span>\n';
+      s += '<span class="blue">  skills/smoke-test/</span>\n';
+      s += '<span class="blue">  skills/ui-design-first/</span>\n';
+      for (var j3 = 0; j3 < conventions.length; j3++) {
+        if (conventions[j3] === 'code-review') { s += '<span class="blue">  skills/code-review/</span>\n'; }
+        if (conventions[j3] === 'security') { s += '<span class="blue">  skills/security-review/</span>\n'; }
+      }
+
+      s += '\n<span class="green">Agents</span>\n';
+      s += '<span class="blue">  agents/bug-fix.md</span>\n';
+      s += '<span class="blue">  agents/feature-build.md</span>\n';
+
+      s += '\n<span class="green">Modes</span>\n';
+      s += '<span class="blue">  modes/develop.json</span>\n';
+      s += '<span class="blue">  modes/review.json</span>\n';
+      s += '<span class="blue">  modes/deploy.json</span>\n';
+      s += '<span class="blue">  modes/safe.json</span>\n';
+
+      if (conventions.indexOf('memory-system') >= 0) {
+        s += '\n<span class="green">Memory</span> <span class="dim">(pre-populated)</span>\n';
+        s += '<span class="blue">  memory/MEMORY.md</span>\n';
+        s += '<span class="blue">  memory/STATUS.md</span>\n';
+        s += '<span class="blue">  memory/lessons.md</span>\n';
+        s += '<span class="blue">  memory/decisions.md</span>\n';
+        s += '<span class="blue">  memory/tasks/regret.md</span>\n';
+        s += '<span class="blue">  memory/tasks/skill_scores.md</span>\n';
+        s += '<span class="blue">  memory/tasks/skill_usage.md</span>\n';
+        s += '<span class="blue">  memory/tasks/velocity.md</span>\n';
+        s += '<span class="blue">  memory/tasks/draft-lessons.md</span>\n';
+      }
+
+      s += '\n<span class="green">Tools</span>\n';
+      s += '<span class="blue">  tools/memory.py</span> <span class="dim">(drift, snapshots, sync)</span>\n';
+      s += '<span class="blue">  tools/team_sync.py</span> <span class="dim">(shared memory)</span>\n';
+      s += '<span class="blue">  tools/telemetry.py</span>\n';
 
       el.innerHTML = s;
     }
