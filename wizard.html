@@ -567,7 +567,10 @@
             </label>
           </div>
           <div id="importFileName" style="display:none; font-size:0.72rem; color:var(--accent); margin-bottom:4px;"></div>
-          <textarea id="importExisting" placeholder="Or paste content here..." oninput="updatePreview()" style="min-height:200px; font-size:0.78rem; font-family:'SF Mono','Consolas','Fira Code',monospace; line-height:1.6; padding:12px; tab-size:2; white-space:pre; overflow-x:auto;"></textarea>
+          <div style="display:flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--input-bg);">
+            <div id="importLineNums" style="padding:10px 8px; font-size:0.72rem; font-family:'SF Mono','Consolas',monospace; line-height:1.65; color:#444; text-align:right; user-select:none; min-width:32px; border-right:1px solid var(--border); background:#111;">1</div>
+            <textarea id="importExisting" placeholder="Paste content here..." oninput="updateLineNums(); updatePreview();" onscroll="document.getElementById('importLineNums').scrollTop=this.scrollTop;" style="flex:1; min-height:200px; max-height:400px; font-size:0.78rem; font-family:'SF Mono','Consolas','Fira Code',monospace; line-height:1.65; padding:10px; tab-size:2; white-space:pre; overflow:auto; border:none; background:transparent; color:var(--text); resize:vertical; outline:none;"></textarea>
+          </div>
         </div>
       </div>
 
@@ -659,6 +662,18 @@
       updatePreview();
     }
 
+    function updateLineNums() {
+      var ta = document.getElementById('importExisting');
+      var ln = document.getElementById('importLineNums');
+      var lines = (ta.value || '').split('\n').length;
+      if (lines < 1) { lines = 1; }
+      var nums = '';
+      for (var i = 1; i <= lines; i++) {
+        nums += i + '\n';
+      }
+      ln.textContent = nums;
+    }
+
     function handleFileUpload(input) {
       if (!input.files || !input.files[0]) { return; }
       var file = input.files[0];
@@ -669,6 +684,7 @@
         document.getElementById('importFileName').textContent = 'Loaded: ' + file.name;
         document.getElementById('importFileName').style.display = 'block';
         autoDetectFromContent(content);
+        updateLineNums();
         updatePreview();
       };
       reader.readAsText(file);
