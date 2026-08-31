@@ -888,7 +888,7 @@
         if (!tipSrc) { return; }
         floatingTip = document.createElement('div');
         floatingTip.className = 'tip-floating';
-        floatingTip.textContent = tipSrc.textContent;
+        floatingTip.innerHTML = tipSrc.innerHTML || tipSrc.textContent;
         document.body.appendChild(floatingTip);
         var rect = this.getBoundingClientRect();
         var tipW = 260;
