@@ -398,7 +398,25 @@ function generateFiles(body) {
   files['skills/end-session/SKILL.md'] = generateEndSessionSkill(body);
   files['skills/evolve-check/SKILL.md'] = generateEvolveCheckSkill();
   files['skills/evolve/SKILL.md'] = generateEvolveSkill();
+  files['skills/fix-bug/SKILL.md'] = generateFixBugSkill(lang);
+  files['skills/plan/SKILL.md'] = generatePlanSkill();
+  files['skills/smoke-test/SKILL.md'] = generateSmokeTestSkill(lang);
+  files['skills/ui-design-first/SKILL.md'] = generateUiDesignFirstSkill();
   files['rules/karpathy-principles.md'] = generateKarpathyPrinciples();
+  files['rules/feedback-update-codemap.md'] = generateFeedbackUpdateCodemap();
+
+  // Agents
+  files['agents/bug-fix.md'] = generateBugFixAgent(lang);
+  files['agents/feature-build.md'] = generateFeatureBuildAgent(lang);
+
+  // Modes
+  files['modes/develop.json'] = JSON.stringify({ name: 'develop', description: 'Default mode for development work', tools: ['Read', 'Edit', 'Write', 'Bash', 'Glob', 'Grep'] }, null, 2);
+  files['modes/review.json'] = JSON.stringify({ name: 'review', description: 'Read-only mode for code review - no edits allowed', tools: ['Read', 'Glob', 'Grep'] }, null, 2);
+  files['modes/deploy.json'] = JSON.stringify({ name: 'deploy', description: 'Deployment mode - confirms before every action', tools: ['Read', 'Bash', 'Glob', 'Grep'] }, null, 2);
+  files['modes/safe.json'] = JSON.stringify({ name: 'safe', description: 'Safe mode - read-only, no file changes, no commands', tools: ['Read', 'Glob', 'Grep'] }, null, 2);
+
+  // Settings
+  files['settings.json'] = JSON.stringify({ permissions: { allow: [], deny: [] } }, null, 2);
 
   // Sync instructions
   files['SYNC.md'] = generateSyncGuide(body);
@@ -898,5 +916,168 @@ function generateSyncGuide(body) {
   s += '| `skills/` | Workflows |\n';
   s += '| `memory/` | Lessons, decisions, status |\n';
   s += '| `memory/tasks/` | Scores, velocity, regrets |\n';
+  return s;
+}
+
+// --- Fix Bug Skill ---
+
+function generateFixBugSkill(lang) {
+  var s = '# Skill: fix-bug\n\n';
+  s += '**Trigger:** "fix the bug", "it\'s broken", "not working", "wrong result"\n\n';
+  s += '**Description:** Structured bug fix workflow: reproduce, isolate, fix, verify.\n\n';
+  s += '**Allowed Tools:** Read, Edit, Write, Grep, Glob, Bash\n\n---\n\n';
+  s += '## Steps\n\n';
+  s += '1. **Reproduce** - Confirm the bug exists. Get exact steps, input, and expected vs actual output.\n';
+  s += '2. **Isolate** - Find the root cause. Read the relevant code, trace the data flow, add debug output if needed.\n';
+  s += '3. **Fix** - Present a plan (Before/After) following plan-before-edit rules. Wait for approval.\n';
+  s += '4. **Verify** - Confirm the fix works. Check for regressions in related code paths.\n';
+  s += '5. **Log** - If the bug reveals a pattern, add it to `memory/lessons.md` via `/learn`.\n\n';
+  s += '## Before fixing, check:\n';
+  s += '- Is this actually a bug, or expected behavior?\n';
+  s += '- Has this been fixed before? Check `memory/lessons.md` and `memory/tasks/regret.md`\n';
+  s += '- Is the fix in the right place, or should it be fixed upstream?\n';
+  return s;
+}
+
+// --- Plan Skill ---
+
+function generatePlanSkill() {
+  var s = '# Skill: plan\n\n';
+  s += '**Trigger:** "plan", "I want to build", "design", "thinking about"\n\n';
+  s += '**Description:** Structured planning session for a new feature or change.\n\n';
+  s += '**Allowed Tools:** Read, Grep, Glob\n\n---\n\n';
+  s += '## Steps\n\n';
+  s += '1. **Clarify the goal** - What does "done" look like? Who is it for?\n';
+  s += '2. **Research what exists** - Search the codebase for related code, patterns, similar features.\n';
+  s += '3. **Present options** - At least 2 approaches with tradeoffs:\n';
+  s += '   - Build cost (Low/Medium/High)\n';
+  s += '   - Risk (what could go wrong)\n';
+  s += '   - Payoff (what you get)\n';
+  s += '4. **Wait for decision** - User picks an option.\n';
+  s += '5. **Write the plan** - Break into steps with success criteria for each.\n';
+  s += '6. **Save** - Write plan to `memory/plans/[name].md` with status: Draft.\n\n';
+  s += '## Plan statuses\n';
+  s += '- **Draft** - Options being discussed\n';
+  s += '- **Ready to Code** - Approved, waiting for implementation\n';
+  s += '- **In Progress** - Being built\n';
+  s += '- **Shipped** - Complete\n';
+  s += '- **On Hold** - Paused, revisit later\n';
+  return s;
+}
+
+// --- Smoke Test Skill ---
+
+function generateSmokeTestSkill(lang) {
+  var s = '# Skill: smoke-test\n\n';
+  s += '**Trigger:** "smoke test", "quick test", "did I break anything"\n\n';
+  s += '**Description:** Quick verification that key endpoints/functions still work after a change.\n\n';
+  s += '**Allowed Tools:** Read, Bash, Grep\n\n---\n\n';
+  s += '## Steps\n\n';
+  s += '1. **Identify what changed** - `git diff --stat` to see affected files.\n';
+  s += '2. **Run tests** - `' + lang.testCmd + '`\n';
+  s += '3. **Check build** - `' + lang.buildCmd + '`\n';
+  s += '4. **Manual check** - If it\'s a web app, hit the main endpoint and verify it responds.\n';
+  s += '5. **Report** - "Smoke test passed" or list what failed.\n\n';
+  s += '## Not a full test suite\n';
+  s += 'This is a 30-second confidence check, not comprehensive testing. Use it after every change to catch obvious breakage.\n';
+  return s;
+}
+
+// --- UI Design First Skill ---
+
+function generateUiDesignFirstSkill() {
+  var s = '# Skill: ui-design-first\n\n';
+  s += '**Trigger:** "make it nicer", "it looks off", "redesign", "UI change"\n\n';
+  s += '**Description:** Pin down the visual intent before touching any CSS or HTML.\n\n';
+  s += '**Allowed Tools:** Read, Grep\n\n---\n\n';
+  s += '## Steps\n\n';
+  s += '1. **Ask what\'s wrong** - "What specifically looks off? Layout, spacing, colors, typography?"\n';
+  s += '2. **Ask for the goal** - "What should it look like? Describe or reference."\n';
+  s += '3. **Sketch first** - Describe the layout top-to-bottom in plain text before writing any code.\n';
+  s += '4. **Confirm** - "Does this match what you want?" Wait for yes.\n';
+  s += '5. **Then code** - Follow plan-before-edit with the agreed layout.\n\n';
+  s += '## Why this exists\n';
+  s += 'Vague UI requests ("make it nicer") without pinned intent cause 10+ iteration loops. This skill eliminates that by getting agreement on the design before any code runs.\n';
+  return s;
+}
+
+// --- Feedback Update Codemap Rule ---
+
+function generateFeedbackUpdateCodemap() {
+  var s = '# Update Code Map After Every Change\n\n';
+  s += 'After EVERY code change, check whether this file needs updating and update it immediately.\n\n';
+  s += '## What to update\n\n';
+  s += '- New function/method added -> add to the code map with file path and line\n';
+  s += '- Function moved or renamed -> update the reference\n';
+  s += '- New endpoint added -> add the route, handler, and what it does\n';
+  s += '- New page or URL -> add to the URL/routing section\n';
+  s += '- DB schema change -> update the schema section\n\n';
+  s += '## Why\n';
+  s += 'An outdated code map causes the same slowdown as no code map at all. Keep it current.\n';
+  return s;
+}
+
+// --- Bug Fix Agent ---
+
+function generateBugFixAgent(lang) {
+  var s = '---\n';
+  s += 'name: bug-fix\n';
+  s += 'description: Bug fix orchestrator - reproduce, isolate, fix, verify, log\n';
+  s += 'tools: [Read, Edit, Write, Grep, Glob, Bash]\n';
+  s += '---\n\n';
+  s += '# Bug Fix Agent\n\n';
+  s += 'Follow this sequence for every bug fix:\n\n';
+  s += '## 1. Reproduce\n';
+  s += '- Confirm the bug exists with specific steps\n';
+  s += '- Get expected vs actual behavior\n';
+  s += '- Check if it\'s a regression (was it working before?)\n\n';
+  s += '## 2. Isolate\n';
+  s += '- Search the codebase for the relevant code path\n';
+  s += '- Trace data flow from input to output\n';
+  s += '- Check `memory/tasks/regret.md` - has this approach been tried before?\n\n';
+  s += '## 3. Fix\n';
+  s += '- Present a plan following plan-before-edit rules\n';
+  s += '- Wait for approval before any edit\n';
+  s += '- Make the minimal change that fixes the root cause\n\n';
+  s += '## 4. Verify\n';
+  s += '- Run: `' + lang.testCmd + '`\n';
+  s += '- Check for regressions in related code\n';
+  s += '- Read back changed lines and confirm\n\n';
+  s += '## 5. Log\n';
+  s += '- If the bug reveals a pattern, add to `memory/lessons.md`\n';
+  s += '- If a bad approach was tried, add to `memory/tasks/regret.md`\n';
+  return s;
+}
+
+// --- Feature Build Agent ---
+
+function generateFeatureBuildAgent(lang) {
+  var s = '---\n';
+  s += 'name: feature-build\n';
+  s += 'description: Full feature build - search, plan, implement, review, test, learn\n';
+  s += 'tools: [Read, Edit, Write, Grep, Glob, Bash]\n';
+  s += '---\n\n';
+  s += '# Feature Build Agent\n\n';
+  s += 'Follow this sequence for new features:\n\n';
+  s += '## 1. Search\n';
+  s += '- Search the codebase for related existing code\n';
+  s += '- Check `memory/decisions.md` for relevant settled decisions\n';
+  s += '- Check `memory/tasks/regret.md` for approaches to avoid\n\n';
+  s += '## 2. Plan\n';
+  s += '- Present options with tradeoffs\n';
+  s += '- Wait for the user to pick an approach\n';
+  s += '- Write a detailed plan with Before/After for each file\n\n';
+  s += '## 3. Implement\n';
+  s += '- Follow plan-before-edit for every edit\n';
+  s += '- Verify after each file change\n';
+  s += '- Keep changes surgical - don\'t touch unrelated code\n\n';
+  s += '## 4. Review\n';
+  s += '- Run `/code-review` on changed files\n';
+  s += '- Fix any issues found\n\n';
+  s += '## 5. Test\n';
+  s += '- Run: `' + lang.testCmd + '`\n';
+  s += '- Manual smoke test if applicable\n\n';
+  s += '## 6. Learn\n';
+  s += '- Run `/learn` to extract patterns from this feature build\n';
   return s;
 }
