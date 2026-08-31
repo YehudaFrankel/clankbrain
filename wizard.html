@@ -511,7 +511,6 @@
       <div class="form-group">
         <label>Include</label>
         <div class="checkbox-grid">
-        <div class="checkbox-grid">
           <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit <span class="help-icon">?<span class="tip">Claude shows you exactly what it will change before touching any file. You review and say "go" before anything happens. Prevents surprises.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules <span class="help-icon">?<span class="tip">Consistent names across your project. Variables, functions, files, classes all follow your language's best practices automatically.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review <span class="help-icon">?<span class="tip">Say "review this" and Claude checks your code for bugs, bad patterns, and security issues specific to your language. Not generic — tailored to your stack.</span></span></label>
@@ -521,8 +520,10 @@
           <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Mark files that Claude should never restructure — config files, migrations, env files. Claude can still make small targeted edits, but won't rewrite the whole thing.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Claude remembers what it learned. Mistakes get logged so they don't repeat. Decisions stay decided. Every session builds on the last one instead of starting fresh.</span></span></label>
         </div>
-        <div style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border);">
-        <div class="hint" style="margin-bottom:6px;">Always included:</div>
+      </div>
+
+      <div class="form-group" style="border-top:1px solid var(--border); padding-top:12px;">
+        <label style="color:var(--muted);">Always included</label>
         <div class="checkbox-grid" style="opacity:0.55;">
           <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Say "Start Session" and Claude loads everything it knows about your project. Say "End Session" and it saves what it learned. Two commands — that's the whole workflow.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
@@ -532,7 +533,6 @@
           <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
           <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
-        </div>
         </div>
       </div>
 
