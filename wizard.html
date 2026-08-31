@@ -446,7 +446,7 @@
 
       <div class="form-group">
         <label for="language">Language <span style="color:var(--accent)">*</span></label>
-        <select id="language" onchange="updatePreview()">
+        <select id="language" onchange="updateFrameworkOptions()">
           <option value="javascript">JavaScript / TypeScript</option>
           <option value="python">Python</option>
           <option value="java">Java</option>
@@ -463,12 +463,25 @@
 
       <div class="form-group">
         <label for="framework">Framework</label>
-        <input type="text" id="framework" placeholder="e.g. Next.js, Django, Spring Boot" value="Next.js" oninput="updatePreview()">
+        <select id="framework" onchange="updatePreview()">
+          <option value="">None / Other</option>
+        </select>
       </div>
 
       <div class="form-group">
         <label for="database">Database</label>
-        <input type="text" id="database" placeholder="e.g. PostgreSQL, MongoDB, none" value="PostgreSQL" oninput="updatePreview()">
+        <select id="database" onchange="updatePreview()">
+          <option value="">None</option>
+          <option value="PostgreSQL" selected>PostgreSQL</option>
+          <option value="MySQL">MySQL</option>
+          <option value="MongoDB">MongoDB</option>
+          <option value="SQLite">SQLite</option>
+          <option value="Redis">Redis</option>
+          <option value="SQL Server">SQL Server</option>
+          <option value="DynamoDB">DynamoDB</option>
+          <option value="Firebase">Firebase</option>
+          <option value="Supabase">Supabase</option>
+        </select>
       </div>
 
       <div class="form-group">
@@ -573,6 +586,35 @@
 
   <script>
     var generatedFiles = null;
+
+    var FRAMEWORK_OPTIONS = {
+      javascript: ['Next.js', 'React', 'Express', 'Vue', 'Angular', 'Svelte', 'Nuxt', 'Astro', 'Remix', 'Nest.js'],
+      python: ['Django', 'Flask', 'FastAPI', 'Streamlit', 'Celery'],
+      java: ['Spring Boot', 'Quarkus', 'Micronaut', 'Jakarta EE'],
+      go: ['Gin', 'Echo', 'Fiber', 'Chi'],
+      rust: ['Actix', 'Axum', 'Rocket', 'Warp'],
+      csharp: ['ASP.NET Core', 'Blazor', 'MAUI', 'WPF'],
+      ruby: ['Rails', 'Sinatra', 'Hanami'],
+      php: ['Laravel', 'Symfony', 'Slim', 'CodeIgniter'],
+      swift: ['SwiftUI', 'UIKit', 'Vapor'],
+      kotlin: ['Spring Boot', 'Ktor', 'Jetpack Compose'],
+      other: []
+    };
+
+    function updateFrameworkOptions() {
+      var langKey = document.getElementById('language').value;
+      var fw = document.getElementById('framework');
+      var options = FRAMEWORK_OPTIONS[langKey] || [];
+      fw.innerHTML = '<option value="">None / Other</option>';
+      for (var i = 0; i < options.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = options[i];
+        opt.textContent = options[i];
+        if (i === 0) { opt.selected = true; }
+        fw.appendChild(opt);
+      }
+      updatePreview();
+    }
 
     var LANG_DATA = {
       javascript: { name: 'JavaScript', test: 'jest', testCmd: 'npm test', devCmd: 'npm run dev', buildCmd: 'npm run build', installCmd: 'npm install', lint: 'eslint', format: 'prettier' },
@@ -783,8 +825,8 @@
       });
     }
 
-    // Show preview immediately on load with pre-filled defaults
-    updatePreview();
+    // Populate framework options and show preview on load
+    updateFrameworkOptions();
   </script>
 </body>
 </html>
