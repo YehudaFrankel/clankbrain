@@ -504,10 +504,10 @@ function generateClaudeMd(body, lang, fw, conventions) {
     s += '## Additional Context\n' + body.additionalContext + '\n\n';
   }
 
-  // Merge imported existing CLAUDE.md content
+  // Merge imported existing setup content
   if (body.importExisting) {
-    s += '## Imported From Existing Setup\n\n';
-    s += '_The following was imported from your existing CLAUDE.md:_\n\n';
+    s += '## Your Existing Setup\n\n';
+    s += '_Imported from your previous configuration — preserved as-is:_\n\n';
     s += body.importExisting + '\n\n';
   }
 

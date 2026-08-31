@@ -521,9 +521,9 @@
       </div>
 
       <div class="form-group" style="margin-bottom:6px;">
-        <label>Import existing <span style="color:var(--muted);font-weight:400">(optional)</span> <span class="help-icon">?<span class="tip">Already have a CLAUDE.md? Paste it here and the wizard will merge your existing context, conventions, and commands into the generated setup. Nothing gets lost.</span></span></label>
-        <textarea id="importExisting" placeholder="Paste your existing CLAUDE.md content here..." oninput="updatePreview()" style="min-height:40px; font-size:0.75rem; font-family:'SF Mono',monospace; display:none;"></textarea>
-        <a href="#" onclick="var t=document.getElementById('importExisting');t.style.display=t.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.72rem; text-decoration:none;">+ Paste existing CLAUDE.md</a>
+        <label>Already have a setup? <span style="color:var(--muted);font-weight:400">(optional)</span> <span class="help-icon">?<span class="tip">Already have a CLAUDE.md, rules, or conventions from any source? Paste them here. The wizard merges your existing work into the generated setup — nothing gets lost or overwritten.</span></span></label>
+        <textarea id="importExisting" placeholder="Paste your existing CLAUDE.md, rules, or conventions here..." oninput="updatePreview()" style="min-height:40px; font-size:0.75rem; font-family:'SF Mono',monospace; display:none;"></textarea>
+        <a href="#" onclick="var t=document.getElementById('importExisting');t.style.display=t.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.72rem; text-decoration:none;">+ Import existing setup</a>
       </div>
 
       <div class="form-group">
