@@ -7,22 +7,22 @@
   <meta name="description" content="Generate a complete Claude Code setup for your project in under 2 minutes. Free, instant, no API key needed.">
   <style>
     :root {
-      --bg: #0f0f0f;
-      --card: #1a1a1a;
-      --text: #e8e8e8;
-      --muted: #888;
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
       --accent: #d97706;
-      --accent-hover: #f59e0b;
-      --accent-glow: rgba(217, 119, 6, 0.15);
-      --border: #2a2a2a;
-      --input-bg: #141414;
-      --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.15);
-      --preview-bg: #0c0c0c;
+      --accent-hover: #b45309;
+      --accent-glow: rgba(217, 119, 6, 0.08);
+      --border: #e5e7eb;
+      --input-bg: #f9fafb;
+      --success: #059669;
+      --success-glow: rgba(5, 150, 105, 0.08);
+      --preview-bg: #1e1e2e;
       --code-green: #6dba78;
       --code-blue: #7aafed;
       --code-orange: #e8955a;
-      --code-muted: #5a5a5a;
+      --code-muted: #6b7280;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -159,8 +159,8 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: var(--border);
-      color: var(--muted);
+      background: #e5e7eb;
+      color: #6b7280;
       font-size: 0.6rem;
       font-weight: 700;
       cursor: help;
@@ -176,13 +176,13 @@
     .tip-floating {
       position: fixed;
       width: 260px;
-      background: #2a2a2a;
-      border: 1px solid #555;
+      background: #1a1a1a;
+      border: 1px solid #333;
       border-radius: 8px;
       padding: 10px 12px;
       font-size: 0.75rem;
       font-weight: 400;
-      color: var(--text);
+      color: #e8e8e8;
       line-height: 1.5;
       z-index: 10000;
       box-shadow: 0 8px 24px rgba(0,0,0,0.6);
@@ -193,7 +193,7 @@
       width: 100%;
       padding: 12px;
       background: var(--accent);
-      color: #000;
+      color: #fff;
       border: none;
       border-radius: 8px;
       font-size: 0.95rem;
@@ -231,8 +231,8 @@
     .preview-header {
       position: sticky;
       top: 0;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
+      background: #1a1a2e;
+      border-bottom: 1px solid #2a2a3a;
       padding: 10px 16px;
       display: flex;
       justify-content: space-between;
@@ -242,7 +242,7 @@
 
     .preview-title {
       font-size: 0.78rem;
-      color: var(--muted);
+      color: #888;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -262,14 +262,14 @@
       font-family: 'SF Mono', 'Consolas', 'Fira Code', monospace;
       font-size: 0.78rem;
       line-height: 1.7;
-      color: var(--muted);
+      color: #999;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
 
-    .preview-content .ph { color: var(--code-muted); font-style: italic; }
-    .preview-content .h1 { color: var(--text); font-weight: 700; font-size: 0.95rem; }
-    .preview-content .h2 { color: var(--text); font-weight: 600; font-size: 0.85rem; margin-top: 12px; }
+    .preview-content .ph { color: #555; font-style: italic; }
+    .preview-content .h1 { color: #e8e8e8; font-weight: 700; font-size: 0.95rem; }
+    .preview-content .h2 { color: #e8e8e8; font-weight: 600; font-size: 0.85rem; margin-top: 12px; }
     .preview-content .accent { color: var(--accent); }
     .preview-content .green { color: var(--code-green); }
     .preview-content .blue { color: var(--code-blue); }
@@ -281,7 +281,7 @@
       align-items: center;
       justify-content: center;
       height: 300px;
-      color: var(--code-muted);
+      color: #555;
       font-size: 0.85rem;
       text-align: center;
       padding: 40px;
@@ -293,7 +293,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.5);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -330,7 +330,7 @@
       display: inline-block;
       padding: 12px 36px;
       background: var(--success);
-      color: #000;
+      color: #fff;
       border: none;
       border-radius: 8px;
       font-size: 0.95rem;
@@ -435,8 +435,8 @@
     <h1>Stop re-explaining your stack every session.</h1>
     <p>Generate a complete AI coding workflow for your project — rules, memory, and skills that make Claude Code smarter every session. <span>Free. Instant. No account.</span></p>
     <a href="#" onclick="var d=document.getElementById('heroDetails');d.style.display=d.style.display==='none'?'block':'none';this.textContent=d.style.display==='none'?'What do I get? ▾':'Hide details ▴';return false;" style="color:var(--accent); font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:8px;">Hide details ▴</a>
-    <div id="heroDetails" style="text-align:left; max-width:560px; margin:12px auto 0; padding:16px 20px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:10px; font-size:0.8rem; color:#aaa; line-height:1.7;">
-      <div style="color:#e8e8e8; font-weight:600; margin-bottom:8px;">You get 35+ files that drop into your project:</div>
+    <div id="heroDetails" style="text-align:left; max-width:560px; margin:12px auto 0; padding:16px 20px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.8rem; color:var(--muted); line-height:1.7; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <div style="color:var(--text); font-weight:600; margin-bottom:8px;">You get 35+ files that drop into your project:</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">CLAUDE.md</span> — Your stack, commands, and conventions. Claude reads it every session so you never re-explain.</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Plan before edit</span> — Claude shows you exactly what it will change and waits for your OK. No surprises.</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Memory system</span> — Lessons, decisions, and mistakes are saved. Session 50 is smarter than session 1.</div>
@@ -444,10 +444,10 @@
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Skills that self-improve</span> — Each skill is scored. Weak skills get flagged and patched automatically.</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Code review</span> — Deep checks specific to your language. Not generic linting — catches real bugs.</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Start Session / End Session</span> — Two commands. Claude loads context, you work, it saves what it learned. That's the whole workflow.</div>
-      <div style="border-top:1px solid #2a2a2a; margin-top:10px; padding-top:10px; color:#666; font-size:0.75rem;">
-        <div style="margin-bottom:4px;">Also: <span style="color:#888;">pre-loaded with real gotchas for your language</span> — not empty on day 1.</div>
-        <div style="margin-bottom:4px;"><span style="color:#888;">Works on any machine</span> — commit .claude/ with your code, git pull and everything is there.</div>
-        <div><span style="color:#888;">Already have a setup?</span> Upload your existing .claude/ folder — the wizard merges it. Nothing lost.</div>
+      <div style="border-top:1px solid var(--border); margin-top:10px; padding-top:10px; color:var(--muted); font-size:0.75rem;">
+        <div style="margin-bottom:4px;">Also: <strong>pre-loaded with real gotchas for your language</strong> — not empty on day 1.</div>
+        <div style="margin-bottom:4px;"><strong>Works on any machine</strong> — commit .claude/ with your code, git pull and everything is there.</div>
+        <div><strong>Already have a setup?</strong> Upload your existing .claude/ folder — the wizard merges it. Nothing lost.</div>
       </div>
     </div>
   </div>
