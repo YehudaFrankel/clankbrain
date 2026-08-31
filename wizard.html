@@ -751,24 +751,31 @@
     function autoDetectFromContent(content) {
       var lower = content.toLowerCase();
 
-      // Detect language
-      var langMap = {
-        'typescript': 'javascript', 'javascript': 'javascript',
-        'python': 'python', 'django': 'python', 'flask': 'python', 'fastapi': 'python',
-        'java': 'java', 'spring': 'java', 'kotlin': 'kotlin',
-        'golang': 'go', '\\bgo\\b': 'go', 'gin': 'go',
-        'rust': 'rust', 'cargo': 'rust',
-        'c#': 'csharp', 'csharp': 'csharp', '.net': 'csharp', 'dotnet': 'csharp',
-        'ruby': 'ruby', 'rails': 'ruby',
-        'php': 'php', 'laravel': 'php',
-        'swift': 'swift', 'swiftui': 'swift'
-      };
+      // Detect language — order matters: check specific terms before generic ones
+      var langChecks = [
+        { terms: ['resin', 'jsp', 'servlet'], lang: 'java' },
+        { terms: ['spring boot', 'maven', 'gradle', 'pom.xml'], lang: 'java' },
+        { terms: ['typescript', 'next.js', 'nextjs', 'react', 'express', 'node.js', 'npm run'], lang: 'javascript' },
+        { terms: ['django', 'flask', 'fastapi', 'pip install', 'pytest', 'python'], lang: 'python' },
+        { terms: ['kotlin', 'ktor'], lang: 'kotlin' },
+        { terms: ['golang', 'go mod', 'go run', 'go test'], lang: 'go' },
+        { terms: ['cargo', 'rustfmt', 'clippy'], lang: 'rust' },
+        { terms: ['c#', 'csharp', 'dotnet', '.net', 'asp.net'], lang: 'csharp' },
+        { terms: ['ruby', 'rails', 'gemfile', 'rspec'], lang: 'ruby' },
+        { terms: ['php', 'laravel', 'composer'], lang: 'php' },
+        { terms: ['swift', 'swiftui', 'xcode'], lang: 'swift' }
+      ];
       var langEl = document.getElementById('language');
-      for (var key in langMap) {
-        if (lower.indexOf(key) >= 0) {
-          langEl.value = langMap[key];
-          updateFrameworkOptions();
-          break;
+      var langDetected = false;
+      for (var li = 0; li < langChecks.length; li++) {
+        if (langDetected) { break; }
+        for (var lt = 0; lt < langChecks[li].terms.length; lt++) {
+          if (lower.indexOf(langChecks[li].terms[lt]) >= 0) {
+            langEl.value = langChecks[li].lang;
+            updateFrameworkOptions();
+            langDetected = true;
+            break;
+          }
         }
       }
 
@@ -811,12 +818,17 @@
         }
       }
 
-      // Detect project name from # heading
-      var nameMatch = content.match(/^#\s+(.+?)[\r\n]/m);
-      if (nameMatch) {
-        var detectedName = nameMatch[1].trim();
-        if (detectedName.length < 40) {
-          document.getElementById('projectName').value = detectedName;
+      // Detect project name from # heading — skip file path headers (--- path ---)
+      var lines = content.split('\n');
+      for (var ni = 0; ni < lines.length; ni++) {
+        var line = lines[ni].trim();
+        if (line.indexOf('---') === 0) { continue; }
+        if (line.indexOf('# ') === 0 && line.indexOf('# ---') !== 0) {
+          var detectedName = line.replace(/^#+\s*/, '').trim();
+          if (detectedName.length > 0 && detectedName.length < 50 && detectedName.indexOf('/') < 0) {
+            document.getElementById('projectName').value = detectedName;
+          }
+          break;
         }
       }
     }
