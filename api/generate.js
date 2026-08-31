@@ -415,8 +415,21 @@ function generateFiles(body) {
   files['modes/deploy.json'] = JSON.stringify({ name: 'deploy', description: 'Deployment mode - confirms before every action', tools: ['Read', 'Bash', 'Glob', 'Grep'] }, null, 2);
   files['modes/safe.json'] = JSON.stringify({ name: 'safe', description: 'Safe mode - read-only, no file changes, no commands', tools: ['Read', 'Glob', 'Grep'] }, null, 2);
 
-  // Settings
-  files['settings.json'] = JSON.stringify({ permissions: { allow: [], deny: [] } }, null, 2);
+  // Settings with hooks for memory.py
+  files['settings.json'] = JSON.stringify({
+    permissions: { allow: [], deny: [] },
+    hooks: {
+      SessionStart: [
+        { type: 'command', command: 'python tools/memory.py session-start', timeout: 10000 }
+      ],
+      PostToolUse: [
+        { type: 'command', command: 'python tools/memory.py capture-correction', timeout: 5000, matcher: { tool_name: 'Edit' } }
+      ],
+      PreCompact: [
+        { type: 'command', command: 'python tools/memory.py precompact', timeout: 10000 }
+      ]
+    }
+  }, null, 2);
 
   // Sync instructions
   files['SYNC.md'] = generateSyncGuide(body);
