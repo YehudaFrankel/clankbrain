@@ -171,22 +171,23 @@
 
     .help-icon .tip {
       display: none;
-      position: fixed;
-      width: 240px;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 0.72rem;
-      font-weight: 400;
-      color: var(--text);
-      line-height: 1.4;
-      z-index: 1000;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-      pointer-events: none;
     }
 
-    .help-icon:hover .tip { display: block; }
+    .tip-floating {
+      position: fixed;
+      width: 260px;
+      background: #2a2a2a;
+      border: 1px solid #555;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.5;
+      z-index: 10000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
 
     .generate-btn {
       width: 100%;
@@ -878,18 +879,29 @@
       document.getElementById('resultOverlay').className = 'result-overlay';
     }
 
-    // Position tooltips on hover using fixed positioning
+    // Floating tooltip on body — escapes all parent overflow/z-index
+    var floatingTip = null;
     var helpIcons = document.querySelectorAll('.help-icon');
     for (var h = 0; h < helpIcons.length; h++) {
-      helpIcons[h].addEventListener('mouseenter', function(e) {
-        var tip = this.querySelector('.tip');
-        if (!tip) { return; }
+      helpIcons[h].addEventListener('mouseenter', function() {
+        var tipSrc = this.querySelector('.tip');
+        if (!tipSrc) { return; }
+        floatingTip = document.createElement('div');
+        floatingTip.className = 'tip-floating';
+        floatingTip.textContent = tipSrc.textContent;
+        document.body.appendChild(floatingTip);
         var rect = this.getBoundingClientRect();
-        tip.style.left = Math.max(8, rect.left - 100) + 'px';
-        tip.style.top = (rect.top - tip.offsetHeight - 8) + 'px';
-        // If goes above viewport, show below instead
-        if (rect.top - tip.offsetHeight - 8 < 0) {
-          tip.style.top = (rect.bottom + 8) + 'px';
+        var tipW = 260;
+        var left = Math.max(8, Math.min(rect.left - tipW / 2, window.innerWidth - tipW - 8));
+        var top = rect.top - floatingTip.offsetHeight - 8;
+        if (top < 8) { top = rect.bottom + 8; }
+        floatingTip.style.left = left + 'px';
+        floatingTip.style.top = top + 'px';
+      });
+      helpIcons[h].addEventListener('mouseleave', function() {
+        if (floatingTip && floatingTip.parentNode) {
+          floatingTip.parentNode.removeChild(floatingTip);
+          floatingTip = null;
         }
       });
     }
