@@ -609,9 +609,6 @@
           <label for="additionalContext">Extra context <span class="help-icon">?<span class="tip">Anything specific to your project that Claude should know from day one. Examples: "We use Prettier for formatting", "Deploy via GitHub Actions", "All API routes are in /api/v2/". This goes straight into your CLAUDE.md.</span></span></label>
           <textarea id="additionalContext" placeholder="Anything else Claude should know..." oninput="updatePreview()" style="min-height:48px;"></textarea>
         </div>
-        <div class="form-group">
-          <label class="checkbox-item" style="font-size:0.82rem;"><input type="checkbox" id="hasPython"> I have Python 3.7+ installed <span class="help-icon">?<span class="tip">Enables automatic hooks: memory loads on session start, corrections are captured after edits, and state is saved before context compression. Without Python, everything still works — you just use Start/End Session commands manually. To install Python: python.org/downloads (Windows/Mac) or "sudo apt install python3" (Linux).</span></span></label>
-        </div>
       </div>
       <div class="error-msg" id="errorMsg"></div>
     </div>
@@ -1015,7 +1012,6 @@
       }
       // Always-included files
       fileCount += 17; // skills(7) + rules(2) + agents(2) + modes(4) + settings + SYNC.md
-      fileCount += 3; // Python tools
 
       s += '<span class="dim">' + fileCount + ' files will be generated:</span>\n\n';
 
@@ -1074,10 +1070,6 @@
         s += '<span class="blue">  memory/tasks/draft-lessons.md</span>\n';
       }
 
-      s += '\n<span class="green">Tools</span>\n';
-      s += '<span class="blue">  tools/memory.py</span> <span class="dim">(drift, snapshots, sync)</span>\n';
-      s += '<span class="blue">  tools/team_sync.py</span> <span class="dim">(shared memory)</span>\n';
-      s += '<span class="blue">  tools/telemetry.py</span>\n';
 
       el.innerHTML = s;
     }
@@ -1107,8 +1099,7 @@
         protectedFiles: document.getElementById('protectedFiles').value.trim(),
         additionalContext: document.getElementById('additionalContext').value.trim(),
         conventions: getChecked(),
-        importExisting: document.getElementById('importExisting').value.trim(),
-        hasPython: document.getElementById('hasPython').checked
+        importExisting: document.getElementById('importExisting').value.trim()
       };
 
       fetch('/api/generate', {
