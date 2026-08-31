@@ -50,12 +50,15 @@ module.exports = async function handler(req, res) {
       claudeFolder.file(fileName, content);
     }
 
-    // Fetch and add Python tools from GitHub
-    for (var j = 0; j < GITHUB_FILES.length; j++) {
-      var gf = GITHUB_FILES[j];
-      var fileContent = await fetchFile(GITHUB_RAW_BASE + gf.path);
-      if (fileContent) {
-        claudeFolder.file(gf.zipPath, fileContent);
+    // Fetch and add Python tools from GitHub (only if hasPython flag in settings)
+    var settingsStr = filesJson['settings.json'] || '';
+    if (settingsStr.indexOf('hooks') >= 0) {
+      for (var j = 0; j < GITHUB_FILES.length; j++) {
+        var gf = GITHUB_FILES[j];
+        var fileContent = await fetchFile(GITHUB_RAW_BASE + gf.path);
+        if (fileContent) {
+          claudeFolder.file(gf.zipPath, fileContent);
+        }
       }
     }
 

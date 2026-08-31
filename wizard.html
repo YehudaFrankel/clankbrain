@@ -609,6 +609,9 @@
           <label for="additionalContext">Extra context <span class="help-icon">?<span class="tip">Anything specific to your project that Claude should know from day one. Examples: "We use Prettier for formatting", "Deploy via GitHub Actions", "All API routes are in /api/v2/". This goes straight into your CLAUDE.md.</span></span></label>
           <textarea id="additionalContext" placeholder="Anything else Claude should know..." oninput="updatePreview()" style="min-height:48px;"></textarea>
         </div>
+        <div class="form-group">
+          <label class="checkbox-item" style="font-size:0.82rem;"><input type="checkbox" id="hasPython"> I have Python 3.7+ installed <span class="help-icon">?<span class="tip">Enables automatic hooks: memory loads on session start, corrections are captured after edits, and state is saved before context compression. Without Python, everything still works — you just use Start/End Session commands manually. To install Python: python.org/downloads (Windows/Mac) or "sudo apt install python3" (Linux).</span></span></label>
+        </div>
       </div>
       <div class="error-msg" id="errorMsg"></div>
     </div>
@@ -1104,7 +1107,8 @@
         protectedFiles: document.getElementById('protectedFiles').value.trim(),
         additionalContext: document.getElementById('additionalContext').value.trim(),
         conventions: getChecked(),
-        importExisting: document.getElementById('importExisting').value.trim()
+        importExisting: document.getElementById('importExisting').value.trim(),
+        hasPython: document.getElementById('hasPython').checked
       };
 
       fetch('/api/generate', {
