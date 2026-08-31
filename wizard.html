@@ -511,6 +511,21 @@
         </div>
       </div>
 
+      <div class="form-group" style="margin-bottom:6px;">
+        <label>Setup mode</label>
+        <div style="display:flex; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+          <button type="button" id="modeLite" onclick="setMode('lite')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--input-bg); color:var(--muted); transition:all 0.2s;">Lite</button>
+          <button type="button" id="modeFull" onclick="setMode('full')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--accent); color:#000; transition:all 0.2s;">Full</button>
+        </div>
+        <div class="hint" id="modeHint">Full setup: 35+ files with compound learning engine, agents, and tools.</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:6px;">
+        <label>Import existing <span style="color:var(--muted);font-weight:400">(optional)</span> <span class="help-icon">?<span class="tip">Already have a CLAUDE.md? Paste it here and the wizard will merge your existing context, conventions, and commands into the generated setup. Nothing gets lost.</span></span></label>
+        <textarea id="importExisting" placeholder="Paste your existing CLAUDE.md content here..." oninput="updatePreview()" style="min-height:40px; font-size:0.75rem; font-family:'SF Mono',monospace; display:none;"></textarea>
+        <a href="#" onclick="var t=document.getElementById('importExisting');t.style.display=t.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.72rem; text-decoration:none;">+ Paste existing CLAUDE.md</a>
+      </div>
+
       <div class="form-group">
         <label>Include</label>
         <div class="checkbox-grid">
@@ -596,6 +611,41 @@
 
   <script>
     var generatedFiles = null;
+    var currentMode = 'full';
+
+    var LITE_CHECKS = ['plan-before-edit', 'memory-system'];
+    var FULL_CHECKS = ['plan-before-edit', 'naming-conventions', 'code-review', 'protected-files', 'memory-system'];
+
+    function setMode(mode) {
+      currentMode = mode;
+      var liteBtn = document.getElementById('modeLite');
+      var fullBtn = document.getElementById('modeFull');
+      var hint = document.getElementById('modeHint');
+      if (mode === 'lite') {
+        liteBtn.style.background = 'var(--accent)';
+        liteBtn.style.color = '#000';
+        fullBtn.style.background = 'var(--input-bg)';
+        fullBtn.style.color = 'var(--muted)';
+        hint.textContent = 'Lite: CLAUDE.md + plan-before-edit + memory. Clean and simple.';
+      } else {
+        fullBtn.style.background = 'var(--accent)';
+        fullBtn.style.color = '#000';
+        liteBtn.style.background = 'var(--input-bg)';
+        liteBtn.style.color = 'var(--muted)';
+        hint.textContent = 'Full setup: 35+ files with compound learning engine, agents, and tools.';
+      }
+      var checks = (mode === 'lite') ? LITE_CHECKS : FULL_CHECKS;
+      var cbs = document.querySelectorAll('.checkbox-grid input[type="checkbox"]:not([disabled])');
+      for (var i = 0; i < cbs.length; i++) {
+        cbs[i].checked = false;
+        for (var j = 0; j < checks.length; j++) {
+          if (cbs[i].value === checks[j]) {
+            cbs[i].checked = true;
+          }
+        }
+      }
+      updatePreview();
+    }
 
     var FRAMEWORK_OPTIONS = {
       javascript: ['Next.js', 'React', 'Express', 'Vue', 'Angular', 'Svelte', 'Nuxt', 'Astro', 'Remix', 'Nest.js'],
@@ -825,7 +875,8 @@
         teamSize: document.getElementById('teamSize').value,
         protectedFiles: document.getElementById('protectedFiles').value.trim(),
         additionalContext: document.getElementById('additionalContext').value.trim(),
-        conventions: getChecked()
+        conventions: getChecked(),
+        importExisting: document.getElementById('importExisting').value.trim()
       };
 
       fetch('/api/generate', {
