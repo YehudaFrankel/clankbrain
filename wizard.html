@@ -432,8 +432,9 @@
   </nav>
 
   <div class="hero">
-    <h1>Stop re-explaining your stack every session.</h1>
-    <p>Generate a complete AI coding workflow for your project — rules, memory, and skills that make Claude Code smarter every session. <span>Free. Instant. No account.</span></p>
+    <h1>Claude Code that gets smarter every session.</h1>
+    <p>35 structured files that give Claude a learning system — not just memory, but a regret log, skill scoring, and self-improving workflows. <span>Free. Instant. No account.</span></p>
+    <div style="margin-top:10px; font-size:0.78rem; color:var(--muted);">Built from 335 real sessions on a production codebase. <a href="https://github.com/YehudaFrankel/clankbrain" style="color:var(--accent); text-decoration:none;">See the source →</a></div>
     <a href="#" onclick="var d=document.getElementById('heroDetails');d.style.display=d.style.display==='none'?'block':'none';this.textContent=d.style.display==='none'?'What do I get? ▾':'Hide details ▴';return false;" style="color:var(--accent); font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:8px;">Hide details ▴</a>
     <div id="heroDetails" style="text-align:left; max-width:560px; margin:12px auto 0; padding:16px 20px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.8rem; color:var(--muted); line-height:1.7; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
       <div style="color:var(--text); font-weight:600; margin-bottom:8px;">You get 35+ files that drop into your project:</div>
@@ -445,9 +446,9 @@
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Code review</span> — Deep checks specific to your language. Not generic linting — catches real bugs.</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Start Session / End Session</span> — Two commands. Claude loads context, you work, it saves what it learned. That's the whole workflow.</div>
       <div style="border-top:1px solid var(--border); margin-top:10px; padding-top:10px; color:var(--muted); font-size:0.75rem;">
-        <div style="margin-bottom:4px;">Also: <strong>pre-loaded with real gotchas for your language</strong> — not empty on day 1.</div>
-        <div style="margin-bottom:4px;"><strong>Works on any machine</strong> — commit .claude/ with your code, git pull and everything is there.</div>
-        <div><strong>Already have a setup?</strong> Upload your existing .claude/ folder — the wizard merges it. Nothing lost.</div>
+        <div style="margin-bottom:4px;"><strong>Not empty on day 1</strong> — pre-loaded with real gotchas for your language.</div>
+        <div style="margin-bottom:4px;"><strong>Portable</strong> — lives in your repo. Switch machines, git pull, everything is there.</div>
+        <div><strong>Upgradeable</strong> — already have a setup? Upload it, the wizard merges. Nothing lost.</div>
       </div>
       <div style="border-top:1px solid var(--border); margin-top:10px; padding-top:10px;">
         <div style="font-size:0.75rem; color:var(--muted); line-height:1.6;">
@@ -463,7 +464,7 @@
     <div class="form-side">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <h2 style="margin:0;">Your project</h2>
-        <a href="#" onclick="var d=document.getElementById('importSection');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.72rem; text-decoration:none;">Already using Claude Code? Import →</a>
+        <a href="#" onclick="var d=document.getElementById('importSection');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.75rem; text-decoration:none; background:var(--accent-glow); padding:4px 10px; border-radius:4px; border:1px solid rgba(217,119,6,0.2);">Upgrading? Import your .claude/ →</a>
       </div>
 
       <div class="form-group">
@@ -538,28 +539,26 @@
 
       <div class="form-group">
         <label>Include</label>
-        <div class="checkbox-grid">
-          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit <span class="help-icon">?<span class="tip">Claude shows you exactly what it will change before touching any file. You review and say "go" before anything happens. Prevents surprises.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules <span class="help-icon">?<span class="tip">Consistent names across your project. Variables, functions, files, classes all follow your language's best practices automatically.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review <span class="help-icon">?<span class="tip">Say "review this" and Claude checks your code for bugs, bad patterns, and security issues specific to your language. Not generic — tailored to your stack.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review <span class="help-icon">?<span class="tip">Checks your code for common vulnerabilities: SQL injection, exposed secrets, missing auth, unsafe inputs. Flags issues by severity so you fix the critical ones first.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules <span class="help-icon">?<span class="tip">Clear rules on what needs tests and what doesn't. No guessing — Claude knows your test framework and follows your standards.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style <span class="help-icon">?<span class="tip">Clean, consistent commit messages every time. "fix: resolve login timeout" instead of "fixed stuff". Makes your git history actually useful.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Mark files that Claude should never restructure — config files, migrations, env files. Claude can still make small targeted edits, but won't rewrite the whole thing.</span></span></label>
-          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Claude remembers what it learned. Mistakes get logged so they don't repeat. Decisions stay decided. Every session builds on the last one instead of starting fresh.</span></span></label>
+        <div style="font-size:0.7rem; color:var(--muted); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Smart Coding</div>
+        <div class="checkbox-grid" style="margin-bottom:8px;">
+          <label class="checkbox-item"><input type="checkbox" value="plan-before-edit" checked onchange="updatePreview()"> Plan before edit <span class="help-icon">?<span class="tip">Claude shows you what it will change and waits for your OK. No surprises.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="code-review" checked onchange="updatePreview()"> Code review <span class="help-icon">?<span class="tip">Deep checks specific to your language — not generic linting.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="security" onchange="updatePreview()"> Security review <span class="help-icon">?<span class="tip">Catches SQL injection, exposed secrets, missing auth. Severity-rated.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="protected-files" checked onchange="updatePreview()"> Protected files <span class="help-icon">?<span class="tip">Files Claude should never restructure — config, migrations, env.</span></span></label>
         </div>
-        <div class="hint" style="margin-top:6px;">+ 8 always-included features: <a href="#" onclick="var d=document.getElementById('alwaysIncluded');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); text-decoration:none;">show details</a></div>
-        <div id="alwaysIncluded" style="display:none; margin-top:8px; border-top:1px solid var(--border); padding-top:8px;">
-          <div class="checkbox-grid" style="opacity:0.55;">
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Start / End Session <span class="help-icon">?<span class="tip">Say "Start Session" and Claude loads everything it knows about your project. Say "End Session" and it saves what it learned. Two commands — that's the whole workflow.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">When an approach fails, it goes on the "never again" list. Next time Claude is about to suggest the same bad idea, it catches itself and proposes something better.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Tracks whether each workflow actually works or needs fixing. If a skill keeps causing problems, it gets flagged and improved automatically.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Estimate accuracy <span class="help-icon">?<span class="tip">Claude learns how long tasks actually take vs. how long it estimated. Over time, its estimates get more accurate because they're based on your real history.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Keep it simple <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Catches conflicts <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Cost optimizer <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
-          </div>
+        <div style="font-size:0.7rem; color:var(--muted); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Memory &amp; Learning</div>
+        <div class="checkbox-grid" style="margin-bottom:8px;">
+          <label class="checkbox-item"><input type="checkbox" value="memory-system" checked onchange="updatePreview()"> Memory system <span class="help-icon">?<span class="tip">Lessons, decisions, and mistakes saved. Every session builds on the last.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="naming-conventions" checked onchange="updatePreview()"> Naming rules <span class="help-icon">?<span class="tip">Consistent variable, function, file naming for your language.</span></span></label>
+        </div>
+        <div style="font-size:0.7rem; color:var(--muted); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Output Quality</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" value="testing" onchange="updatePreview()"> Testing rules <span class="help-icon">?<span class="tip">What needs tests, what doesn't. Your framework, your standards.</span></span></label>
+          <label class="checkbox-item"><input type="checkbox" value="commit-style" onchange="updatePreview()"> Commit style <span class="help-icon">?<span class="tip">"fix: resolve login timeout" instead of "fixed stuff".</span></span></label>
+        </div>
+        <div class="hint" style="margin-top:8px;">Always included: Start/End Session, Learn, Regret log, Skill scoring, Estimate accuracy, Conflict detection, Cost optimizer. <a href="#" onclick="var d=document.getElementById('alwaysIncluded');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); text-decoration:none;">details</a></div>
+        <div id="alwaysIncluded" style="display:none; margin-top:6px; padding:8px; background:var(--input-bg); border-radius:6px; font-size:0.72rem; color:var(--muted); line-height:1.6;">
+          <strong>Start / End Session</strong> — two commands, whole workflow. <strong>Learn</strong> — extracts patterns after each session. <strong>Regret log</strong> — "never again" list checked before every plan. <strong>Skill scoring</strong> — tracks what works, flags what doesn't. <strong>Estimate accuracy</strong> — calibrates from real history. <strong>Conflict detection</strong> — speaks up when plans contradict past decisions. <strong>Cost optimizer</strong> — cheaper model for routine, expensive for hard problems.
         </div>
       </div>
 
