@@ -779,22 +779,24 @@
         }
       }
 
-      // Detect framework
-      var fwMap = {
-        'next.js': 'Next.js', 'nextjs': 'Next.js', 'react': 'React', 'express': 'Express',
-        'vue': 'Vue', 'angular': 'Angular', 'svelte': 'Svelte', 'nuxt': 'Nuxt',
-        'django': 'Django', 'flask': 'Flask', 'fastapi': 'FastAPI',
-        'spring boot': 'Spring Boot', 'spring-boot': 'Spring Boot',
-        'rails': 'Rails', 'laravel': 'Laravel',
-        'gin': 'Gin', 'actix': 'Actix',
-        'resin': 'Resin', 'tomcat': 'Tomcat'
-      };
+      // Detect framework — check unique/specific terms first, generic last
+      var fwChecks = [
+        ['resin', 'Resin'], ['tomcat', 'Tomcat'], ['jetty', 'Jetty'],
+        ['next.js', 'Next.js'], ['nextjs', 'Next.js'],
+        ['fastapi', 'FastAPI'], ['flask', 'Flask'], ['django', 'Django'],
+        ['spring boot', 'Spring Boot'], ['spring-boot', 'Spring Boot'],
+        ['laravel', 'Laravel'], ['rails', 'Rails'],
+        ['nuxt', 'Nuxt'], ['svelte', 'Svelte'], ['angular', 'Angular'], ['vue', 'Vue'],
+        ['express', 'Express'], ['nest.js', 'Nest.js'],
+        ['gin', 'Gin'], ['actix', 'Actix'], ['axum', 'Axum'],
+        ['react', 'React']
+      ];
       var fwEl = document.getElementById('framework');
-      for (var fk in fwMap) {
-        if (lower.indexOf(fk) >= 0) {
+      for (var fci = 0; fci < fwChecks.length; fci++) {
+        if (lower.indexOf(fwChecks[fci][0]) >= 0) {
           for (var fi = 0; fi < fwEl.options.length; fi++) {
-            if (fwEl.options[fi].value === fwMap[fk]) {
-              fwEl.value = fwMap[fk];
+            if (fwEl.options[fi].value === fwChecks[fci][1]) {
+              fwEl.value = fwChecks[fci][1];
               break;
             }
           }
