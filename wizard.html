@@ -434,8 +434,8 @@
   <div class="hero">
     <h1>Stop re-explaining your stack every session.</h1>
     <p>Generate a complete AI coding workflow for your project — rules, memory, and skills that make Claude Code smarter every session. <span>Free. Instant. No account.</span></p>
-    <a href="#" onclick="var d=document.getElementById('heroDetails');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:8px;">What do I get? ▾</a>
-    <div id="heroDetails" style="display:none; text-align:left; max-width:560px; margin:12px auto 0; padding:16px 20px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:10px; font-size:0.8rem; color:#aaa; line-height:1.7;">
+    <a href="#" onclick="var d=document.getElementById('heroDetails');d.style.display=d.style.display==='none'?'block':'none';this.textContent=d.style.display==='none'?'What do I get? ▾':'Hide details ▴';return false;" style="color:var(--accent); font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:8px;">Hide details ▴</a>
+    <div id="heroDetails" style="text-align:left; max-width:560px; margin:12px auto 0; padding:16px 20px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:10px; font-size:0.8rem; color:#aaa; line-height:1.7;">
       <div style="color:#e8e8e8; font-weight:600; margin-bottom:8px;">You get 35+ files that drop into your project:</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">CLAUDE.md</span> — Your stack, commands, and conventions. Claude reads it every session so you never re-explain.</div>
       <div style="margin-bottom:6px;"><span style="color:var(--accent);">Plan before edit</span> — Claude shows you exactly what it will change and waits for your OK. No surprises.</div>
@@ -455,7 +455,10 @@
   <div class="main">
     <!-- Form -->
     <div class="form-side">
-      <h2>Your project</h2>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2 style="margin:0;">Your project</h2>
+        <a href="#" onclick="var d=document.getElementById('importSection');d.style.display=d.style.display==='none'?'block':'none';return false;" style="color:var(--accent); font-size:0.72rem; text-decoration:none;">Already using Claude Code? Import →</a>
+      </div>
 
       <div class="form-group">
         <label for="projectName">Project name <span style="color:var(--accent)">*</span></label>
@@ -546,10 +549,10 @@
             <label class="checkbox-item"><input type="checkbox" checked disabled> Learn skill <span class="help-icon">?<span class="tip">After each session, Claude writes down what went well, what went wrong, and what to do differently. These notes carry forward to every future session.</span></span></label>
             <label class="checkbox-item"><input type="checkbox" checked disabled> Regret log <span class="help-icon">?<span class="tip">When an approach fails, it goes on the "never again" list. Next time Claude is about to suggest the same bad idea, it catches itself and proposes something better.</span></span></label>
             <label class="checkbox-item"><input type="checkbox" checked disabled> Skill scoring <span class="help-icon">?<span class="tip">Tracks whether each workflow actually works or needs fixing. If a skill keeps causing problems, it gets flagged and improved automatically.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Velocity tracking <span class="help-icon">?<span class="tip">Claude learns how long tasks actually take vs. how long it estimated. Over time, its estimates get more accurate because they're based on your real history.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Coding principles <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Scoped pushback <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
-            <label class="checkbox-item"><input type="checkbox" checked disabled> Model selection <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Estimate accuracy <span class="help-icon">?<span class="tip">Claude learns how long tasks actually take vs. how long it estimated. Over time, its estimates get more accurate because they're based on your real history.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Keep it simple <span class="help-icon">?<span class="tip">Simple rules: think before coding, keep it simple, change only what's needed, verify it works. Prevents Claude from over-engineering or going off-track.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Catches conflicts <span class="help-icon">?<span class="tip">Claude will speak up if your plan conflicts with a past decision or repeats a known mistake — but only once, and only when it matters. It won't argue or slow you down.</span></span></label>
+            <label class="checkbox-item"><input type="checkbox" checked disabled> Cost optimizer <span class="help-icon">?<span class="tip">Uses the cheaper, faster model for routine work. Only switches to the powerful (expensive) model for hard problems. Can save 50-80% on API costs with no quality loss on simple tasks.</span></span></label>
           </div>
         </div>
       </div>
@@ -570,6 +573,10 @@
             <button type="button" id="modeFull" onclick="setMode('full')" style="flex:1; padding:6px; border:none; font-size:0.78rem; font-weight:600; cursor:pointer; background:var(--accent); color:#000; transition:all 0.2s;">Full</button>
           </div>
           <div class="hint" id="modeHint">Full setup: 35+ files with compound learning engine, agents, and tools.</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; font-size:0.7rem; color:var(--muted);">
+            <div style="padding:6px 8px; border:1px solid var(--border); border-radius:4px;"><strong style="color:var(--text);">Lite</strong><br>CLAUDE.md + plan-before-edit + memory. ~15 files. For getting started fast.</div>
+            <div style="padding:6px 8px; border:1px solid var(--border); border-radius:4px;"><strong style="color:var(--text);">Full</strong><br>Everything: skills, agents, modes, regret log, velocity, evolve. ~32 files. The complete engine.</div>
+          </div>
         </div>
       </div>
 
