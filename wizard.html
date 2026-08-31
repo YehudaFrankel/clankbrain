@@ -562,8 +562,12 @@
           <label>Import existing setup <span class="help-icon">?<span class="tip">Already have a CLAUDE.md, rules, or conventions from any source? Upload the file or paste the content. The wizard merges your existing work into the generated setup — nothing gets lost.</span></span></label>
           <div style="display:flex; gap:8px; margin-bottom:6px;">
             <label style="flex:1; padding:8px; border:1px dashed var(--border); border-radius:6px; text-align:center; cursor:pointer; font-size:0.75rem; color:var(--muted); transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <input type="file" id="importFolder" webkitdirectory multiple onchange="handleFolderUpload(this)" style="display:none;">
+              Upload .claude/ folder
+            </label>
+            <label style="flex:1; padding:8px; border:1px dashed var(--border); border-radius:6px; text-align:center; cursor:pointer; font-size:0.75rem; color:var(--muted); transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
               <input type="file" id="importFile" accept=".md,.txt" onchange="handleFileUpload(this)" style="display:none;">
-              Upload CLAUDE.md or .txt
+              Upload single file
             </label>
           </div>
           <div id="importFileName" style="display:none; font-size:0.72rem; color:var(--accent); margin-bottom:4px;"></div>
@@ -672,6 +676,54 @@
         nums += i + '\n';
       }
       ln.textContent = nums;
+    }
+
+    function handleFolderUpload(input) {
+      if (!input.files || input.files.length === 0) { return; }
+      var files = input.files;
+      var allContent = '';
+      var fileCount = 0;
+      var mdFiles = [];
+
+      // Collect all .md files
+      for (var i = 0; i < files.length; i++) {
+        var name = files[i].webkitRelativePath || files[i].name;
+        if (name.match(/\.(md|txt)$/i)) {
+          mdFiles.push(files[i]);
+        }
+      }
+
+      if (mdFiles.length === 0) {
+        document.getElementById('importFileName').textContent = 'No .md files found in folder';
+        document.getElementById('importFileName').style.display = 'block';
+        document.getElementById('importFileName').style.color = '#ef4444';
+        return;
+      }
+
+      var loaded = 0;
+      var sections = [];
+
+      for (var j = 0; j < mdFiles.length; j++) {
+        (function(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var path = file.webkitRelativePath || file.name;
+            sections.push('# --- ' + path + ' ---\n\n' + e.target.result);
+            loaded++;
+            if (loaded === mdFiles.length) {
+              var combined = sections.join('\n\n');
+              document.getElementById('importExisting').value = combined;
+              document.getElementById('importFileName').textContent = 'Loaded ' + mdFiles.length + ' files from folder';
+              document.getElementById('importFileName').style.display = 'block';
+              document.getElementById('importFileName').style.color = 'var(--accent)';
+              autoDetectFromContent(combined);
+              updateLineNums();
+              updatePreview();
+            }
+          };
+          reader.readAsText(file);
+        })(mdFiles[j]);
+      }
     }
 
     function handleFileUpload(input) {
