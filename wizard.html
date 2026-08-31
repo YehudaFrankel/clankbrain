@@ -570,10 +570,16 @@
               Upload single file
             </label>
           </div>
-          <div id="importFileName" style="display:none; font-size:0.72rem; color:var(--accent); margin-bottom:4px;"></div>
-          <div style="display:flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--input-bg);">
-            <div id="importLineNums" style="padding:10px 8px; font-size:0.72rem; font-family:'SF Mono','Consolas',monospace; line-height:1.65; color:#444; text-align:right; user-select:none; min-width:32px; border-right:1px solid var(--border); background:#111;">1</div>
-            <textarea id="importExisting" placeholder="Paste content here..." oninput="updateLineNums(); updatePreview();" onscroll="document.getElementById('importLineNums').scrollTop=this.scrollTop;" style="flex:1; min-height:200px; max-height:400px; font-size:0.78rem; font-family:'SF Mono','Consolas','Fira Code',monospace; line-height:1.65; padding:10px; tab-size:2; white-space:pre; overflow:auto; border:none; background:transparent; color:var(--text); resize:vertical; outline:none;"></textarea>
+          <div id="importFileName" style="display:none; font-size:0.75rem; color:var(--accent); margin:6px 0; padding:8px 12px; background:rgba(217,119,6,0.08); border-radius:6px;"></div>
+          <div id="importEditor" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span class="hint" style="margin:0;">Edit imported content:</span>
+              <a href="#" onclick="document.getElementById('importEditor').style.display='none';return false;" style="color:var(--muted); font-size:0.7rem; text-decoration:none;">hide</a>
+            </div>
+            <div style="display:flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--input-bg);">
+              <div id="importLineNums" style="padding:10px 8px; font-size:0.72rem; font-family:'SF Mono','Consolas',monospace; line-height:1.65; color:#444; text-align:right; user-select:none; min-width:32px; border-right:1px solid var(--border); background:#111;">1</div>
+              <textarea id="importExisting" placeholder="Paste content here..." oninput="updateLineNums(); updatePreview();" onscroll="document.getElementById('importLineNums').scrollTop=this.scrollTop;" style="flex:1; min-height:150px; max-height:300px; font-size:0.78rem; font-family:'SF Mono','Consolas','Fira Code',monospace; line-height:1.65; padding:10px; tab-size:2; white-space:pre; overflow:auto; border:none; background:transparent; color:var(--text); resize:vertical; outline:none;"></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -713,9 +719,8 @@
             if (loaded === mdFiles.length) {
               var combined = sections.join('\n\n');
               document.getElementById('importExisting').value = combined;
-              document.getElementById('importFileName').textContent = 'Loaded ' + mdFiles.length + ' files from folder';
+              document.getElementById('importFileName').innerHTML = 'Loaded ' + mdFiles.length + ' files from folder &nbsp;<a href="#" onclick="document.getElementById(\'importEditor\').style.display=\'block\';return false;" style="color:var(--accent);font-size:0.7rem;">view/edit</a>';
               document.getElementById('importFileName').style.display = 'block';
-              document.getElementById('importFileName').style.color = 'var(--accent)';
               autoDetectFromContent(combined);
               updateLineNums();
               updatePreview();
@@ -733,8 +738,9 @@
       reader.onload = function(e) {
         var content = e.target.result;
         document.getElementById('importExisting').value = content;
-        document.getElementById('importFileName').textContent = 'Loaded: ' + file.name;
+        document.getElementById('importFileName').innerHTML = 'Loaded: ' + file.name + ' &nbsp;<a href="#" onclick="document.getElementById(\'importEditor\').style.display=\'block\';return false;" style="color:var(--accent);font-size:0.7rem;">view/edit</a>';
         document.getElementById('importFileName').style.display = 'block';
+        document.getElementById('importEditor').style.display = 'none';
         autoDetectFromContent(content);
         updateLineNums();
         updatePreview();
