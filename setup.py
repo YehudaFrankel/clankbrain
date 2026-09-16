@@ -148,6 +148,56 @@ def _generate_memory_ps1(memory_repo, code_repo):
     print(f"  Created memory.ps1 (memory repo: {memory_repo})")
 
 
+def _install_addons():
+    """Offer optional add-on integrations for new users."""
+    print()
+    print("Optional add-ons (recommended for new projects):")
+    print("  Graphify     — auto-map your codebase into a queryable knowledge graph")
+    print("  Agent Skills — 25 engineering best-practice workflows (code review, security, etc.)")
+    print()
+
+    install_graphify = ask_yn("Install Graphify? (codebase knowledge graph)", "y")
+    install_skills = ask_yn("Install Agent Skills? (engineering workflow skills)", "y")
+
+    if not install_graphify and not install_skills:
+        print("  Skipped add-ons")
+        return
+
+    installed = []
+
+    if install_graphify:
+        try:
+            result = subprocess.run(
+                ["npx", "skills", "add", "Graphify-Labs/graphify"],
+                capture_output=True, text=True, timeout=60
+            )
+            if result.returncode == 0:
+                installed.append("Graphify")
+                print("  Installed Graphify")
+            else:
+                print("  WARN: Graphify install failed -- install manually: npx skills add Graphify-Labs/graphify")
+        except Exception:
+            print("  WARN: Graphify install failed -- install manually: npx skills add Graphify-Labs/graphify")
+
+    if install_skills:
+        try:
+            result = subprocess.run(
+                ["npx", "skills", "add", "addyosmani/agent-skills"],
+                capture_output=True, text=True, timeout=60
+            )
+            if result.returncode == 0:
+                installed.append("Agent Skills")
+                print("  Installed Agent Skills")
+            else:
+                print("  WARN: Agent Skills install failed -- install manually: npx skills add addyosmani/agent-skills")
+        except Exception:
+            print("  WARN: Agent Skills install failed -- install manually: npx skills add addyosmani/agent-skills")
+
+    if installed:
+        print(f"  Add-ons ready: {', '.join(installed)}")
+    print()
+
+
 def _copy_dashboard():
     """Copy the session dashboard into the project's _tools/dashboard/ directory."""
     src = HERE / '_tools' / 'dashboard'
@@ -1963,6 +2013,9 @@ type: reference
     # ── Skills ──
     if ask_yn("Generate skill files? (auto-invoked prompts for code review, security, bug fixing)", "y"):
         generate_skills(name, tech)
+
+    # ── Add-ons (optional) ──
+    _install_addons()
 
     # ── Dashboard ──
     _copy_dashboard()
