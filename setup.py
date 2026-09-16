@@ -1838,6 +1838,8 @@ def main():
 ## Project Rules (auto-generated on first session by /scan-codebase)
 
 @rules/plan-before-edit.md
+@rules/common-traps.md
+@rules/post-edit-checks.md
 @rules/code-map.md
 @rules/coding-conventions.md
 @rules/file-paths.md
@@ -1854,6 +1856,14 @@ claude --headless "your full task description here"
 ```
 
 Best used for: generating scaffolding, large refactors where the goal is clear, multi-file changes you don't need to watch step-by-step. For debugging or design decisions — use normal interactive mode.
+
+---
+
+## Working Rules
+
+- **Commit after each logical change** -- do not batch all changes to end of session. Mid-session commits protect work.
+- **Update STATUS.md and memory after every code change** -- stale memory is worse than no memory.
+- **Check callers after editing any function** -- grep for all references before moving on.
 
 ---
 
@@ -2114,6 +2124,14 @@ Check `tasks/velocity.md` for similar past tasks before estimating.
 ### Risks
 Concrete risks with mitigations. If zero risks, say so.
 
+### Risk Gate
+
+**If the plan lists any risks:** stop here and ask:
+> "Risks flagged: [one line per risk]. Any of these blockers?"
+
+Wait for the user to respond. Only show code (Before/After) AFTER risks are acknowledged.
+Risks shown after the code feel like fine print -- show them before.
+
 ### Challenge
 The strongest argument AGAINST this approach. If none: "No credible alternative."
 
@@ -2125,6 +2143,23 @@ git restore path/to/file.ext
 
 ---
 
+## Plan Corrections -- Always Re-Show Full Plan
+
+When the user corrects or refines any part of the plan, re-show the ENTIRE plan -- never just
+the changed section. The user cannot approve what they cannot see.
+
+"Yes" to a concept description is NOT plan approval. The Before/After code, Scope, Risks,
+Challenge, and Rollback must all be visible before any edit runs.
+
+## Lock Rules Before Large Refactors
+
+Before any change touching 3+ files or 100+ lines, ask:
+> "Any additional conventions to apply before I start? Reply 'all locked' or list them."
+
+Do NOT start coding until the user confirms.
+
+---
+
 ## After Approval -- Verify Every Edit
 
 After applying each edit:
@@ -2133,12 +2168,90 @@ After applying each edit:
 3. Confirm: Verified [file]:[lines]
 4. If it does not match -- stop immediately
 
+## After Every Edit -- Broader Impact Check
+
+After verifying the edit, scan for things that commonly break together:
+- Did you edit a function? Grep for all callers -- do their arguments still match?
+- Did you rename or move a function? Check for other references.
+- Did you change an API endpoint? Does the frontend caller still send the right params?
+- Did you change a DB query? Does the column list still match the table schema?
+- If you spot something wrong: say so unprompted. Do not wait to be asked.
+
 ## After All Edits -- Confirm Scope
 
 Run `git diff --stat` and report actual lines changed vs plan.
+
+## After All Edits -- Commit
+
+Commit after each logical change. Mid-session commits protect work from being lost.
+Do not batch all changes to the end of the session.
+""")
+    write(".claude/rules/common-traps.md", """\
+# Common Traps -- Read Before Every Plan
+
+These failure patterns recur across projects. Check each one before finalizing a plan.
+
+---
+
+## 1. The Narrow-Sample Trap
+If the change touches logic that runs against multiple records/configs, query for the FULL set
+of values it will touch -- not just the one case under investigation. Testing against one example
+and assuming the rest look the same is not verification.
+
+## 2. The Generic-Fix Trap
+A fix in a shared utility that only gets tested against one case will silently break every other
+case. Before fixing a shared function: grep for ALL callers. If the list is longer than the one
+case being fixed, verify the fix works for every caller -- or make it a targeted fix instead.
+Targeted is always safer than generic.
+
+## 3. The Reimplementation Trap
+If the "simpler" version of a fix means re-deriving logic that a platform utility already does
+correctly, call the existing method instead. A scoped-down reimplementation handles only the cases
+already tested and silently breaks on the rest.
+
+## 4. The Scope-Narrowing Trap
+If the After block moves a variable declaration into a narrower scope (e.g. inside an if/else),
+read the REST of the method to confirm nothing further down still references it at the old scope.
+Compiles clean in isolation, fails when the full file is compiled.
+
+## 5. The Context-Transfer Trap
+Before copying a fix (fallback, null guard, default value) from one method to another, verify the
+value's PURPOSE in each context. Same variable name can have different semantics. A zero-guard
+that prevents division-by-zero in one method might suppress a valid "no limit" signal in another.
+
+## 6. The Parameter-Drop Trap
+When simplifying function calls or API params, check what the receiving end reads BEFORE removing
+any field. A dropped parameter causes silent empty responses -- no error, just missing data.
+""")
+    write(".claude/rules/post-edit-checks.md", """\
+# Post-Edit Checks -- Run After Every Code Change
+
+After verifying the edit matches the plan, scan for broader impact:
+
+## After any backend/API edit:
+- Is there a frontend function that calls this endpoint? Does its param shape still match?
+- Did any function signatures change? Grep for all callers.
+- Does the change touch anything in auth/permissions? Confirm it still works.
+
+## After any frontend edit:
+- Is there a backend endpoint this calls? Do the param names match what the backend reads?
+- Was a function renamed? Grep for other callers.
+- Does the change add a new form or button? Check for proper event handling.
+
+## After any DB/SQL change:
+- Was a column renamed? Grep for the old name in backend code.
+- Was a new column added? Check if it needs a default value.
+- Is the table used by multiple features? Verify the change works for all of them.
+
+## The rule:
+If you spot something wrong during the scan, say so unprompted:
+"While verifying this edit I noticed X -- worth fixing before we continue?"
+A real co-worker does not wait to be asked.
 """)
     print("  Created .claude/rules/ skeleton (auto-populated on first Start Session)")
     print("  Created .claude/rules/plan-before-edit.md (plan + verify guardrail)")
+    print("  Created .claude/rules/common-traps.md (6 universal failure patterns)")
+    print("  Created .claude/rules/post-edit-checks.md (broader impact scanning)")
 
     # ── Skills ──
     if ask_yn("Generate skill files? (auto-invoked prompts for code review, security, bug fixing)", "y"):
