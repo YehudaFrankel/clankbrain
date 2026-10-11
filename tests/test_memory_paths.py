@@ -142,3 +142,33 @@ def test_setup_py_installs_session_and_date_hooks(tmp_path):
     # the journal only records edits that --log-edit has logged
     edit_commands = ' '.join(h['command'] for g in hooks['PostToolUse'] for h in g['hooks'])
     assert '--log-edit' in edit_commands
+
+
+# --- npx scenario: setup.py runs alone, without the rest of the kit -----------
+
+def _github_reachable():
+    try:
+        import urllib.request
+        urllib.request.urlopen('https://github.com', timeout=5)
+        return True
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not _github_reachable(), reason='needs network access to GitHub')
+def test_setup_py_alone_downloads_the_rest_of_the_kit(tmp_path):
+    """`npx clankbrain` runs a lone setup.py; it must still install tools/memory.py and the core skills."""
+    standalone = tmp_path / 'standalone'
+    standalone.mkdir()
+    (standalone / 'setup.py').write_text((KIT_ROOT / 'setup.py').read_text(encoding='utf-8'), encoding='utf-8')
+    project = tmp_path / 'project'
+    project.mkdir()
+    env = dict(os.environ, PYTHONIOENCODING='utf-8', CLANKBRAIN_NO_TELEMETRY='1')
+    result = subprocess.run(
+        [sys.executable, str(standalone / 'setup.py')],
+        cwd=project, input='n\n' + '\n' * 80, capture_output=True, text=True,
+        encoding='utf-8', errors='replace', env=env, timeout=240,
+    )
+    assert result.returncode == 0, result.stderr[-400:]
+    assert (project / 'tools' / 'memory.py').exists(), 'hooks would fail: tools/memory.py missing'
+    assert len(list((project / '.claude' / 'skills').iterdir())) >= 19

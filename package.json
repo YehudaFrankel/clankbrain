@@ -1,17 +1,26 @@
 {
   "name": "clankbrain",
-  "version": "2.12.1",
+  "version": "2.12.2",
   "description": "Persistent memory and repeatable workflows for Claude Code",
-  "files": ["bin/"],
+  "files": [
+    "bin/"
+  ],
   "bin": {
-    "clankbrain": "./bin/clankbrain.js"
+    "clankbrain": "bin/clankbrain.js"
   },
-  "keywords": ["claude", "claude-code", "memory", "ai", "developer-tools", "llm"],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "memory",
+    "ai",
+    "developer-tools",
+    "llm"
+  ],
   "author": "Yehuda Frankel",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YehudaFrankel/clankbrain"
+    "url": "git+https://github.com/YehudaFrankel/clankbrain.git"
   },
   "homepage": "https://clankbrain.vercel.app",
   "engines": {

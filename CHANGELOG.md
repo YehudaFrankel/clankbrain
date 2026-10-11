@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.12.2 - npx install fix
+
+### Fixed
+- `npx clankbrain` did not install `tools/memory.py`, the dashboard or the 19 core skills (it downloaded only setup.py), so every hook failed. setup.py now downloads the rest of the kit from GitHub when it runs on its own. New test covers it.
+- package.json: `bin` and `repository.url` normalized so `npm publish` runs without warnings.
+- README: removed two badges that do not render on npmjs.com.
+
 ## v2.12.1 - Docs accuracy and install fixes
 
 ### Changed

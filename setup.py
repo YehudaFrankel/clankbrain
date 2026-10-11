@@ -19,6 +19,33 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = Path.cwd()
 
+
+def _ensure_kit_files(here):
+    """`npx clankbrain` downloads only setup.py into a temp folder, so the skills, tools/memory.py,
+    the dashboard and upgrade.py are missing. Download the full kit once and use that as HERE."""
+    if (here / 'tools' / 'memory.py').exists():
+        return here
+    try:
+        import atexit
+        import io
+        import tempfile
+        import urllib.request
+        import zipfile
+        print('Downloading the rest of the kit from GitHub...')
+        data = urllib.request.urlopen('https://github.com/YehudaFrankel/clankbrain/archive/refs/heads/main.zip', timeout=60).read()
+        dest = Path(tempfile.mkdtemp(prefix='clankbrain_kit_'))
+        atexit.register(shutil.rmtree, str(dest), True)
+        zipfile.ZipFile(io.BytesIO(data)).extractall(dest)
+        for child in dest.iterdir():
+            if (child / 'tools' / 'memory.py').exists():
+                return child
+    except Exception as err:
+        print('  WARN: could not download the full kit (' + str(err) + ')')
+    return here
+
+
+HERE = _ensure_kit_files(HERE)
+
 # ─── Python binary detection ────────────────────────────────────────────────────
 # On Mac/Linux `python` often doesn't exist — only `python3`.
 # Detect which one works so hooks in settings.json use the right binary.
