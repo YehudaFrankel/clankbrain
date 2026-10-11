@@ -20,4 +20,6 @@ clankbrain runs entirely locally — no data leaves your machine, no cloud servi
 
 **Data flow is one-way:** kit updates are pulled from GitHub to your machine. Nothing is ever pushed back to clankbrain. Memory files stay on disk by default — cross-machine sync is opt-in and goes to your own private repo, not clankbrain's.
 
+**How `npx clankbrain` works:** the npm launcher (`bin/clankbrain.js`) downloads `setup.py` from the `main` branch of this repository and runs it with Python. That means the installer you get is whatever is on `main` at that moment, not a pinned release. If you want to review the code before it runs, clone the repo, read `setup.py`, and run `python tools/memory.py --init` instead.
+
 **For business use:** clankbrain is safe for general development work. For regulated industries, pair with an Anthropic enterprise plan and keep memory local (no git sync).

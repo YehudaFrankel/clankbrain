@@ -13,3 +13,6 @@ Thumbs.db
 
 # Team sync staging repo (separate git repo — must not be nested inside this one)
 .claude/team_repo/
+
+# Marketplace packaging output
+dist/

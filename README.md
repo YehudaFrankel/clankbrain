@@ -10,7 +10,7 @@ Every session, your coding agent wakes up a stranger.
 
 You re-explain the stack. Re-describe what you were building. Re-establish why certain approaches won't work here. Then it fumbles through the same debug flow, the same code review, the same refactor — because it has no structured way to do any of it.
 
-Clankbrain fixes both. It gives Claude Code a **living memory** — decisions, mistakes, patterns, lessons that compound across sessions — and **19 core workflows installed by default (40 in the repo)** for every development task: debugging, code review, refactoring, frontend design, security audits, and more.
+Clankbrain fixes both. It gives Claude Code a **living memory** — decisions, mistakes, patterns, lessons that compound across sessions — and **19 core workflows installed by default (36 in the repo)** for every development task: debugging, code review, refactoring, frontend design, security audits, and more.
 
 Session 1: the agent learns your stack.
 Session 10: it knows every mistake you've made, every approach you've rejected, every shortcut that works in your codebase.
@@ -33,6 +33,8 @@ End Session     ->  extracts lessons, saves everything to memory
 ```bash
 npx clankbrain
 ```
+
+> `npx clankbrain` downloads `setup.py` from the `main` branch and runs it. To read the code first, clone the repo instead (see [SECURITY.md](SECURITY.md)).
 
 Or if you cloned the repo directly:
 

@@ -83,3 +83,9 @@ def test_readme_states_full_install_skill_count():
     count = len(_curated("FULL_CURATED_SKILLS"))
     readme = (KIT_ROOT / "README.md").read_text(encoding="utf-8", errors="replace")
     assert str(count) + " core workflows" in readme, "README does not state " + str(count) + " core workflows"
+
+
+def test_readme_states_repo_skill_count():
+    live = len([d for d in _skill_dirs() if not d.name.startswith("_archived")])
+    readme = (KIT_ROOT / "README.md").read_text(encoding="utf-8", errors="replace")
+    assert "(" + str(live) + " in the repo)" in readme, "README does not state " + str(live) + " in the repo"
