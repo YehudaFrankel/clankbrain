@@ -48,13 +48,12 @@ A merge conflict is when two computers changed the same file and git cannot comb
 ```bash
 cd .claude/memory
 echo "*.md merge=union" > .gitattributes
-git config pull.rebase false
 git add .gitattributes
 git commit -m "Keep both sides when merging memory files"
 git push
 ```
 
-`merge=union` keeps every added line from both sides. `pull.rebase false` makes `python sync.py pull` merge, so that rule applies.
+`merge=union` keeps every added line from both sides. `python sync.py pull` always merges (it never rebases), so that rule applies.
 
 ---
 

@@ -15,6 +15,9 @@
 - Fix: setup.py now installs the --log-edit hook, so the session journal records edited files (it stayed empty before).
 - Fix: skills forget and recall used effort: fast, which Claude Code rejects; now low. Tests check effort values.
 - Fix: --search and --build-index now include the root tasks/ folder (lessons, decisions, errors, regrets were invisible to search in setup.py installs).
+- Fix: team-push no longer drops a teammate's new rows (it merges team entries into your files before copying them to the team repo).
+- Fix: sync pulls always merge (--no-rebase), so the union-merge rule in docs/sync.md works without extra git config.
+- Fix: team sync now finds lessons/decisions/errors in the root tasks/ folder that setup.py installs, not only in .claude/memory/.
 - Note: Claude Code older than the PostCompact hook (e.g. 2.1.29) drops the WHOLE hooks block if it contains an event it does not know; update Claude Code if hooks do nothing.
 - npm package now ships bin/ only; sync tests no longer write to the real .sync-log.json.
 

@@ -20,7 +20,7 @@ import uuid
 from pathlib import Path
 
 # ── PostHog config ─────────────────────────────────────────────────────────────
-# Replace with your PostHog project API key from posthog.com/settings/project
+# Public PostHog project key. It can only send events, not read data, so it is safe to ship.
 _POSTHOG_KEY    = 'phc_kQyQfXxpDn5Z7CvtN4GoqQACiULxACgSFmzrNrGVgZx8'
 _POSTHOG_HOST   = 'https://app.posthog.com'
 _CAPTURE_URL    = f'{_POSTHOG_HOST}/capture/'

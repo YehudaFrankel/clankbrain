@@ -53,6 +53,18 @@ TEAM_FILES = {
     'agreed-flow.md':       'agreed-flow.md',
 }
 
+
+def _team_local_path(local_rel):
+    """Local file for a team file: .claude/memory/<path> if it exists, else the root tasks/ copy
+    that setup.py installs, else the .claude/memory default."""
+    default = MEMORY_DIR / local_rel
+    if default.exists():
+        return default
+    root_copy = ROOT / 'tasks' / Path(local_rel).name
+    if root_copy.exists():
+        return root_copy
+    return default
+
 # guard-patterns.md and complexity_profile.md handled separately (different locations)
 
 # Table header values to skip during merge
@@ -266,7 +278,7 @@ def health_check():
     """
     found, missing = [], []
     for team_name, local_rel in TEAM_FILES.items():
-        path = MEMORY_DIR / local_rel
+        path = _team_local_path(local_rel)
         if path.exists():
             found.append(team_name)
         else:
@@ -376,7 +388,7 @@ def _copy_to_team_repo():
     """Copy current team files into the team_repo checkout. Returns count copied."""
     copied = 0
     for team_name, local_rel in TEAM_FILES.items():
-        src = MEMORY_DIR / local_rel
+        src = _team_local_path(local_rel)
         if src.exists():
             shutil.copy2(src, TEAM_REPO_DIR / team_name)
             copied += 1
@@ -477,7 +489,7 @@ def cmd_pull():
     git_dir  = MEMORY_DIR / '.git'
 
     if git_dir.exists():
-        result = run('git pull origin main', cwd=MEMORY_DIR, capture=True)
+        result = run('git pull --no-rebase origin main', cwd=MEMORY_DIR, capture=True)
         if result.returncode == 0:
             print('Memory pulled from remote.')
             _log_sync('pull', 'ok', 'Memory pulled from remote')
@@ -678,7 +690,7 @@ def cmd_join(repo_url):
             total = 0
             for team_name, local_rel in TEAM_FILES.items():
                 remote = TEAM_REPO_DIR / team_name
-                local  = MEMORY_DIR / local_rel
+                local  = _team_local_path(local_rel)
                 n = merge_table(local, remote)
                 total += n
 
@@ -704,28 +716,14 @@ def cmd_join(repo_url):
     print('Run "python sync.py team-push" at End Session to share what you learn.')
 
 
-def cmd_team_pull():
-    cfg = load_config()
-    if not cfg.get('team_repo'):
-        print('Team sync not configured.')
-        print('Run: python sync.py setup-team https://github.com/team/shared-memory')
-        return
-
-    if not TEAM_REPO_DIR.exists() or not (TEAM_REPO_DIR / '.git').exists():
-        print('Team repo missing locally — re-run setup-team or join.')
-        return
-
-    for branch in ('main', 'master'):
-        rc, out, err = git(['pull', 'origin', branch], cwd=TEAM_REPO_DIR)
-        if rc == 0 or 'already up to date' in (out + err).lower():
-            break
-
+def _merge_team_into_local():
+    """Merge the team checkout's entries into local memory. Returns (total_added, message_lines)."""
     total     = 0
     additions = []
 
     for team_name, local_rel in TEAM_FILES.items():
         remote = TEAM_REPO_DIR / team_name
-        local  = MEMORY_DIR / local_rel
+        local  = _team_local_path(local_rel)
         n = merge_table(local, remote)
         if n:
             additions.append(f'  {team_name}: +{n} new entr{"y" if n == 1 else "ies"} from team')
@@ -744,6 +742,27 @@ def cmd_team_pull():
         shutil.copy2(remote_cp, local_cp)
         additions.append('  complexity_profile.md: copied from team')
         total += 1
+
+    return total, additions
+
+
+def cmd_team_pull():
+    cfg = load_config()
+    if not cfg.get('team_repo'):
+        print('Team sync not configured.')
+        print('Run: python sync.py setup-team https://github.com/team/shared-memory')
+        return
+
+    if not TEAM_REPO_DIR.exists() or not (TEAM_REPO_DIR / '.git').exists():
+        print('Team repo missing locally — re-run setup-team or join.')
+        return
+
+    for branch in ('main', 'master'):
+        rc, out, err = git(['pull', '--no-rebase', 'origin', branch], cwd=TEAM_REPO_DIR)
+        if rc == 0 or 'already up to date' in (out + err).lower():
+            break
+
+    total, additions = _merge_team_into_local()
 
     cfg['team_last_pull'] = datetime.now().strftime('%Y-%m-%d %H:%M')
     save_config(cfg)
@@ -770,9 +789,13 @@ def cmd_team_push():
 
     # Pull latest first to minimise conflicts
     for branch in ('main', 'master'):
-        rc, out, err = git(['pull', 'origin', branch], cwd=TEAM_REPO_DIR)
+        rc, out, err = git(['pull', '--no-rebase', 'origin', branch], cwd=TEAM_REPO_DIR)
         if rc == 0 or 'already up to date' in (out + err).lower():
             break
+
+    # Merge teammates' entries into local files BEFORE copying local over the checkout,
+    # otherwise the copy overwrites rows a teammate just pushed.
+    _merge_team_into_local()
 
     count = _copy_to_team_repo()
 

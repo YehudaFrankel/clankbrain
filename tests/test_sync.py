@@ -258,6 +258,45 @@ def test_team_pull_merges_from_repo(kit, team_remote):
     assert content.count('Use UTC') == 1  # not duplicated
 
 
+def test_team_pull_uses_root_tasks_files_from_setup_py(kit, team_remote):
+    """setup.py installs lessons in the root tasks/ folder; team-pull must merge into that file."""
+    sync.TEAM_REPO_DIR.mkdir(parents=True)
+    subprocess.run(['git', 'clone', str(team_remote), str(sync.TEAM_REPO_DIR)], capture_output=True)
+    root_lessons = kit / 'tasks' / 'lessons.md'
+    root_lessons.parent.mkdir()
+    root_lessons.write_text('| Lesson | Session |\n|---|---|\n| Mine | 1 |\n')
+
+    sync.save_config({'team_repo': str(team_remote)})
+    sync.cmd_team_pull()
+
+    assert 'Always guard empties' in root_lessons.read_text()
+    assert not (sync.MEMORY_DIR / 'lessons.md').exists()
+
+
+def test_team_push_keeps_teammates_entries(kit, team_remote):
+    """team-push must merge a teammate's rows before copying local files over the checkout."""
+    sync.TEAM_REPO_DIR.mkdir(parents=True)
+    subprocess.run(['git', 'clone', str(team_remote), str(sync.TEAM_REPO_DIR)], capture_output=True)
+    for key, value in (('user.email', 'me@test.com'), ('user.name', 'Me')):
+        subprocess.run(['git', '-C', str(sync.TEAM_REPO_DIR), 'config', key, value], capture_output=True)
+    # a push to a non-bare remote needs a branch that is not checked out there
+    branch = subprocess.run(['git', '-C', str(team_remote), 'rev-parse', '--abbrev-ref', 'HEAD'],
+                            capture_output=True, text=True).stdout.strip()
+    subprocess.run(['git', '-C', str(team_remote), 'checkout', '-b', 'parking'], capture_output=True)
+
+    # I only know my own decision; the teammate's 'Use UTC' row is in the remote
+    decisions = sync.MEMORY_DIR / 'decisions.md'
+    decisions.write_text('| Decision | Why |\n|---|---|\n| Mine | Local only |\n')
+    sync.save_config({'team_repo': str(team_remote)})
+
+    sync.cmd_team_push()
+
+    pushed = subprocess.run(['git', '-C', str(team_remote), 'show', branch + ':decisions.md'],
+                            capture_output=True, text=True).stdout
+    assert 'Use UTC' in pushed, 'teammate row was dropped by team-push'
+    assert 'Mine' in pushed
+
+
 def test_team_pull_creates_lessons_if_missing(kit, team_remote):
     """team-pull creates lessons.md locally if it doesn't exist yet."""
     sync.TEAM_REPO_DIR.mkdir(parents=True)
