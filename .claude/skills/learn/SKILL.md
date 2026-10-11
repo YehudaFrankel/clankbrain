@@ -1,6 +1,8 @@
 ---
 name: learn
 keep-coding-instructions: true
+description: "Extracts reusable patterns, lessons, and decisions from the current session and saves them to memory files. Run before End Session or before /compact to capture what was learned. Triggers on /learn or \"extract patterns\" or \"learn from this session\"."
+allowed-tools: Read, Edit, Write, Glob, Grep
 ---
 
 # Skill: learn

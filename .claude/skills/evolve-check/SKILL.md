@@ -1,3 +1,8 @@
+---
+name: evolve-check
+description: "Reads skill_scores.md and surfaces which skills are ready for /evolve. Analysis only — no patching, no file changes. Triggers on \"evolve check\", \"check evolve\", \"which skills need evolving\", \"evolve status\", \"skill health\"."
+allowed-tools: Read, Glob
+---
 # Skill: evolve-check
 
 **Trigger:** "evolve check", "check evolve", "which skills need evolving", "evolve status", "skill health"

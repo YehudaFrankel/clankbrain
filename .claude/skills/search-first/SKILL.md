@@ -1,3 +1,8 @@
+---
+name: search-first
+description: "Enforces research-before-coding. Before writing any new code, search the existing codebase for reusable patterns, existing implementations, and prior art. Prevents duplicated logic. Triggers on Automatically before any new feature implementation, or \"search first\" or \"check if this exists\"."
+allowed-tools: Read, Glob, Grep, Bash
+---
 # Skill: search-first
 
 **Trigger:** Automatically before any new feature implementation, or "search first" or "check if this exists"

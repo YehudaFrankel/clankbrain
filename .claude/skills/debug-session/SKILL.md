@@ -1,3 +1,8 @@
+---
+name: debug-session
+description: "Structured debugging flow for any bug or unexpected behavior. Follows reproduce, isolate, hypothesize, fix, verify, log. Triggers on \"debug session\", \"can't figure out why\", \"weird behavior\", \"something's wrong with\", \"why is X not working\", \"help me debug\"."
+allowed-tools: Read, Grep, Glob, Bash, Edit, Write
+---
 # Skill: debug-session
 
 **Trigger:** "debug session", "can't figure out why", "weird behavior", "something's wrong with", "why is X not working", "help me debug"

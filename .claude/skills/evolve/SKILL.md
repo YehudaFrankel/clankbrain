@@ -1,6 +1,8 @@
 ---
 name: evolve
 keep-coding-instructions: true
+description: "Reviews accumulated lessons.md entries, identifies repeated patterns, and proposes or creates new reusable skills. Turns hard-won session knowledge into formalized, reusable workflow. Triggers on /evolve or \"evolve lessons into skills\" or \"cluster patterns into skills\"."
+allowed-tools: Read, Edit, Write, Glob, Bash
 ---
 
 # Skill: evolve

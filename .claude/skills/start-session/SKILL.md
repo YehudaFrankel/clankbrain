@@ -1,3 +1,8 @@
+---
+name: start-session
+description: "Initialize a working session with full project context. Triggers on \"Start Session\"."
+allowed-tools: Read, Glob, Grep
+---
 # Skill: start-session
 
 **Trigger:** "Start Session"

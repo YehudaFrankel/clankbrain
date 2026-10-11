@@ -1,3 +1,8 @@
+---
+name: check-anthropic
+description: "Fetches the Claude Code GitHub releases page and official docs to find new hooks, CLAUDE.md features, and skills API changes. Cross-references against what this project currently uses and rates each gap for relevance. Run every few weeks or after a major Claude Code release. Triggers on /check-anthropic or \"check for new Anthropic features\" or \"what's new in Claude Code\"."
+allowed-tools: WebFetch, Read, Glob
+---
 # Skill: check-anthropic
 
 **Trigger:** `/check-anthropic` or "check for new Anthropic features" or "what's new in Claude Code"

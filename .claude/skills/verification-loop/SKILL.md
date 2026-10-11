@@ -1,3 +1,8 @@
+---
+name: verification-loop
+description: "Continuous self-evaluation after code changes. Combines compile/build verification with functional smoke tests and a code quality self-check. Catches problems before the user has to report them. Triggers on \"verify\" or \"run verification loop\" or \"check this works\" or after any code change."
+allowed-tools: Bash, Read, Glob
+---
 # Skill: verification-loop
 
 **Trigger:** "verify" or "run verification loop" or "check this works" or after any code change

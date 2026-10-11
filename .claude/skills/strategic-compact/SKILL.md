@@ -1,3 +1,8 @@
+---
+name: strategic-compact
+description: "Evaluates whether context should be compacted and guides through safe compaction that preserves all memory. Prevents the context-limit mid-task problem. Triggers on \"should I compact?\" or \"compact now?\" or \"context getting long\" or when session is large."
+allowed-tools: Read, Bash
+---
 # Skill: strategic-compact
 
 **Trigger:** "should I compact?" or "compact now?" or "context getting long" or when session is large

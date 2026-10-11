@@ -1,3 +1,8 @@
+---
+name: end-session
+description: "Save session progress, extract lessons, update memory, push to GitHub if configured. Triggers on \"End Session\"."
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash
+---
 # Skill: end-session
 
 **Trigger:** "End Session"

@@ -1,6 +1,8 @@
 ---
 name: progress-report
 keep-coding-instructions: true
+description: "Shows concrete numbers proving the system is compounding. Run after session 5 or any time the user wants to see the value. Triggers on \"progress report\", \"how am I doing\", \"show my progress\", \"is this working\", \"what has the kit done for me\"."
+allowed-tools: Read, Grep
 ---
 
 # Skill: progress-report

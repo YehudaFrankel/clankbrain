@@ -1,3 +1,8 @@
+---
+name: scan-codebase
+description: "Scans the current project and generates project-specific rules by reading actual code patterns, file structure, and conventions. Run automatically on first Start Session if no code-map exists. Triggers on /scan-codebase or \"scan the codebase\" or \"analyze the project\" or \"generate rules from code\"."
+allowed-tools: Read, Glob, Grep, Write, Bash
+---
 # Skill: scan-codebase
 
 **Trigger:** `/scan-codebase` or "scan the codebase" or "analyze the project" or "generate rules from code"
