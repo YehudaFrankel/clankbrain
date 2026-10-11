@@ -156,8 +156,8 @@ def _install_addons():
     print("  Agent Skills — 25 engineering best-practice workflows (code review, security, etc.)")
     print()
 
-    install_graphify = ask_yn("Install Graphify? (codebase knowledge graph)", "y")
-    install_skills = ask_yn("Install Agent Skills? (engineering workflow skills)", "y")
+    install_graphify = ask_yn("Install Graphify? (codebase knowledge graph)", "n")
+    install_skills = ask_yn("Install Agent Skills? (engineering workflow skills)", "n")
 
     if not install_graphify and not install_skills:
         print("  Skipped add-ons")
@@ -2277,6 +2277,14 @@ A real co-worker does not wait to be asked.
     "deny": []
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --session-start", "timeout": 15, "statusMessage": "Loading memory..." },
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --check-expiry", "timeout": 5 }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --capture-correction" }]
@@ -2288,10 +2296,21 @@ A real co-worker does not wait to be asked.
         "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --check-drift --silent" }]
       }
     ],
+    "PreCompact": [
+      {
+        "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --precompact", "timeout": 15, "statusMessage": "Preserving memory..." }]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --postcompact", "timeout": 15, "statusMessage": "Restoring memory..." }]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
           { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --process-corrections" },
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --update-date", "timeout": 5, "statusMessage": "Updating session date..." },
           { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --journal", "timeout": 10, "statusMessage": "Capturing session journal..." },
           { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --stop-check", "timeout": 20, "statusMessage": "Checking memory + plan drift..." }
         ]
@@ -2343,9 +2362,11 @@ Done. Full memory system created in: {ROOT}{ide_note}{repo_note}
 └─────────────────────────────────────────────────────────────┘
 
 Hooks installed (fire automatically -- nothing to run):
-  UserPromptSubmit -> captures corrections + regret guard
+  SessionStart     -> loads memory + greets with last change
+  UserPromptSubmit -> captures corrections
   PostToolUse      -> drift detection after every edit
-  Stop             -> session journal + stop-check reminder
+  PreCompact/PostCompact -> keeps memory across /compact
+  Stop             -> session date, journal + stop-check reminder
 
 Dashboard (session status viewer):
   _tools/dashboard/  -- run with: node _tools/dashboard/server.js

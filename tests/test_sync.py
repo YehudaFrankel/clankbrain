@@ -42,6 +42,7 @@ def kit(tmp_path):
     sync.MEMORY_DIR    = memory
     sync.CONFIG_FILE   = tmp_path / '.claude' / '.sync-config.json'
     sync.TEAM_REPO_DIR = tmp_path / '.claude' / 'team_repo'
+    sync.SYNC_LOG      = tmp_path / '.claude' / '.sync-log.json'  # keep the log out of the real repo
 
     return tmp_path
 

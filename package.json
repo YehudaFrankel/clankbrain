@@ -1,7 +1,8 @@
 {
   "name": "clankbrain",
-  "version": "2.12.0",
+  "version": "2.12.1",
   "description": "Persistent memory, self-improving skills, and autonomous workflows for Claude Code",
+  "files": ["bin/"],
   "bin": {
     "clankbrain": "./bin/clankbrain.js"
   },

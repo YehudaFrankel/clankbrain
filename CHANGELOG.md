@@ -1,12 +1,18 @@
 # Changelog
 
-## v2.12.1 - Docs accuracy
+## v2.12.1 - Docs accuracy and install fixes
 
 ### Changed
 - Skill counts now match what the installer ships: 19 core skills on Full install (7 on Lite); 40 live in the repo.
 - Archived 03-security, 04-environments, 06-testing, 07-refactoring (project-specific, never installed) as _archived_*; removed them from the README table.
 - Replaced the unverified usage claim with the session count.
-- VERSION and package.json synced to 2.12.0.
+- VERSION and package.json synced to 2.12.1.
+- Fix: context-percentage warning read the newest transcript from ANY project; now only this project.
+- Fix: drift check no longer flags the kit dashboard JS (_tools/dashboard) in new projects.
+- Fix: tools/memory.py and setup.py now agree on tasks/ (find_tasks_dir); existing .claude/memory/tasks installs are unchanged.
+- setup.py now installs SessionStart, PreCompact, PostCompact and the --update-date Stop hook (same as memory.py --init).
+- setup.py: Graphify and Agent Skills prompts default to No.
+- npm package now ships bin/ only; sync tests no longer write to the real .sync-log.json.
 
 ## v2.10.0 (2026-08-28) — Feedback memories + comment-changes rule
 

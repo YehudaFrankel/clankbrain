@@ -87,6 +87,18 @@ def find_memory_dir():
     return ROOT / '.claude' / 'memory'
 
 
+def find_tasks_dir(memory_dir):
+    """Locate tasks/. Keep .claude/memory/tasks if it already has files; else use the
+    root tasks/ that setup.py creates; else fall back to .claude/memory/tasks."""
+    memory_tasks = memory_dir / 'tasks'
+    if memory_tasks.is_dir() and any(memory_tasks.iterdir()):
+        return memory_tasks
+    root_tasks = ROOT / 'tasks'
+    if (root_tasks / 'lessons.md').exists() or (root_tasks / 'corrections_queue.md').exists():
+        return root_tasks
+    return memory_tasks
+
+
 # ─── KIT HEALTH (silent helper) ──────────────────────────────────────────────
 
 def _kit_health_fails():
@@ -97,7 +109,7 @@ def _kit_health_fails():
         fails.append('MEMORY.md missing — memory index not found')
     if not (ROOT / 'STATUS.md').exists():
         fails.append('STATUS.md missing — session tracking not initialized')
-    if not (mem_dir / 'tasks').exists():
+    if not (find_tasks_dir(mem_dir)).exists():
         fails.append('tasks/ directory missing — run Setup Memory')
     settings_paths = [ROOT / '.claude' / 'settings.json', ROOT / '.claude' / 'settings.local.json']
     if not any(sp.exists() for sp in settings_paths):
@@ -130,7 +142,7 @@ def _load_status_context():
 
 def _check_interruption(memory_dir):
     """Return interruption block if last session was cut off, then delete the file. Returns ''."""
-    path = memory_dir / 'tasks' / 'interruption_state.md'
+    path = find_tasks_dir(memory_dir) / 'interruption_state.md'
     if not path.exists():
         return ''
     try:
@@ -145,7 +157,7 @@ def _check_interruption(memory_dir):
 
 def _check_correction_queue(memory_dir):
     """Return pending corrections block if any are queued, or ''."""
-    queue_file = memory_dir / 'tasks' / 'corrections_queue.md'
+    queue_file = find_tasks_dir(memory_dir) / 'corrections_queue.md'
     if not queue_file.exists():
         return ''
     q       = queue_file.read_text(encoding='utf-8', errors='ignore')
@@ -159,7 +171,7 @@ def _check_correction_queue(memory_dir):
 def _reset_session_counter(memory_dir):
     """Reset the per-session edit counter to 0. Side-effect only."""
     try:
-        counter_file = memory_dir / 'tasks' / 'session_edit_count.txt'
+        counter_file = find_tasks_dir(memory_dir) / 'session_edit_count.txt'
         counter_file.parent.mkdir(parents=True, exist_ok=True)
         counter_file.write_text('0', encoding='utf-8')
     except Exception:
@@ -228,7 +240,7 @@ def _snapshot_memory_state(memory_dir):
                 snapshot[rel] = len(f.read_text(encoding='utf-8', errors='ignore').splitlines())
             except Exception:
                 snapshot[rel] = 0
-        snap_file = memory_dir / 'tasks' / 'session_snapshot.json'
+        snap_file = find_tasks_dir(memory_dir) / 'session_snapshot.json'
         snap_file.parent.mkdir(parents=True, exist_ok=True)
         snap_file.write_text(json.dumps(snapshot, indent=2), encoding='utf-8')
     except Exception:
@@ -256,7 +268,7 @@ def cmd_memory_diff():
     Call at End Session to confirm what was actually written.
     """
     memory_dir = find_memory_dir()
-    snap_file  = memory_dir / 'tasks' / 'session_snapshot.json'
+    snap_file  = find_tasks_dir(memory_dir) / 'session_snapshot.json'
 
     if not snap_file.exists():
         print('No session snapshot found — run Start Session first.')
@@ -395,7 +407,7 @@ def _memory_load_summary(memory_dir):
             if n:
                 counts.append(f'{n} decision{"s" if n != 1 else ""}')
 
-        regret_file = memory_dir / 'tasks' / 'regret.md'
+        regret_file = find_tasks_dir(memory_dir) / 'regret.md'
         if regret_file.exists():
             text = regret_file.read_text(encoding='utf-8', errors='ignore')
             # Count table rows (lines with | that aren't headers or separators)
@@ -536,7 +548,7 @@ def cmd_capture_correction():
         lesson = prompt[len('remember:'):].strip()
         if lesson:
             memory_dir = find_memory_dir()
-            draft = memory_dir / 'tasks' / 'draft-lessons.md'
+            draft = find_tasks_dir(memory_dir) / 'draft-lessons.md'
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
             entry = f'\n- [{timestamp}] {lesson}'
             draft.parent.mkdir(parents=True, exist_ok=True)
@@ -548,7 +560,7 @@ def cmd_capture_correction():
         return
 
     memory_dir = find_memory_dir()
-    queue_file = memory_dir / 'tasks' / 'corrections_queue.md'
+    queue_file = find_tasks_dir(memory_dir) / 'corrections_queue.md'
 
     if not queue_file.exists():
         queue_file.parent.mkdir(parents=True, exist_ok=True)
@@ -571,7 +583,7 @@ def cmd_capture_correction():
 
 def cmd_process_corrections():
     memory_dir = find_memory_dir()
-    queue_file = memory_dir / 'tasks' / 'corrections_queue.md'
+    queue_file = find_tasks_dir(memory_dir) / 'corrections_queue.md'
 
     if not queue_file.exists():
         return
@@ -585,7 +597,7 @@ def cmd_process_corrections():
     if not entries:
         return
 
-    lessons_file = memory_dir / 'tasks' / 'lessons.md'
+    lessons_file = find_tasks_dir(memory_dir) / 'lessons.md'
     with open(lessons_file, 'a', encoding='utf-8') as f:
         for date, prompt_text in entries:
             rule = prompt_text[:120] + ('...' if len(prompt_text) > 120 else '')
@@ -638,6 +650,9 @@ _JS_KEYWORDS = {
 
 
 def _drift_is_excluded(path):
+    # The kit's own dashboard JS (_tools/dashboard) is not the user's code
+    if '_tools' in path.parts and 'dashboard' in path.parts:
+        return True
     return any(part in _EXCLUDE_DIRS for part in path.parts)
 
 
@@ -914,7 +929,7 @@ def cmd_postcompact():
 
 def cmd_stop_failure():
     memory_dir = find_memory_dir()
-    interrupt_path = memory_dir / 'tasks' / 'interruption_state.md'
+    interrupt_path = find_tasks_dir(memory_dir) / 'interruption_state.md'
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
     error_detail = ''
@@ -1039,7 +1054,7 @@ def cmd_subagent_start():
 
 def cmd_subagent_stop():
     memory_dir = find_memory_dir()
-    log_file = memory_dir / 'tasks' / 'subagent_scores.md'
+    log_file = find_tasks_dir(memory_dir) / 'subagent_scores.md'
 
     # Read agent type from stdin
     agent_type = 'unknown'
@@ -1052,7 +1067,7 @@ def cmd_subagent_stop():
         pass
 
     # Create file with header if needed
-    tasks_dir = memory_dir / 'tasks'
+    tasks_dir = find_tasks_dir(memory_dir)
     tasks_dir.mkdir(exist_ok=True)
     if not log_file.exists():
         header = (
@@ -1135,7 +1150,7 @@ def cmd_stop_check():
     elif pct >= 60:
         messages.append(f'Context at {pct}% — consider /compact soon.')
     try:
-        counter_file = memory_dir / 'tasks' / 'session_edit_count.txt'
+        counter_file = find_tasks_dir(memory_dir) / 'session_edit_count.txt'
         if counter_file.exists():
             edit_count = int(counter_file.read_text(encoding='utf-8').strip() or '0')
             if edit_count >= 3:
@@ -1148,7 +1163,7 @@ def cmd_stop_check():
     try:
         import re as _re
         from datetime import datetime as _dt, timedelta as _td
-        lessons_file = memory_dir / 'tasks' / 'lessons.md'
+        lessons_file = find_tasks_dir(memory_dir) / 'lessons.md'
         if not lessons_file.exists():
             lessons_file = memory_dir / '.claude' / 'memory' / 'lessons.md'
         if lessons_file.exists():
@@ -1177,8 +1192,8 @@ def cmd_stop_check():
     # Skill scoring nudge — fire if any skill was logged in skill_usage.md today
     try:
         today_str = datetime.now().strftime('%Y-%m-%d')
-        skill_usage = memory_dir / 'tasks' / 'skill_usage.md'
-        skill_scores = memory_dir / 'tasks' / 'skill_scores.md'
+        skill_usage = find_tasks_dir(memory_dir) / 'skill_usage.md'
+        skill_scores = find_tasks_dir(memory_dir) / 'skill_scores.md'
         if skill_usage.exists():
             usage_lines = skill_usage.read_text(encoding='utf-8').splitlines()
             used_today = []
@@ -1248,9 +1263,10 @@ def _journal_read_phase(status_path):
 
 def _journal_estimate_tokens():
     try:
-        project_dir = ROOT / '.claude' / 'projects'
+        # Only this project's transcripts: Claude Code names the folder after the path with non-alphanumerics as '-'
+        project_dir = Path.home() / '.claude' / 'projects' / re.sub(r'[^A-Za-z0-9]', '-', str(ROOT))
         if not project_dir.exists():
-            project_dir = Path.home() / '.claude' / 'projects'
+            return 0, 0, ''
         jsonl_files = list(project_dir.rglob('*.jsonl'))
         if not jsonl_files:
             return 0, 0, ''
@@ -1268,7 +1284,7 @@ def _journal_estimate_tokens():
 
 
 def _journal_read_edit_count(mem_dir):
-    counter_file = mem_dir / 'tasks' / 'session_edit_count.txt'
+    counter_file = find_tasks_dir(mem_dir) / 'session_edit_count.txt'
     if counter_file.exists():
         try:
             return int(counter_file.read_text(encoding='utf-8').strip())
@@ -1301,7 +1317,7 @@ def _journal_open_plans(mem_dir):
 
 def cmd_journal():
     mem_dir = find_memory_dir()
-    draft_file = mem_dir / 'tasks' / 'draft-lessons.md'
+    draft_file = find_tasks_dir(mem_dir) / 'draft-lessons.md'
     status_file = mem_dir / 'STATUS.md'
     journal_file = mem_dir / 'session_journal.md'
 
@@ -1351,7 +1367,7 @@ def cmd_journal():
     if edit_count and edit_count > 0:
         lessons_path = mem_dir / 'lessons.md'
         lessons_rel = str(lessons_path.relative_to(ROOT)) if ROOT in lessons_path.parents else str(lessons_path)
-        assist_path = mem_dir / 'tasks' / 'memory_assist.md'
+        assist_path = find_tasks_dir(mem_dir) / 'memory_assist.md'
         assist_rel = str(assist_path.relative_to(ROOT)) if ROOT in assist_path.parents else str(assist_path)
         msg = (
             f'This session had {edit_count} file save(s). '
@@ -1946,7 +1962,7 @@ def cmd_verify_edit():
     # Increment session edit counter
     try:
         memory_dir = find_memory_dir()
-        counter_file = memory_dir / 'tasks' / 'session_edit_count.txt'
+        counter_file = find_tasks_dir(memory_dir) / 'session_edit_count.txt'
         count = 0
         if counter_file.exists():
             try:
@@ -1969,7 +1985,7 @@ def cmd_quick_learn():
     today = datetime.now().strftime('%Y-%m-%d')
     context_parts = []
 
-    draft_path = memory_dir / 'tasks' / 'draft-lessons.md'
+    draft_path = find_tasks_dir(memory_dir) / 'draft-lessons.md'
 
     # Write a timestamped stub FIRST — so there's a record even if session closes before callback
     stub_entry = f'\n- [{today} QUICK-LEARN PENDING] Review session and fill in key lesson here'
@@ -1985,7 +2001,7 @@ def cmd_quick_learn():
             context_parts.append('Draft notes from this session:\n' + '\n'.join(useful_lines))
 
     # Surface pending corrections queue
-    queue_path = memory_dir / 'tasks' / 'corrections_queue.md'
+    queue_path = find_tasks_dir(memory_dir) / 'corrections_queue.md'
     if queue_path.exists():
         q = queue_path.read_text(encoding='utf-8', errors='ignore')
         entries = re.findall(r'## \d{4}-\d{2}-\d{2} \d{2}:\d{2}\n\*\*Prompt:\*\* ".+?"', q)
@@ -2027,7 +2043,7 @@ def cmd_kit_health():
         checks.append(('FAIL', 'STATUS.md', 'missing — session tracking not initialized'))
 
     # tasks/ directory
-    tasks_dir = mem_dir / 'tasks'
+    tasks_dir = find_tasks_dir(mem_dir)
     if tasks_dir.exists():
         checks.append(('PASS', 'tasks/', 'directory exists'))
     else:
@@ -2077,7 +2093,7 @@ def cmd_kit_health():
         checks.append(('WARN', 'complexity_profile.md', 'missing — run Start Session to generate'))
 
     # lessons.md
-    if (mem_dir / 'tasks' / 'lessons.md').exists():
+    if (find_tasks_dir(mem_dir) / 'lessons.md').exists():
         checks.append(('PASS', 'lessons.md', 'exists'))
     else:
         checks.append(('WARN', 'lessons.md', 'not yet created — run /learn after first session'))
@@ -2135,7 +2151,7 @@ def _parse_md_table_rows(text):
 def _log_guard_fire(memory_dir, guard_name, matches):
     """Mechanically write to memory_assist.md when a guard fires. No Claude involvement."""
     try:
-        assist_path = memory_dir / 'tasks' / 'memory_assist.md'
+        assist_path = find_tasks_dir(memory_dir) / 'memory_assist.md'
         assist_path.parent.mkdir(parents=True, exist_ok=True)
         if not assist_path.exists():
             assist_path.write_text(
@@ -2348,7 +2364,7 @@ def cmd_velocity_estimate():
         return
 
     memory_dir = find_memory_dir()
-    velocity_path = memory_dir / 'tasks' / 'velocity.md'
+    velocity_path = find_tasks_dir(memory_dir) / 'velocity.md'
     if not velocity_path.exists():
         print('velocity.md not found — no history yet.')
         return
@@ -2402,7 +2418,7 @@ def cmd_velocity_estimate():
 def cmd_mine_patterns():
     """Cluster lessons.md entries to surface recurring patterns across sessions."""
     memory_dir = find_memory_dir()
-    lessons_path = memory_dir / 'tasks' / 'lessons.md'
+    lessons_path = find_tasks_dir(memory_dir) / 'lessons.md'
     if not lessons_path.exists():
         print('lessons.md not found — run /learn after a few sessions.')
         return
@@ -2666,7 +2682,7 @@ def cmd_progress_report():
 
     # Lessons count
     lesson_count = 0
-    for lpath in [memory_dir / 'tasks' / 'lessons.md', memory_dir / 'lessons.md']:
+    for lpath in [find_tasks_dir(memory_dir) / 'lessons.md', memory_dir / 'lessons.md']:
         if lpath.exists():
             rows = _parse_md_table_rows(lpath.read_text(encoding='utf-8', errors='ignore'))
             lesson_count = sum(1 for r in rows if r and r[0].lower() not in ('date', 'session', 'when', 'title'))
@@ -2682,7 +2698,7 @@ def cmd_progress_report():
     # Skill accuracy from skill_scores.md
     yes_count = 0
     no_count = 0
-    scores_path = memory_dir / 'tasks' / 'skill_scores.md'
+    scores_path = find_tasks_dir(memory_dir) / 'skill_scores.md'
     if scores_path.exists():
         text = scores_path.read_text(encoding='utf-8', errors='ignore')
         yes_count = len(re.findall(r'\|\s*[Yy]\s*\|', text))
@@ -2690,14 +2706,14 @@ def cmd_progress_report():
 
     # Velocity data points
     velocity_count = 0
-    vel_path = memory_dir / 'tasks' / 'velocity.md'
+    vel_path = find_tasks_dir(memory_dir) / 'velocity.md'
     if vel_path.exists():
         rows = _parse_md_table_rows(vel_path.read_text(encoding='utf-8', errors='ignore'))
         velocity_count = sum(1 for r in rows if r and r[0].lower() not in ('task', 'feature', 'item'))
 
     # Rejected approaches
     regret_count = 0
-    regret_path = memory_dir / 'tasks' / 'regret.md'
+    regret_path = find_tasks_dir(memory_dir) / 'regret.md'
     if regret_path.exists():
         rows = _parse_md_table_rows(regret_path.read_text(encoding='utf-8', errors='ignore'))
         regret_count = sum(1 for r in rows if r and r[0].lower() not in ('approach', 'what was tried', 'rejected'))
@@ -2763,7 +2779,7 @@ def cmd_log_edit():
             return
         filename = Path(file_path).name
         memory_dir = find_memory_dir()
-        draft = memory_dir / 'tasks' / 'draft-lessons.md'
+        draft = find_tasks_dir(memory_dir) / 'draft-lessons.md'
         draft.parent.mkdir(parents=True, exist_ok=True)
         if not draft.exists():
             draft.write_text(
@@ -2828,7 +2844,7 @@ def cmd_check_expiry():
 
 def cmd_permission_denied():
     memory_dir = find_memory_dir()
-    denial_log = memory_dir / 'tasks' / 'permission_denials.md'
+    denial_log = find_tasks_dir(memory_dir) / 'permission_denials.md'
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
     tool_name = ''
@@ -3129,7 +3145,7 @@ def cmd_pre_edit():
     try:
         proposed = tool_input.get('new_string', '') + tool_input.get('content', '')
         if proposed and len(proposed) > 20:
-            regret_path = memory_dir / 'tasks' / 'regret.md'
+            regret_path = find_tasks_dir(memory_dir) / 'regret.md'
             if regret_path.exists():
                 regret_text = regret_path.read_text(encoding='utf-8', errors='ignore')
                 proposed_kw = _extract_keywords(proposed)
