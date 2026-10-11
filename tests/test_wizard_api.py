@@ -79,3 +79,28 @@ def test_missing_fields_are_rejected():
 def test_get_is_rejected():
     out = _call(_body('python'), method='GET')
     assert out['status'] == 405
+
+
+def test_download_builds_a_valid_zip_without_dependencies(tmp_path):
+    """api/download.js writes the zip itself (no jszip); it must open cleanly and keep file contents."""
+    import zipfile
+    out = tmp_path / 'out.zip'
+    script = r"""
+var fs = require('fs');
+var download = require(%s);
+var files = { 'CLAUDE.md': '# caf\u00e9 \u2014 hello', 'memory/lessons.md': 'one\ntwo', 'memory.ps1': 'root file' };
+var res = {
+  status: function (c) { this.code = c; return this; },
+  json: function (o) { console.error(JSON.stringify(o)); },
+  setHeader: function () {},
+  send: function (b) { fs.writeFileSync(%s, b); }
+};
+download({ method: 'POST', body: { files: JSON.stringify(files) } }, res);
+""" % (json.dumps(str(KIT_ROOT / 'api' / 'download.js')), json.dumps(str(out)))
+    result = subprocess.run([NODE, '-e', script], capture_output=True, text=True, encoding='utf-8', timeout=60)
+    assert result.returncode == 0, result.stderr[-400:]
+    with zipfile.ZipFile(out) as z:
+        assert z.testzip() is None
+        assert sorted(z.namelist()) == ['.claude/CLAUDE.md', '.claude/memory/lessons.md', 'memory.ps1']
+        assert z.read('.claude/CLAUDE.md').decode('utf-8') == '# caf\u00e9 \u2014 hello'
+        assert z.read('.claude/memory/lessons.md').decode('utf-8') == 'one\ntwo'
