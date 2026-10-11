@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clankbrain — Compound Learning for Claude Code</title>
+  <link rel="icon" href="logo.jpeg">
 <meta name="description" content="Clankbrain — compound learning for Claude Code. Skills self-improve, rejected approaches stay rejected, decisions stop getting re-debated. Two commands. No external dependencies.">
 <!-- formerly known as claude-recall, engram, and Claude-Code-memory-starter-kit -->
 <style>
@@ -971,7 +972,7 @@ footer {
     </div>
     <div style="display:flex; gap:1.5rem; margin-top:1.25rem; flex-wrap:wrap;">
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Sessions compound, not reset</span>
-      <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> 20+ workflow skills built in</span>
+      <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> 19 core workflow skills installed</span>
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Skills self-improve from failure</span>
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Live dashboard included</span>
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> No external dependencies</span>
@@ -1277,7 +1278,7 @@ footer {
       <div style="padding:.75rem 1.4rem; background:var(--s2); color:var(--muted);">skills stay static — no feedback loop</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); color:var(--green);">skills score themselves · /evolve patches failures</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">rejected approaches get re-proposed</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">regret guard blocks them permanently</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">regret.md keeps them from coming back</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">single notes dump file</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">typed files: decisions · errors · lessons · regret</div>
       <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">no team sync</div>
@@ -1381,7 +1382,7 @@ footer {
         <div class="lc-body">
           After every session, <em>/learn scores each skill Y/N.</em>
           /evolve reads those scores, patches weak steps, and proposes
-          new skills from patterns it detected — without you asking.
+          new skills from patterns it detected — when you run it.
         </div>
       </div>
       <div class="living-cell">
@@ -1390,7 +1391,7 @@ footer {
         <div class="lc-body">
           lessons.md and decisions.md grow every session and apply at
           every Start Session. <em>Claude stops re-debating settled choices.</em>
-          By session 50 it engineers alongside you, not behind you.
+          Over many sessions it works more like a teammate who knows your project.
         </div>
       </div>
     </div>
@@ -1403,9 +1404,9 @@ footer {
     <div class="sec-label">agentic core</div>
     <h2>The compound<br><span class="h2-amber">learning loop</span></h2>
     <p class="sec-desc">
-      The engine that makes this agentic. Runs quietly in the background —
-      <em>extract lessons, score skills, patch weak steps, repeat.</em>
-      The environment gets smarter without you managing it.
+      The engine behind the loop. Hooks do the quiet bookkeeping —
+      <em>extract lessons, score skills, patch weak steps, repeat</em> —
+      and you run End Session and /evolve to keep it moving.
     </p>
 
     <div class="loop-track reveal">
@@ -1603,9 +1604,9 @@ footer {
       <div class="stats-body" id="stats-term-body">
         <span class="st-cmd">cat</span> <span style="color:var(--text)">stats.md</span><br>
         <span class="tdim">────────────────────────────────────────</span><br>
-        <span class="st-key">sessions logged         </span><span class="st-val">275</span><br>
+        <span class="st-key">sessions logged         </span><span class="st-val">335</span><br>
         <span class="st-key">skills in active use    </span><span class="st-val">37</span><br>
-        <span class="st-key">sessions, zero data lost</span><span class="st-val">275</span><br>
+        <span class="st-key">sessions, zero data lost</span><span class="st-val">335</span><br>
         <span class="st-key">memory files tracked    </span><span class="st-val">40+</span><br>
         <span class="st-key">decisions preserved     </span><span class="st-val">75</span><br>
         <span class="st-key">rejected approaches logged</span><span class="st-val">38</span><br>
@@ -1615,7 +1616,7 @@ footer {
         <span class="tdim">────────────────────────────────────────</span><br>
         <span class="tmut">// compare to: rwieruch/the-road-to-claude (no loop), </span><br>
         <span class="tmut">// anthropics/claude-code-examples (no persistence)</span><br>
-        <span class="tmut">// nothing else ships persistent memory + compound learning loop</span><br>
+        <span class="tmut">// persistent memory + a skill feedback loop, in plain text files</span><br>
       </div>
     </div>
   </div>
@@ -1757,7 +1758,7 @@ footer {
       <details>
         <summary>Does a big CLAUDE.md actually help?</summary>
         <div class="faq-body">
-          No — and the research backs this up. Large monolithic CLAUDE.md files increase token use by ~20% with only a 5% improvement in output quality, and sometimes a <em>negative</em> effect when the content is AI-generated.<br><br>
+          No. A very long CLAUDE.md costs extra tokens on every request, and extra detail does not always make the answers better. Clankbrain keeps it short and puts the detail in separate memory files.<br><br>
           clankbrain is built the opposite way: <code>CLAUDE.md</code> stays lean — commands and project-specific gotchas only. Project knowledge lives in separate <code>.claude/memory/</code> files that load selectively based on what's relevant to the current task. That's what the research actually recommends.<br><br>
           The template that ships with the kit enforces this. The project-specific section is designed to stay under 50 lines. When you do want universal behavioral guardrails, ship them as a dedicated rule file — like the included <code>karpathy-principles.md</code>, which encodes Andrej Karpathy's 4 LLM coding principles (think before coding, simplicity first, surgical changes, goal-driven execution) as an always-load rule.
         </div>
@@ -1876,8 +1877,8 @@ footer {
           Clankbrain also improves how Claude works: skills score themselves on every use,
           <code>/evolve</code> patches the steps that keep failing, and <code>regret.md</code> permanently blocks
           approaches you've already rejected.<br><br>
-          On session 5 every tool looks similar. By session 50, Clankbrain's skills have been refined
-          by 50 real feedback loops. <em>Nothing else compounds that way.</em>
+          In the first few sessions the difference is small. Over many sessions, each skill gets
+          adjusted by your own feedback, if you keep running End Session and /evolve.
         </div>
       </details>
     </div>
@@ -2599,7 +2600,7 @@ function initStatsAnim() {
   var FOOTER = [
     '// compare to: rwieruch/the-road-to-claude (no loop),\u00a0',
     '// anthropics/claude-code-examples (no persistence)',
-    '// nothing else ships persistent memory + compound learning loop',
+    '// persistent memory + a skill feedback loop, in plain text files',
   ];
   var DIV = '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500';
 

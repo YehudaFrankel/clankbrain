@@ -430,7 +430,29 @@ function generateFiles(body) {
     files['setup.ps1'] = generateSetupScript(body);
   }
 
+  addSkillFrontmatter(files);
+
   return files;
+}
+
+// Claude Code only registers a skill whose SKILL.md starts with name/description frontmatter.
+// The generators write "**Description:**" and "**Allowed Tools:**" lines, so build the block from those.
+function addSkillFrontmatter(files) {
+  var names = Object.keys(files);
+  for (var i = 0; i < names.length; i++) {
+    var match = names[i].match(/^skills\/([^\/]+)\/SKILL\.md$/);
+    if (!match || /^---\r?\n/.test(files[names[i]])) { continue; }
+    var text = files[names[i]];
+    var descMatch = text.match(/^\*\*Description:\*\*\s*(.+)$/m);
+    var toolsMatch = text.match(/^\*\*Allowed Tools:\*\*\s*(.+)$/m);
+    var trigMatch = text.match(/^\*\*Trigger:\*\*\s*(.+)$/m);
+    var description = match[1];
+    if (descMatch) { description = descMatch[1].trim().replace(/\.$/, ''); }
+    if (trigMatch) { description = description + '. Triggers on ' + trigMatch[1].trim().replace(/`/g, '') + '.'; }
+    var block = '---\nname: ' + match[1] + '\ndescription: ' + JSON.stringify(description) + '\n';
+    if (toolsMatch) { block = block + 'allowed-tools: ' + toolsMatch[1].trim() + '\n'; }
+    files[names[i]] = block + '---\n' + text;
+  }
 }
 
 // --- CLAUDE.md ---

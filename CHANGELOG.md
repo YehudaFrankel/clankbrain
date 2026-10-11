@@ -18,6 +18,8 @@
 - Fix: team-push no longer drops a teammate's new rows (it merges team entries into your files before copying them to the team repo).
 - Fix: sync pulls always merge (--no-rebase), so the union-merge rule in docs/sync.md works without extra git config.
 - Fix: team sync now finds lessons/decisions/errors in the root tasks/ folder that setup.py installs, not only in .claude/memory/.
+- Fix: the website wizard (api/generate.js) wrote skills without name/description frontmatter, so Claude Code did not register them; it now adds the frontmatter. New tests/test_wizard_api.py covers every language.
+- Website copy: removed claims the product cannot back up (automatic patching, "nothing else compounds", unsourced percentages), fixed stale session and skill counts, added a favicon.
 - Note: Claude Code older than the PostCompact hook (e.g. 2.1.29) drops the WHOLE hooks block if it contains an event it does not know; update Claude Code if hooks do nothing.
 - npm package now ships bin/ only; sync tests no longer write to the real .sync-log.json.
 
