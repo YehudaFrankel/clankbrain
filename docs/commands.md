@@ -168,7 +168,7 @@ Sync copies your memory to a private GitHub repository you own. It is off until 
 | `Sync Memory` | Pushes memory to your repo (`python sync.py push`). |
 | `Pull Memory` | Pulls memory on a new machine (`python sync.py pull`). |
 | `python sync.py status` | Shows what is waiting to sync. |
-| `Setup Team [url]` | A manager runs this once to create the shared repo. |
+| `Setup Team [url]` | A manager runs this once, after creating an empty private repo on GitHub, to start sharing through it. |
 | `Join Team [url]` | A new teammate runs this once with the manager's URL. |
 | `Team Push` | Shares your lessons with the team. Run it at End Session. |
 | `Team Status` | Shows last sync times and recent commits. |

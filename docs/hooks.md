@@ -4,7 +4,7 @@ Hooks are what make Clankbrain work without you doing anything. A **hook** is a 
 
 You do not need to read this page to use Clankbrain. Read it if you want to know what runs behind the scenes, turn something off, or fix a problem.
 
-Example: you correct Claude by typing "no, use tabs, not spaces." A hook notices the correction and saves it. At the end of the session `/learn` turns it into a lesson, and Claude follows it next time.
+Example: you correct Claude by typing "no, use tabs, not spaces." A hook notices the correction and queues it. When Claude finishes its reply, another hook moves it into `lessons.md`, and Claude follows it next time.
 
 ---
 
