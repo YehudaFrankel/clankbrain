@@ -1,5 +1,5 @@
 ---
-name: debug-session
+name: debug-session-archived
 description: Structured debugging flow for any bug or unexpected behavior. Follows reproduce → isolate → hypothesize → fix → verify → log. Ends by updating error-lookup.md so the same bug never costs time again. Triggers on "debug session", "can't figure out why", "weird behavior", "something's wrong with", "why is X not working", "help me debug".
 model: claude-sonnet-4-5
 effort: high
