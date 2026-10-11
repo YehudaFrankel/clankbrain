@@ -83,7 +83,7 @@ How much you gain depends on how consistently you use it.
    ```
    npx clankbrain
    ```
-   You need Node and Python 3.7+. You can choose Lite (a single notes file, no hooks, a smaller set of skills) or Full (all memory files, hooks, and more skills). You can upgrade from Lite to Full later.
+   You need Node and Python 3.7+. You can choose Lite (three memory files, no hooks, a smaller set of skills) or Full (all memory files, hooks, and more skills). You can upgrade from Lite to Full later.
 2. Open Claude Code and type `Start Session`. Claude scans your project and builds its first notes.
 3. Do some normal work.
 4. Type `End Session`. Read what Claude saved.

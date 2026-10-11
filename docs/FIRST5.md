@@ -38,9 +38,9 @@ Look at what End Session saved. At least one lesson should be written to a memor
 
 1. Type `Start Session`.
 2. Use at least two skills, such as `/fix-bug`, `/code-review`, or `/plan`.
-3. Type `End Session`. When Claude asks how each skill went, answer honestly. Specific answers ("it skipped the test step") lead to better fixes than vague ones.
+3. Type `End Session`. If a skill got something wrong, say so, and be specific ("it skipped the test step"). Specific notes lead to better fixes than vague ones. `/learn` records how each skill went.
 
-Your answers are saved in `tasks/skill_scores.md`. Later, `/evolve-check` reads it, and `/evolve` improves skills that keep failing.
+These notes are saved in `tasks/skill_scores.md`. Later, `/evolve-check` reads it, and `/evolve` improves skills that keep failing.
 
 ## Session 5: Look at the results
 

@@ -59,17 +59,17 @@ Before:
 
 ```markdown
 ### Step 4 - Build the query
-Use getOnlyMetaData with a SELECT to load the table structure.
-  t.getOnlyMetaData("SELECT * FROM ch_CourseSession WHERE 1=2");
+Load the table structure with a SELECT.
+  db.query("SELECT * FROM course_sessions WHERE 1=2");
 ```
 
 After:
 
 ```markdown
 ### Step 4 - Build the query
-Use getOnlyMetaData with an EXPLICIT column list, never SELECT *.
-SELECT * pulls in the IDENTITY column, and the later insert fails.
-  t.getOnlyMetaData("SELECT CourseID, SessionNumber, SessionTitle FROM ch_CourseSession WHERE 1=2");
+Load the table structure with an EXPLICIT column list, never SELECT *.
+SELECT * pulls in the auto-generated ID column, and the later insert fails.
+  db.query("SELECT course_id, session_number, session_title FROM course_sessions WHERE 1=2");
 
 [2024-12-10] Improved: replaced SELECT * example with an explicit column list.
 ```

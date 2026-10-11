@@ -46,11 +46,5 @@ cd clankbrain
 python setup.py
 ```
 
-**Python one-liner (no Node):**
-```bash
-python -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/YehudaFrankel/clankbrain/main/setup.py').read().decode())"
-```
-This downloads `setup.py` and runs it at once. Read the script first if you want to see what it does.
-
 **No terminal:** paste this into Claude Code or Codex chat:
 > Analyze this codebase and set up the Claude memory system. Scan all JS, CSS, and backend files. Create CLAUDE.md, STATUS.md, and .claude/memory/ pre-filled with what you find.

@@ -13,7 +13,7 @@ No. Typing `Start Session` and `End Session` is the whole daily routine. Everyth
 Any plan that includes Claude Code. The kit is text files plus Python scripts that run on your computer. You need Python 3.7+ (and Node if you install with `npx clankbrain`).
 
 **Does it work with my programming language?**
-Yes. Setup looks at your project and adapts. The memory files are plain text, so they do not depend on a language.
+The memory files, skills and session commands work with any language, because they are plain text and instructions. One feature is narrower: automatic drift checking (noticing that your notes no longer match the code) reads only JavaScript and CSS files. For other languages it has nothing to check, and everything else still works.
 
 **Does it work with Cursor or Windsurf?**
 Partly. The installer can generate rule files for them with its `--ide` flag. Session commands and hooks are built for Claude Code. See [other-ides.md](other-ides.md).

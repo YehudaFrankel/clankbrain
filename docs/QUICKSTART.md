@@ -47,9 +47,9 @@ A **skill** is a saved set of step-by-step instructions that Claude follows for 
 2. At the end, Claude may run `/evolve-check`, which reports which skills have needed corrections. You might see lines like:
    ```
    🟢 STABLE - learn: 3 clean sessions
-   🟡 WATCH - plan: 1 correction logged
+   🟡 WATCH - plan: 2 corrections logged
    ```
-   Green means no problems. Yellow means a skill has needed a correction. If one skill is corrected twice, type `/evolve` to have Claude improve its steps.
+   Green means no problems (one correction alone still shows green). Yellow means a skill has needed two corrections and is ready to fix. Type `/evolve` to have Claude improve its steps.
 
 ---
 

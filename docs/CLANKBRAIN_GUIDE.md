@@ -22,7 +22,7 @@ The kit does send one anonymous usage ping (a random ID, the install mode, your 
 
 ### 1. Memory files
 
-Memory files are plain text files where Claude keeps notes about your project. They live in the `.claude/memory/` folder. You can open and edit them like any text file.
+Memory files are plain text files where Claude keeps notes about your project. They live in the `.claude/memory/` folder, and lessons, decisions and similar task files may sit in a top-level `tasks/` folder instead. You can open and edit them like any text file.
 
 There is an index file called `MEMORY.md`. It lists the other files with a one-line description each. Claude reads the index first, then opens only the files that matter for the task.
 
@@ -89,7 +89,7 @@ The kit holds 36 skills. The installer copies 19 core skills by default, or 7 on
 
 ### 4. Agents
 
-An agent here is a longer workflow that runs several steps in order and pauses to ask you at key points.
+An agent here is a longer workflow that runs several steps in order and pauses to ask you at key points. The installer does not copy agents. Copy them from this repo's `.claude/agents/` folder (see [agents.md](agents.md)).
 
 | Agent | Steps |
 |-------|-------|
@@ -99,13 +99,13 @@ An agent here is a longer workflow that runs several steps in order and pauses t
 
 ### 5. Plans
 
-A plan is a short document written before any code changes. It says what will change, which files are touched, why it should work, and how to undo it. You read it and approve it first. Plans live in `.claude/memory/plans/`, one file per feature.
+A plan is a short document written before any code changes. It says what will change, which files are touched, why it should work, and how to undo it. You read it and approve it first. Plans live in the `plans/` folder (or `.claude/memory/plans/`), one file per feature.
 
 This stops Claude from quietly making the wrong change. The plan forces it to check its assumptions first.
 
 ### 6. Guard patterns
 
-A guard is a named check for a mistake that already happened once. Each guard has a description and a way to search for the mistake. The kit's own list is `.claude/rules/guard-patterns.md`.
+A guard is a named check for a mistake that already happened once. Each guard has a description and a way to search for the mistake. The list lives in `.claude/rules/guard-patterns.md`. This repo includes one, but setup does not create it, so copy it into your project if you want guards.
 
 1. Something goes wrong in a session.
 2. You or Claude add it to the guard list.

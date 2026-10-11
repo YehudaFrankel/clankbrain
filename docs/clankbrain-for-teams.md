@@ -43,11 +43,11 @@ Developer A fixes an error and logs the cause in `error-lookup.md` during End Se
 
 ### A rejected idea stays rejected
 
-The team logs a failed approach in `regret.md`. A hook (a script Claude Code runs for you) checks each prompt against that file and warns when a prompt matches an entry. This works for new teammates too, once they have joined.
+The team logs a failed approach in `regret.md`. Claude is told to check that file before making plans, so it does not suggest the idea again. This works for new teammates too, once they have joined. (If you set up with `python tools/memory.py --init`, a hook also checks each prompt against the file and warns on a match.)
 
 ### A decision is written down
 
-The reason for a design choice goes into `decisions.md`. Claude reads it at Start Session and warns when a plan seems to contradict it.
+The reason for a design choice goes into `decisions.md`. Claude reads it at Start Session, so settled choices are not reopened.
 
 ### A new person gets up to speed
 

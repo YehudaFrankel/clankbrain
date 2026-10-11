@@ -78,7 +78,7 @@ your-project/
     +-- skills/             <- plan, learn, evolve, evolve-check, ...
 ```
 
-An optional search index, `memory_embeddings.pkl`, is built by `memory.py --build-index`. Task files may sit in a top-level `tasks/` folder instead of `.claude/memory/tasks/`; the tool finds whichever exists. Commit `.claude/memory/` and `.claude/skills/` so they travel with the code.
+An optional search index, `memory_embeddings.pkl`, is built by `memory.py --build-index`. `setup.py` puts the task files and plans in top-level `tasks/` and `plans/` folders instead of `.claude/memory/tasks/` and `.claude/memory/plans/`; the tool finds whichever exists. Commit `.claude/memory/` and `.claude/skills/` so they travel with the code.
 
 ---
 

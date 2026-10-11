@@ -13,13 +13,11 @@
 ### Set up once
 
 1. Create a **private** repository at github.com/new. Leave it empty.
-2. In Claude Code, type (with your own URL):
+2. In a terminal, run (with your own URL):
 
 ```
-Setup Sync: https://github.com/you/my-memory
+python sync.py setup https://github.com/you/my-memory
 ```
-
-Or in a terminal: `python sync.py setup https://github.com/you/my-memory`
 
 You should see `Personal sync set up.` If you see `Push failed`, the repo does not exist or git is not logged in.
 
@@ -29,9 +27,9 @@ You should see `Personal sync set up.` If you see `Push failed`, the repo does n
 |---|---|---|
 | `Sync Memory` | `python sync.py push` | Sends memory to your repo. Do it after End Session. |
 | `Pull Memory` | `python sync.py pull` | Gets the latest memory. |
-| `Sync Status` | `python sync.py status` | Shows what is not sent yet. |
+| (none) | `python sync.py status` | Shows what is not sent yet. |
 
-Only `.claude/memory/` is synced. Your code is not.
+Personal sync copies only the `.claude/memory/` folder. Your code is not synced. If your project was set up with `npx clankbrain`, your lessons, decisions and other task files sit in the top-level `tasks/` folder, which personal sync does not copy. Team sync does find them.
 
 ### On a second computer
 

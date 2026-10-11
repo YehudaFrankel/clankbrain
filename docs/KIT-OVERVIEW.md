@@ -72,7 +72,7 @@ Most live in `.claude/memory/`:
 | `tasks/velocity.md` | Estimated versus actual time per task |
 | `plans/_template.md` | Plan template, one file per feature |
 
-Task files may sit in a top-level `tasks/` folder instead. The tool finds whichever exists.
+Task files and plans may sit in top-level `tasks/` and `plans/` folders instead. The tool finds whichever exists.
 
 ---
 
