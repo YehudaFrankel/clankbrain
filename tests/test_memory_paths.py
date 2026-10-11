@@ -60,6 +60,36 @@ def test_tasks_dir_empty_memory_tasks_does_not_hide_root_tasks(project):
     assert memory.find_tasks_dir(mem) == project / 'tasks'
 
 
+# --- searchable files --------------------------------------------------------
+
+def test_search_includes_root_tasks(project):
+    mem = project / '.claude' / 'memory'
+    (mem / 'MEMORY.md').write_text('index', encoding='utf-8')
+    (project / 'tasks').mkdir()
+    (project / 'tasks' / 'lessons.md').write_text('use const', encoding='utf-8')
+    names = [p.name for p in memory._searchable_md_files(mem)]
+    assert 'lessons.md' in names and 'MEMORY.md' in names
+
+
+def test_cmd_search_finds_root_tasks_without_crashing(project, monkeypatch, capsys):
+    mem = project / '.claude' / 'memory'
+    (mem / 'MEMORY.md').write_text('index', encoding='utf-8')
+    (project / 'tasks').mkdir()
+    (project / 'tasks' / 'lessons.md').write_text('always use two-space indent', encoding='utf-8')
+    monkeypatch.setattr(sys, 'argv', ['memory.py', '--search', 'indent'])
+    memory.cmd_search()
+    out = capsys.readouterr().out
+    assert 'lessons.md' in out and 'indent' in out
+
+
+def test_search_does_not_duplicate_memory_tasks(project):
+    mem = project / '.claude' / 'memory'
+    (mem / 'tasks').mkdir()
+    (mem / 'tasks' / 'lessons.md').write_text('x', encoding='utf-8')
+    names = [p.name for p in memory._searchable_md_files(mem)]
+    assert names.count('lessons.md') == 1
+
+
 # --- token estimate ----------------------------------------------------------
 
 def test_token_estimate_ignores_other_projects(project, tmp_path, monkeypatch):

@@ -99,6 +99,23 @@ def find_tasks_dir(memory_dir):
     return memory_tasks
 
 
+def _searchable_md_files(memory_dir):
+    """Markdown files for --search / --build-index: the memory folder plus tasks/ when it lives elsewhere."""
+    files = list(memory_dir.rglob('*.md'))
+    tasks_dir = find_tasks_dir(memory_dir)
+    if tasks_dir.is_dir() and memory_dir not in tasks_dir.parents:
+        files.extend(tasks_dir.rglob('*.md'))
+    return sorted(files)
+
+
+def _display_path(md_file, memory_dir):
+    """Path relative to the memory folder, or to the project root for files outside it (root tasks/)."""
+    try:
+        return md_file.relative_to(memory_dir)
+    except ValueError:
+        return md_file.relative_to(ROOT)
+
+
 # ─── KIT HEALTH (silent helper) ──────────────────────────────────────────────
 
 def _kit_health_fails():
@@ -1738,7 +1755,7 @@ def cmd_search():
     tokens = [t for t in query_lower.split() if t]
 
     results = []
-    for md_file in sorted(memory_dir.rglob('*.md')):
+    for md_file in _searchable_md_files(memory_dir):
         try:
             text = md_file.read_text(encoding='utf-8', errors='ignore')
         except Exception:
@@ -1771,7 +1788,7 @@ def cmd_search():
                     match_blocks.append(lines[start:end])
 
         if match_blocks:
-            rel = md_file.relative_to(memory_dir)
+            rel = _display_path(md_file, memory_dir)
             results.append((score, rel, match_blocks))
 
     if not results:
@@ -1821,12 +1838,12 @@ def cmd_build_index():
 
     docs = []
     paths = []
-    for md_file in sorted(memory_dir.rglob('*.md')):
+    for md_file in _searchable_md_files(memory_dir):
         try:
             text = md_file.read_text(encoding='utf-8', errors='ignore').strip()
             if text:
                 docs.append(text)
-                paths.append(str(md_file.relative_to(memory_dir)))
+                paths.append(str(_display_path(md_file, memory_dir)))
         except Exception:
             continue
 

@@ -14,6 +14,7 @@
 - setup.py: Graphify and Agent Skills prompts default to No.
 - Fix: setup.py now installs the --log-edit hook, so the session journal records edited files (it stayed empty before).
 - Fix: skills forget and recall used effort: fast, which Claude Code rejects; now low. Tests check effort values.
+- Fix: --search and --build-index now include the root tasks/ folder (lessons, decisions, errors, regrets were invisible to search in setup.py installs).
 - Note: Claude Code older than the PostCompact hook (e.g. 2.1.29) drops the WHOLE hooks block if it contains an event it does not know; update Claude Code if hooks do nothing.
 - npm package now ships bin/ only; sync tests no longer write to the real .sync-log.json.
 
