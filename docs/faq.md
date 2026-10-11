@@ -41,7 +41,7 @@ Not necessarily. A long file uses more of Claude's working space on every reques
 ## Compared with other tools
 
 **Does it work with Claude's built-in Auto Memory?**
-Yes. They can run side by side. Clankbrain stores project knowledge in files you can see and edit: lessons, decisions, rejected approaches, and skills.
+Yes. They can run side by side, and they overlap. Auto memory is notes Claude writes itself from your corrections and loads every session. Clankbrain adds ready-wired hooks and separate files you can read and edit, for lessons, decisions and rejected approaches, plus a start-and-end-of-session routine and scored skills. If auto memory is enough for you, you may not need Clankbrain.
 
 **How is it different from other memory tools?**
 Besides remembering, it tracks how well each skill works, lets you improve skills that fail repeatedly (`/evolve`), and records rejected approaches in `regret.md`. Whether that helps you more depends on how consistently you use it.

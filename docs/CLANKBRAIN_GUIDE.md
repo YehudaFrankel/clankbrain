@@ -2,15 +2,17 @@
 
 Clankbrain gives Claude Code a memory. This guide is for anyone, including people who have never used Claude Code, and explains what each part of the kit does and why.
 
-(Claude Code is Anthropic's coding assistant that runs in your terminal or editor. Normally it forgets everything when a session ends.)
+(Claude Code is Anthropic's coding assistant that runs in your terminal or editor. Each session starts with a fresh conversation. It carries knowledge forward only through files such as `CLAUDE.md` and its own auto memory notes.)
 
 ---
 
 ## The problem it solves
 
-Without Clankbrain, every Claude Code session starts from zero. Claude does not remember your project, your preferences, or the mistakes you already corrected. You explain the same things again.
+Claude Code already has memory: you can write instructions in `CLAUDE.md` and rules files, and Claude saves its own notes (called auto memory) from your corrections. It also provides hooks, skills and plan mode as building blocks, but not ready-made hooks.
 
-With Clankbrain, Claude writes notes as it works and reads them at the start of the next session. Think of a contractor who must be briefed on every visit, compared with a team member who keeps a notebook. The kit gives Claude the notebook.
+Clankbrain fills in the rest. It adds hooks that are already wired up, separate memory files for lessons, decisions and rejected approaches, a routine for starting and ending sessions, and scored workflows. Think of Claude Code as the toolbox and Clankbrain as a set-up workbench.
+
+If `CLAUDE.md` and auto memory are enough for you, you may not need it.
 
 Your memory files and code stay on your computer, and no API keys are needed. Syncing memory to a private repo is optional and off by default.
 

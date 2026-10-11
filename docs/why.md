@@ -6,9 +6,9 @@ Clankbrain is a kit that gives Claude Code a memory. This page explains the prob
 
 ## The problem
 
-Claude Code starts every session with a blank slate. It does not remember what you built yesterday, the bug you spent hours fixing, a decision you settled, or an idea you tried and dropped.
+Claude Code does keep some memory between sessions. It reads your `CLAUDE.md` and rules files, and it saves its own notes (auto memory) from your corrections. What it does not give you is a ready-made structure: separate places for lessons, decisions and rejected ideas, automatic capture of corrections into those places, and a routine for starting and ending a session.
 
-So each session you re-explain your project, and Claude may suggest the same rejected idea again. Clankbrain fixes this by keeping notes in files and loading them at the start of each session.
+Clankbrain adds that structure, using Claude Code's own hooks and skills. If `CLAUDE.md` and auto memory already work well for you, you may not need it.
 
 ## The idea
 

@@ -6,18 +6,31 @@
 
 ![Session demo](demo.gif)
 
-**Clankbrain gives Claude Code a memory.** It writes down what you decide, what goes wrong and what you reject, then reminds Claude at the start of every session.
+**Clankbrain is a ready-made setup for Claude Code.** It adds automatic hooks, organized memory files, a start-and-end-of-session routine and reusable workflows on top of what Claude Code already provides.
 
-## The problem it solves
+## What Claude Code already does
 
-Every time you open a new Claude Code session, Claude has forgotten your project. You explain the stack again. You repeat which approaches already failed. Claude suggests the same fix you rejected last week.
+Claude Code has more built in than many people realize:
 
-Clankbrain fixes that with two things:
+- **Instructions you write.** `CLAUDE.md` files and `.claude/rules/` (rules can apply only to certain file types).
+- **Notes Claude writes itself.** *Auto memory* saves what Claude learns from your corrections and preferences, and loads it in every session.
+- **Building blocks.** Hooks (small scripts that run at set moments), skills (saved instructions), subagents and plan mode.
 
-1. **Memory.** Plain text files that record your decisions, mistakes and lessons. Claude reads them when a session starts and updates them when it ends.
-2. **Workflows.** Saved step-by-step instructions (called *skills*) for common jobs: planning a change, fixing a bug, reviewing code, and more. This kit installs **19 core workflows by default (36 in the repo)**.
+If that is enough for you, you do not need Clankbrain.
 
-Session 1, Claude learns your project. By session 10, it knows your mistakes and your rules, and you stop re-explaining.
+## What Clankbrain adds
+
+Claude Code gives you the parts. Its hooks page describes the mechanism only and ships no ready-made hooks. Clankbrain supplies the finished version:
+
+| Claude Code gives you | Clankbrain adds |
+|---|---|
+| A hook system you configure yourself | Hooks already wired: they catch your corrections and turn them into lessons, check whether your notes still match the code, write a session journal and keep memory safe when a long chat is compacted |
+| One auto-memory notes area, written by Claude | Separate files you can read, edit and track in git: lessons, decisions, rejected approaches and error fixes |
+| Skills as a feature | **19 core workflows installed by default (36 in the repo)**, plus a score for each skill and an `/evolve` step that rewrites the ones that keep failing |
+| `CLAUDE.md` and rules shared through git | Optional sharing of lessons, decisions and fixes between teammates through a private git repo you own, merged so nobody's entries are overwritten |
+| Plan mode | A "show the plan, wait for my yes" rule and a `Start Session` / `End Session` routine |
+
+Clankbrain was built from the author's own 335 sessions on one production project. Whether the extra structure is worth it for you depends on how you work. Try the Lite install first.
 
 ## Install
 

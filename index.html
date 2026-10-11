@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clankbrain — Compound Learning for Claude Code</title>
   <link rel="icon" href="logo.jpeg">
-<meta name="description" content="Clankbrain — compound learning for Claude Code. Skills self-improve, rejected approaches stay rejected, decisions stop getting re-debated. Two commands. No external dependencies.">
+<meta name="description" content="Clankbrain — a ready-made setup for Claude Code: wired hooks, organized memory files, a session routine and 19 core workflows. Two commands. Open source, no external dependencies.">
 <!-- formerly known as claude-recall, engram, and Claude-Code-memory-starter-kit -->
 <style>
 :root {
@@ -957,12 +957,12 @@ footer {
   <div>
     <div class="hero-eyebrow"><span class="dot"></span>memory + structured workflows for Claude Code · open source · MIT · built on official Claude Code APIs · data stays on your machine</div>
     <h1>
-      Every session, your coding agent<br>
-      wakes up a stranger.<br>
-      <span class="h1-amber">Clankbrain</span> fixes that.
+      Claude Code gives you memory,<br>
+      hooks and skills.<br>
+      <span class="h1-amber">Clankbrain</span> wires them up.
     </h1>
     <p class="hero-sub">
-      335 sessions on one production project. Claude still knows every decision, every rejected approach, every hard-won pattern from session 1. No re-explaining. No re-debating. Clankbrain gives it a <em>living memory</em> — decisions, lessons, patterns that compound with your project — plus <em>19 core workflows installed by default (36 in the repo)</em> for debugging, code review, refactoring, design, security, and more.
+      Claude Code already has CLAUDE.md, auto memory, hooks and skills, but it ships the mechanism, not the finished setup. Clankbrain adds hooks that are already wired, organized memory files for lessons, decisions and rejected approaches, a Start/End Session routine, and <em>19 core workflows installed by default (36 in the repo)</em>. Built from 335 sessions on one production project.
     </p>
     <p style="font-size:.85rem; color:var(--amber); margin-bottom:1.25rem; letter-spacing:.02em;">Two commands: <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">Start Session</code> → work → <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">End Session</code>. That's the whole interface.</p>
     <div class="hero-btns">
@@ -1863,20 +1863,18 @@ footer {
       <details>
         <summary>Does this work with Anthropic's native Auto Memory?</summary>
         <div class="faq-body">
-          Yes — they solve different problems. Anthropic's Auto Memory captures conversational context within a session.
-          clankbrain persists <em>project knowledge across sessions</em>: your codebase structure, architectural decisions,
-          lessons from past mistakes, and custom workflows. Auto Memory forgets when the session closes.
-          clankbrain doesn't. Run both — they complement each other.
+          Yes, and they overlap. Auto memory is notes Claude writes itself from your corrections and loads
+          in every session. Clankbrain adds ready-wired hooks and separate files you can read and edit, for
+          lessons, decisions and rejected approaches, plus a Start/End Session routine and scored skills.
+          You can run both. If auto memory is enough for you, you may not need Clankbrain.
         </div>
       </details>
       <details>
         <summary>How is this different from other Claude memory repos?</summary>
         <div class="faq-body">
-          Most memory tools remember. Clankbrain learns.<br><br>
-          Every other tool — Auto Memory, MCP servers, single-file notes, SQLite stores — captures what happened.
-          Clankbrain also improves how Claude works: skills score themselves on every use,
-          <code>/evolve</code> patches the steps that keep failing, and <code>regret.md</code> permanently blocks
-          approaches you've already rejected.<br><br>
+          Most memory tools store notes. Clankbrain also tracks how its workflows perform.<br><br>
+          Skills are scored after use, <code>/evolve</code> rewrites the steps that keep failing when you run it, and
+          <code>regret.md</code> keeps approaches you have already rejected where Claude can check them before planning.<br><br>
           In the first few sessions the difference is small. Over many sessions, each skill gets
           adjusted by your own feedback, if you keep running End Session and /evolve.
         </div>

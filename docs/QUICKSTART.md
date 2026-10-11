@@ -8,7 +8,7 @@ A "session" here means one sitting of work in Claude Code, from opening it to cl
 
 ## How it works in one minute
 
-Claude Code forgets everything when you close it. Clankbrain fixes that with plain text files, called **memory files**, that Claude reads at the start of each session and updates at the end. You control this with two phrases you type into Claude Code:
+Each Claude Code session starts with a fresh conversation. Clankbrain gives it organized notes to start from: plain text files, called **memory files**, that Claude reads at the start of each session and updates at the end. You control this with two phrases you type into Claude Code:
 
 - `Start Session` - Claude reads its notes and tells you where you left off.
 - `End Session` - Claude saves what it learned.
