@@ -16,3 +16,4 @@ Thumbs.db
 
 # Marketplace packaging output
 dist/
+evaluation/results/

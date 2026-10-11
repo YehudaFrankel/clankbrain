@@ -7,6 +7,7 @@
 - package.json: `bin` and `repository.url` normalized so `npm publish` runs without warnings.
 - README: removed two badges that do not render on npmjs.com.
 - Positioning: README, docs and website now say what Claude Code already provides (CLAUDE.md, rules, auto memory, hooks, skills, plan mode) and what Clankbrain adds. Fixed a wrong site FAQ claim that auto memory "forgets when the session closes".
+- Added evaluation/ : a rerunnable A/B/C test (bare Claude Code vs hand-written CLAUDE.md vs Clankbrain) with automatic graders. It makes paid Claude calls, so run it only on purpose; see evaluation/README.md.
 - Dependencies: the website download endpoint now writes the zip with Node's built-in zlib, so the npm package has zero dependencies (jszip removed). Verified with Python and Windows Expand-Archive; new test.
 
 ## v2.12.1 - Docs accuracy and install fixes
