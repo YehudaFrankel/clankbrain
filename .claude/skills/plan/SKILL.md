@@ -32,8 +32,8 @@ Write answers into the **Problem** section. **Display the full plan.**
 ### Step 3 — Research before drafting
 Before writing a single option:
 - Grep the codebase for any existing related functionality
-- Read `[MEM]/decisions.md` — any settled decisions that apply?
-- Read `[MEM]/tasks/regret.md` — any rejected approaches to avoid re-proposing?
+- If `[MEM]/decisions.md` exists, read it — any settled decisions that apply?
+- If `[MEM]/tasks/regret.md` exists, read it — any rejected approaches to avoid re-proposing?
 
 Surface anything relevant inline: *"Found existing X in file Y — Option A could build on this."*
 
@@ -82,8 +82,8 @@ If any Blast Radius field is "unknown" — that is an open question. Resolve it 
 Review everything written. Add any unresolved questions to the **Open Questions** checklist.
 State explicitly: *"N open questions before this is ready to code."*
 
-### Step 8 — Update MEMORY.md plans index
-Add or update the entry in `[MEM]/MEMORY.md`:
+### Step 8 — Update MEMORY.md plans index (skip if there is no MEMORY.md)
+If `[MEM]/MEMORY.md` exists, add or update the entry:
 ```
 - [Plan: feature-name](plans/feature-name.md) — Status: Draft/Ready/On Hold — one-line summary
 ```

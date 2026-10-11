@@ -27,7 +27,7 @@ keep-coding-instructions: true
 
 6. **Verify** — re-test the exact failing case, confirm nothing adjacent broke
 
-7. **Log it** — add one line to `tasks/error-lookup.md`:
+7. **Log it** — if `tasks/error-lookup.md` exists, add one line to it (otherwise skip this step):
    `[date] | error description | root cause | fix applied`
 
 8. Report: "Bug fixed. Root cause was: [X]. Changed: [file:line]. Verified: [how]."
