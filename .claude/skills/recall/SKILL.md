@@ -2,7 +2,7 @@
 name: recall
 description: Natural language memory search. Use when the user asks "what did we decide about X", "do we know anything about X", "have we dealt with X before", or "/recall X". Faster than search-memory — single grep pass, no parallel agents.
 allowed-tools: Bash, Read, Grep
-effort: fast
+effort: low
 ---
 
 # Skill: recall

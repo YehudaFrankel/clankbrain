@@ -12,6 +12,9 @@
 - Fix: tools/memory.py and setup.py now agree on tasks/ (find_tasks_dir); existing .claude/memory/tasks installs are unchanged.
 - setup.py now installs SessionStart, PreCompact, PostCompact and the --update-date Stop hook (same as memory.py --init).
 - setup.py: Graphify and Agent Skills prompts default to No.
+- Fix: setup.py now installs the --log-edit hook, so the session journal records edited files (it stayed empty before).
+- Fix: skills forget and recall used effort: fast, which Claude Code rejects; now low. Tests check effort values.
+- Note: Claude Code older than the PostCompact hook (e.g. 2.1.29) drops the WHOLE hooks block if it contains an event it does not know; update Claude Code if hooks do nothing.
 - npm package now ships bin/ only; sync tests no longer write to the real .sync-log.json.
 
 ## v2.10.0 (2026-08-28) — Feedback memories + comment-changes rule

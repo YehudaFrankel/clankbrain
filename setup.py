@@ -2293,7 +2293,10 @@ A real co-worker does not wait to be asked.
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --check-drift --silent" }]
+        "hooks": [
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --log-edit", "timeout": 5 },
+          { "type": "command", "command": "''' + PYTHON_BIN + ''' tools/memory.py --check-drift --silent" }
+        ]
       }
     ],
     "PreCompact": [

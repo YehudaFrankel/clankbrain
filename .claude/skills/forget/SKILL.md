@@ -2,7 +2,7 @@
 name: forget
 description: Invalidate or remove a memory entry. Use when the user says "forget that", "that memory is wrong", "remove the X memory", "/forget X". Marks the file as invalidated rather than deleting — preserves history.
 allowed-tools: Read, Edit, Grep, Bash
-effort: fast
+effort: low
 ---
 
 # Skill: forget

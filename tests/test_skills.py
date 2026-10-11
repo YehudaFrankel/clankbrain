@@ -62,6 +62,14 @@ def test_skill_has_valid_frontmatter(skill_dir):
         assert name == skill_dir.name, "name does not match folder"
 
 
+@pytest.mark.parametrize("skill_dir", _skill_dirs(), ids=lambda d: d.name)
+def test_skill_effort_is_valid(skill_dir):
+    # Claude Code rejects anything else ("invalid effort 'fast'")
+    effort = _field(_frontmatter(skill_dir), "effort")
+    if effort is not None:
+        assert effort in ("low", "medium", "high", "xhigh", "max") or effort.isdigit(), "invalid effort: " + effort
+
+
 def test_skill_names_are_unique():
     seen = {}
     for skill_dir in _skill_dirs():

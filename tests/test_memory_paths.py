@@ -109,3 +109,6 @@ def test_setup_py_installs_session_and_date_hooks(tmp_path):
     assert '--update-date' in stop_commands
     start_commands = ' '.join(h['command'] for g in hooks['SessionStart'] for h in g['hooks'])
     assert '--session-start' in start_commands
+    # the journal only records edits that --log-edit has logged
+    edit_commands = ' '.join(h['command'] for g in hooks['PostToolUse'] for h in g['hooks'])
+    assert '--log-edit' in edit_commands
