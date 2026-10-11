@@ -10,7 +10,7 @@ Every session, your coding agent wakes up a stranger.
 
 You re-explain the stack. Re-describe what you were building. Re-establish why certain approaches won't work here. Then it fumbles through the same debug flow, the same code review, the same refactor — because it has no structured way to do any of it.
 
-Clankbrain fixes both. It gives Claude Code a **living memory** — decisions, mistakes, patterns, lessons that compound across sessions — and **40 built-in workflows** for every development task: debugging, code review, refactoring, frontend design, security audits, and more.
+Clankbrain fixes both. It gives Claude Code a **living memory** — decisions, mistakes, patterns, lessons that compound across sessions — and **19 core workflows installed by default (40 in the repo)** for every development task: debugging, code review, refactoring, frontend design, security audits, and more.
 
 Session 1: the agent learns your stack.
 Session 10: it knows every mistake you've made, every approach you've rejected, every shortcut that works in your codebase.
@@ -523,13 +523,9 @@ The kill gate is the key: if 2+ risks are red, it refuses to build prototypes an
 | Find where something lives in code | `/search-first` |
 | Fix a logic bug | `/fix-bug` |
 | Review code for issues | `code-review` |
-| Refactor without changing behavior | `07-refactoring` |
-| Audit for security issues | `03-security` |
-| Check environment before deploying | `04-environments` |
 | Design a UI from scratch | `frontend-design` |
 | Polish an existing UI | `refactoring-ui` |
 | Audit usability | `ux-heuristics` |
-| Verify a feature works end-to-end | `06-testing` |
 | Validate a product idea before building | `/product-risk create` |
 | Score an existing product's risks | `/product-risk evaluate` |
 | Write first, have Claude review gap | `/shadow-code` |

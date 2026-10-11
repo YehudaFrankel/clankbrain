@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.12.1 - Docs accuracy
+
+### Changed
+- Skill counts now match what the installer ships: 19 core skills on Full install (7 on Lite); 40 live in the repo.
+- Archived 03-security, 04-environments, 06-testing, 07-refactoring (project-specific, never installed) as _archived_*; removed them from the README table.
+- Replaced the unverified usage claim with the session count.
+- VERSION and package.json synced to 2.12.0.
+
 ## v2.10.0 (2026-08-28) — Feedback memories + comment-changes rule
 
 ### Added

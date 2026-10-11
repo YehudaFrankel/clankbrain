@@ -123,7 +123,7 @@ Wait for "next."
 ```
 Demo 3: Reusable workflows.
 
-The kit ships with 40 skills. Each one is a workflow that runs when you need it.
+The kit installs 19 core skills by default (40 in the repo; copy any from .claude/skills/). Each one is a workflow that runs when you need it.
 
 Examples:
 - /plan — walks you through planning a new feature
