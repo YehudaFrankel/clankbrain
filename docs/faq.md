@@ -1,37 +1,57 @@
-## FAQ
+# FAQ
 
-**How does this compare to other memory kits?**
-Most memory tools remember. Clankbrain learns. Every other tool — Auto Memory, MCP servers, single-file notes, SQLite stores — captures what happened. Clankbrain also improves how Claude works: skills score themselves on every use, `/evolve` patches the steps that keep failing, and `regret.md` permanently blocks approaches you've already rejected. On session 5 every tool looks similar. By session 50, Clankbrain's skills have been refined by 50 real feedback loops. Nothing else compounds that way.
+Short answers to common questions about Clankbrain, a kit that gives Claude Code a memory. It is for new and curious users. A **memory file** is a plain text file where Claude keeps notes about your project. A **hook** is a small script Claude Code runs automatically at certain moments, such as when a session starts.
 
-**Does this work with Anthropic's native Auto Memory?**
-Yes and they don't overlap. Auto Memory captures conversational context within a session. Clankbrain persists project knowledge across sessions including architecture decisions, lessons from past mistakes, and custom workflows. Auto Memory forgets when the session closes. Clankbrain doesn't. Run both.
+---
+
+## Basics
+
+**Do I need to understand how it works?**
+No. Typing `Start Session` and `End Session` is the whole daily routine. Everything else runs automatically or responds to plain English.
 
 **What Claude plan do I need?**
-Any paid plan that includes Claude Code. The kit is just markdown files and Python scripts running on your machine. If your sessions are getting long, Max helps with context limits, but the PreCompact hook and Start Session recovery are specifically built to handle that gracefully on any plan.
+Any plan that includes Claude Code. The kit is text files plus Python scripts that run on your computer. You need Python 3.7+ (and Node if you install with `npx clankbrain`).
 
-**Do I need to understand how it all works?**
-No. Start Session and End Session are the whole daily interface. Everything else runs automatically or responds to plain English. You don't need to read the docs to use it.
+**Does it work with my programming language?**
+Yes. Setup looks at your project and adapts. The memory files are plain text, so they do not depend on a language.
 
-**Does it work with my stack?**
-Yes. Setup detects your stack and configures everything for what you're actually using. Java, Python, Node, Go, Ruby, any language with source files works.
+**Does it work with Cursor or Windsurf?**
+Partly. The installer can generate rule files for them with its `--ide` flag. Session commands and hooks are built for Claude Code. See [other-ides.md](other-ides.md).
 
-**What is user_preferences.md for?**
-It's where Claude learns how you like to work. Your tone preferences, things you never want it to do, coding conventions specific to you. Add anything like "always ask before refactoring" or "I prefer short responses". It loads automatically every session.
+## Memory files
 
-**What is global-lessons.md for?**
-Lessons that apply across all your projects, not just one. Lives at `~/.claude/global-lessons.md` and loads at every Start Session regardless of which project you're in. Good for things like "always check .env before debugging auth issues."
+**Why text files instead of a database?**
+You can read them, search them, and compare versions in git. They travel with your project and need no running service.
 
-**What does session_journal.md give me?**
-A searchable history of everything you've worked on. Timestamped automatically, you never write to it. Just grep it and Claude surfaces every session where you touched a specific topic.
+**What is `user_preferences.md`?**
+A file where you record how you like to work, such as "ask before refactoring" or "keep answers short." Claude reads it each session.
+
+**What is `global-lessons.md`?**
+Lessons that apply to every project, such as "check `.env` before debugging login problems." It lives at `~/.claude/global-lessons.md`.
+
+**What is `session_journal.md`?**
+An automatic, dated log of what you worked on. You never write to it. Ask Claude to search it, or search it yourself.
 
 **What does bootstrap do?**
-Scans your entire project and builds `quick_index.md`, a map of every source file grouped by type. Run it once on any new project and Claude has immediate codebase awareness without you documenting anything manually.
+Run `python tools/memory.py --bootstrap` once. It lists your source files in `quick_index.md` so Claude can find them quickly.
 
-**Why markdown files instead of a database?**
-Because you can read them, grep them, diff them, and restore any version from git history without any tooling. A database is opaque. Markdown files travel with your repo, work on any machine, and never need an API key or running service. The simplicity is the point.
+**Does a long CLAUDE.md help?**
+Not necessarily. A long file uses more of Claude's working space on every request. Clankbrain keeps `CLAUDE.md` short and puts details in separate memory files that Claude reads when needed.
 
-**Does a big CLAUDE.md actually help?**
-No. Large CLAUDE.md files increase token use by around 20% with marginal or negative improvement in output quality. Clankbrain is built the opposite way. CLAUDE.md stays lean and project knowledge lives in separate memory files that load selectively. The project-specific section is designed to stay under 50 lines.
+## Compared with other tools
 
-**Is this safe for business use?**
-Clankbrain doesn't touch your data. Memory stays on your machine. Kit updates flow one way only from Clankbrain to you, never the reverse. Anonymous usage stats are sent to PostHog on setup and session start (mode, platform, Python version — no project data, no code, no file paths). Opt out at any time with `CLANKBRAIN_NO_TELEMETRY=1`. The real data consideration for businesses is Claude Code itself sending prompts to Anthropic — that's true regardless of this kit. For regulated industries get an Anthropic enterprise plan with a BAA. Clankbrain adds nothing to that surface. Memory files are local, contain code patterns and decisions not personal data, and are fully under your control.
+**Does it work with Claude's built-in Auto Memory?**
+Yes. They can run side by side. Clankbrain stores project knowledge in files you can see and edit: lessons, decisions, rejected approaches, and skills.
+
+**How is it different from other memory tools?**
+Besides remembering, it tracks how well each skill works, lets you improve skills that fail repeatedly (`/evolve`), and records rejected approaches in `regret.md`. Whether that helps you more depends on how consistently you use it.
+
+## Privacy and safety
+
+**What stays on my computer, and what is sent?**
+Memory files and your code stay on your computer. Clankbrain does not upload them. Syncing memory to a git repository is optional, and you choose the repository.
+
+Clankbrain does send one small anonymous usage report to PostHog (an analytics service) when setup finishes and at each session start. It contains a random ID, the kit version, the install mode, your operating system, and your Python version. It has no project data, code, or file paths. To turn it off, set the environment variable `CLANKBRAIN_NO_TELEMETRY=1`.
+
+**Is it safe for business use?**
+The memory files hold code patterns and decisions and stay under your control. Separately, Claude Code itself sends your prompts to Anthropic, with or without this kit. If you work in a regulated field, check Anthropic's plans and agreements for that. Clankbrain does not change that.

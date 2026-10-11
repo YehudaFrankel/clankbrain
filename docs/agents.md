@@ -1,22 +1,27 @@
-# Agents — Multi-Skill Orchestrators
+# Agents: Multi-Step Workflows
 
-Skills handle one step. Agents chain several skills into a complete workflow, with explicit human-in-the-loop breakpoints at every decision point.
+A skill does one job. An **agent**, in Clankbrain, is a longer workflow made of several steps. It runs those steps in order and stops at checkpoints so you can review before it continues. Each agent is a markdown file in `.claude/agents/`.
 
----
+Use an agent when a job has several stages, such as building a feature or fixing a hard bug. For a single small task, a skill is enough.
 
-## Built-in agents
-
-| Agent | Steps |
-|-------|-------|
-| `feature-build` | search-first → plan → implement → code-reviewer → verification-loop → /learn |
-| `bug-fix` | reproduce → isolate → fix → verify → log+learn |
-| `end-session` | /learn → update memory → drift check → STATUS.md → evolve → sync |
+Note: the installer does not copy agents into your project. They live in this repo's `.claude/agents/` folder. To use one, copy the file into your own project's `.claude/agents/` folder.
 
 ---
 
-## How they work
+## The four agents
 
-Each agent is a markdown file in `.claude/agents/`. Claude reads the steps in order. Every step ends with a `BREAKPOINT` — Claude stops, shows its findings or output, and waits for your explicit confirmation before proceeding.
+| Agent file | Use it when | Steps |
+|------------|------------|-------|
+| `feature-build.md` | You are building a new feature | search first, plan, implement, review, verify, learn |
+| `bug-fix.md` | You are chasing a bug | reproduce, isolate, fix, verify, log and learn |
+| `end-session.md` | You are finishing for the day | extract lessons, update memory, guard scan, drift check, update STATUS.md, evolve check, sync (if set up), final report |
+| `plan.md` | You are designing something | understand the goal, research, draft options, write the plan, execute, close |
+
+---
+
+## How they work: breakpoints
+
+A **breakpoint** is a stop sign inside the agent file. At a breakpoint Claude shows what it found or made, then waits for you to say "continue." You can also stop, change direction, or ask for something different.
 
 ```markdown
 ## Step 1 — Search
@@ -25,36 +30,41 @@ Run `/search-first` with the feature description.
 Find every related function. Note call chains and DB tables involved.
 
 **BREAKPOINT — Show findings. Wait for "continue" before Step 2.**
-
-## Step 2 — Plan
-
-Run `/plan` ...
 ```
 
-You can abort, adjust, or redirect at any BREAKPOINT. Claude does not proceed automatically.
+Example of what you see:
+
+```
+Claude: Step 1 done. Found 3 related functions and 2 tables (details above).
+        Reply "continue" to start the plan.
+You:    continue
+```
+
+Most steps end with a breakpoint. The `end-session` agent has fewer, because its steps are routine.
 
 ---
 
-## Agents vs. skills
+## Agents compared with skills
 
 | | Skills | Agents |
 |-|--------|--------|
-| **Scope** | One step | Full workflow |
-| **Trigger** | Phrase match or `/name` | Invoked by name |
-| **Breakpoints** | None — runs to completion | Explicit BREAKPOINT at each step |
-| **Chaining** | Via `## Auto-Chain` section | Explicit ordered steps |
-| **When to use** | Single, well-defined task | Multi-step feature or bug fix |
+| Size | One task | A whole workflow |
+| How to start | A matching phrase or `/name` | Ask for it by name |
+| Stops to check with you | No, it runs to the end | Yes, at each breakpoint |
+| Linking to the next step | An `## Auto-Chain` section | Steps written in order |
+| Best for | One clear task | A feature or a bug fix |
 
 ---
 
-## Writing your own agent
+## Write your own agent
 
-Drop a `.md` in `.claude/agents/`:
+1. Create a file in `.claude/agents/`, for example `my-workflow.md`.
+2. Paste this and edit it:
 
 ```markdown
 ---
 name: my-workflow
-description: When to invoke this orchestrator
+description: When to use this agent
 ---
 
 ## Step 1 — First thing
@@ -68,8 +78,11 @@ Do this. Check that. Report findings.
 Do this next.
 ```
 
-**Rules:**
-- Every step should have exactly one `BREAKPOINT` at the end
-- State what Claude should show at the breakpoint (findings, plan, review results)
-- State what confirmation phrase to wait for
-- Steps should map to skills where possible — `Run /skill-name` keeps agents thin and skills reusable
+Tips:
+
+- End each step with one breakpoint.
+- Say exactly what Claude should show at the breakpoint (findings, a plan, review results).
+- Say which word to wait for, such as "continue."
+- Where you can, write `Run /skill-name` instead of repeating instructions. That keeps agents short and skills reusable.
+
+See [skills.md](skills.md) for the skills these agents call, and [extending.md](extending.md) for other ways to customize Clankbrain.

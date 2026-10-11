@@ -1,81 +1,61 @@
 # Clankbrain Cheat Sheet
 
-The whole kit fits on one page. Print it, screenshot it, keep it open.
+A one-page list of what to type in Claude Code. It is for anyone using Clankbrain who wants a quick reminder. Commands that start with `/` are **skills**: saved sets of steps Claude follows. Commands without a slash are plain phrases you type.
 
 ---
 
-## The 5 commands you'll use daily
+## Every day
 
-| Type this | What it does |
-|-----------|--------------|
-| `Start Session` | Loads memory, tells you what changed last time |
-| `End Session` | Saves what you learned + writes session changes doc |
-| `/learn` | Pulls lessons + decisions out of this conversation |
-| `/plan [thing]` | Walks you through planning before you build |
-| `/recall [topic]` | Asks memory "what do we know about X?" |
+| Type | What happens |
+|---|---|
+| `Start Session` | Claude reads its notes and tells you where you left off |
+| `End Session` | Claude saves lessons and updates the session log |
+| `/plan task` | Claude makes a plan before changing anything |
+| `/recall topic` | Claude searches its notes for what you already know about a topic |
+| `/learn` | Claude pulls lessons out of the current conversation |
 
-That's it. Everything else runs automatically.
+## First time in a project
 
-## First time on a new project
+| Type | What happens |
+|---|---|
+| `scan-conventions` | Claude reads your code and writes down your coding style |
+| `map-codebase` | Claude writes a map of your files and functions |
 
-| Type this | What it does |
-|-----------|--------------|
-| `scan-conventions` | Reads your real code, writes coding-conventions.md in ~10 min |
-| `map-codebase` | Maps all endpoints + methods + tables into code-map.md |
+Run each once.
 
-Run these once. Never explain your codebase again.
+## When something seems wrong
 
----
+| Type | Use it when |
+|---|---|
+| `tour` | You want a guided walkthrough |
+| `kit-health` | You want to check the install worked |
+| `Check Drift` | Claude's notes may be out of date compared with your code |
+| `Update Kit` | You want the latest version of Clankbrain |
+| `progress report` | You want counts of sessions, lessons, and so on |
 
-## When something goes wrong
+## Handing a project to someone
 
-| Type this | When |
-|-----------|------|
-| `tour` | First time, or "show me how this works again" |
-| `kit-health` | Did the install actually work? |
-| `Check Drift` | Memory feels stale or wrong |
-| `Update Kit` | Pull the latest version of Clankbrain |
-
----
-
-## Build mode (declare at start of work)
-
-| Mode | When |
-|------|------|
-| `Build mode: learn` | Prototyping, throwaway, "let me try" |
-| `Build mode: earn` | Real production code, careful, planned |
-
-The kit applies different conventions for each.
+| Type | What happens |
+|---|---|
+| `Handoff` | Claude writes `HANDOFF.md`: current state, next tasks, decisions, known problems |
 
 ---
 
-## How the magic works (one paragraph)
-
-You tell Claude something → it gets saved to memory. You hit a problem → it gets saved to `regret.md`. Next session → Claude reads both before answering. You never have to repeat yourself, and Claude never repeats a mistake. Run `/learn` at end of session and the loop tightens.
-
-That's the whole system.
-
----
-
-## Where stuff lives
+## Where things are
 
 | What | Where |
-|------|-------|
-| Your project context | `CLAUDE.md` |
-| Stuff Claude remembers | `.claude/memory/` |
-| Reusable workflows | `.claude/skills/` |
-| Project conventions | `.claude/rules/` |
-| Past mistakes | `.claude/memory/tasks/regret.md` |
-| Locked decisions | `.claude/memory/decisions.md` |
+|---|---|
+| Project instructions for Claude | `CLAUDE.md` |
+| Claude's notes (memory files) | `.claude/memory/` |
+| Skills | `.claude/skills/` |
+| Rules for your project | `.claude/rules/` |
+| Lessons, decisions, rejected ideas | `tasks/` (or `.claude/memory/tasks/` if you set up with `memory.py --init`) |
+| Session log | `STATUS.md` |
 
-You don't have to touch any of these. Claude does.
+You rarely need to open these. Claude reads and writes them.
 
----
+## If you get stuck
 
-## When you're stuck
-
-1. Type `tour` — 5-minute walkthrough that makes the magic obvious
-2. Read `QUICKSTART.md` — first session in detail
-3. Open `CLAUDE.md` — every command, every workflow
-
-Most problems = forgot to type `Start Session` at the beginning, or `End Session` at the end. Those two commands are 80% of the kit.
+1. Type `tour`.
+2. Read [QUICKSTART.md](QUICKSTART.md).
+3. Check you typed `Start Session` at the start and `End Session` at the end. Most problems come from skipping one.

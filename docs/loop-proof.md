@@ -1,151 +1,101 @@
-# The Learning Loop in Practice — A Real Case Study
+# The Learning Loop: A Worked Example
 
-This is a real example from 275 sessions on a Java/SQL production codebase.
-The skill is `new-endpoint`. It failed at the same step twice. `/evolve` patched it.
+**What this is:** Clankbrain can notice when one of its skills (a saved set of steps Claude follows) keeps failing at the same step, and then rewrite that step. This page walks through one example.
 
----
+**Do you need it?** No. The loop runs through End Session and two commands, `/evolve-check` and `/evolve`. Read on to see what they do with your data.
 
-## What the data looks like after two failures
+**The example is illustrative.** The skill name, dates and endpoint names are made up to show the format. The file formats and flagging rules come from the kit's own `evolve-check` and `evolve` skills.
 
-**`tasks/skill_scores.md` (excerpt):**
+**Terms:**
+- **Skill:** a file at `.claude/skills/<name>/SKILL.md` with numbered steps.
+- **`/learn`:** runs at End Session and logs how each skill went.
+- **`skill_scores.md`:** the log file (in `tasks/` in your memory folder) where results are recorded.
+
+## The loop
+
+1. At End Session, `/learn` adds a row to `skill_scores.md` for each skill you used: did it need a correction (Y) or not (N)?
+2. `/evolve-check` reads the log and shows which skills keep failing. It changes nothing.
+3. `/evolve` rewrites the failing step, using the logged failures.
+4. `/evolve` records the fix in `tasks/skill_improvements.md` and marks those rows patched.
+5. A later clean use confirms the fix.
+
+## Step 1: Two failures at one step
+
+A skill named `new-endpoint` fails twice at step 4:
 
 ```
-| Date       | Skill        | Step   | Used For                          | Correction Needed | Severity | What Failed                                                                               | Code Fixed | Skill Patched |
-|------------|--------------|--------|-----------------------------------|-------------------|----------|-------------------------------------------------------------------------------------------|------------|---------------|
-| 2024-11-14 | new-endpoint | all    | Add appCourseGetCheckin endpoint  | N                 | minor    | -                                                                                         | -          | -             |
-| 2024-11-21 | new-endpoint | step 4 | Add appAdminSendReminder endpoint | Y                 | major    | Step 4: produced SELECT * in getOnlyMetaData, needed explicit column list. Fixed by: rewrote SELECT with all columns named. | manual | - |
-| 2024-12-03 | new-endpoint | step 4 | Add appAdminGetMessages endpoint  | Y                 | major    | Step 4: produced SELECT * in getOnlyMetaData, needed explicit column list. Fixed by: rewrote SELECT with all columns named. | manual | - |
-| 2024-12-09 | new-endpoint | step 6 | Add appCourseMarkComplete endpoint| N                 | minor    | -                                                                                         | -          | -             |
+| Date       | Skill        | Step   | Correction Needed | What Failed                                                    | Code Fixed | Skill Patched |
+|------------|--------------|--------|-------------------|----------------------------------------------------------------|------------|---------------|
+| 2024-11-21 | new-endpoint | step 4 | Y                 | Step 4: produced SELECT *, needed explicit column list.        | manual     | -             |
+| 2024-12-03 | new-endpoint | step 4 | Y                 | Step 4: produced SELECT *, needed explicit column list.        | manual     | -             |
 ```
 
-Two Y entries. Same step. Same failure. `Code Fixed = manual` means the code was corrected at the time. `Skill Patched = -` means the SKILL.md hasn't been improved yet — the same mistake will happen again. That's the signal.
+(The real file has more columns: Used For and Severity. They are left out here.)
 
----
+- `Y` means you had to fix Claude's output.
+- `Code Fixed = manual` means you fixed that code by hand.
+- `Skill Patched = -` means the skill itself is not fixed yet, so the mistake can happen again.
 
-## What /evolve-check surfaces
+## Step 2: `/evolve-check` flags it
+
+A skill is URGENT with 3 or more unpatched failures, or 2 or more in a row at the same step. It is WATCH with exactly 2 unpatched failures. Sample output:
 
 ```
-/evolve-check
+=== Evolve Check ===
 
-Skill Health Report
-───────────────────────────────────────
+🔴 URGENT - patch now
+  new-endpoint - 2 open failures, 2 consecutive on Step 4
+  Latest failure: "Step 4: produced SELECT *, needed explicit column list."
 
-🔴 URGENT — new-endpoint
-   2 failures at step 4 — same issue twice
-   Step 4: SELECT * in getOnlyMetaData → IDENTITY column included → addRow fails
-   Ready to patch.
-
-🟢 STABLE — plan
-   4 uses, 0 corrections
-
-🟢 STABLE — learn
-   6 uses, 1 minor correction (different steps each time — noise, not pattern)
-
-🟡 WATCH — smoke-test
-   1 failure at step 2 — too early to patch (need 2+ failures at same step)
+🟢 STABLE
+  plan - 4 uses, 0 corrections
 ```
 
-Takes 5 seconds. No files changed.
+## Step 3: `/evolve` patches the step
 
----
+`/evolve` patches only a skill with 2 or more failures, and only when each logged failure names a step and says what was produced and what was needed. It does not guess from vague entries. It rewrites the step that failed most often.
 
-## What /evolve does with the data
-
-It reads the two Y entries for `new-endpoint`. Both say "Step 4: produced SELECT *, needed explicit column list."
-
-It opens the skill and finds Step 4. Before patching:
+Before:
 
 ```markdown
-### Step 4 — Build the UTable query
-
+### Step 4 - Build the query
 Use getOnlyMetaData with a SELECT to load the table structure.
-
-Example:
   t.getOnlyMetaData("SELECT * FROM ch_CourseSession WHERE 1=2");
 ```
 
-After patching:
+After:
 
 ```markdown
-### Step 4 — Build the UTable query
+### Step 4 - Build the query
+Use getOnlyMetaData with an EXPLICIT column list, never SELECT *.
+SELECT * pulls in the IDENTITY column, and the later insert fails.
+  t.getOnlyMetaData("SELECT CourseID, SessionNumber, SessionTitle FROM ch_CourseSession WHERE 1=2");
 
-Use getOnlyMetaData with an EXPLICIT column list — never SELECT *.
-SELECT * pulls IDENTITY columns into metadata → addRow tries to INSERT
-an explicit PK value → SQL Server error.
-
-Example:
-  t.getOnlyMetaData("SELECT CourseID, SessionNumber, SessionTitle,
-    SessionContent, CreatedOn, OrganizationID FROM ch_CourseSession WHERE 1=2");
-
-⚠ Pattern from 2 failures (2024-11-21, 2024-12-03):
-  Always list every column except the IDENTITY PK explicitly.
+[2024-12-10] Improved: replaced SELECT * example with an explicit column list.
 ```
 
-It also writes to `tasks/skill_improvements.md`:
+## Step 4: The fix is recorded
+
+`/evolve` adds a row to `tasks/skill_improvements.md` and changes `Skill Patched` from `-` to the date on the failed rows, so they no longer count as open.
 
 ```
-| 2024-12-10 | new-endpoint | step 4 | 2 failures (same step) | Rewrote example: SELECT * → explicit column list. Added identity column warning. | skill_scores.md rows 2024-11-21, 2024-12-03 |
+| 2024-12-10 | new-endpoint | Step 4 | produced SELECT * | Rewrote example with explicit column list | skill_scores.md 2024-11-21, 2024-12-03 |
 ```
 
-And updates `skill_scores.md` — the two Y rows now have `Skill Patched = 2024-12-10`:
+## Step 5: A clean use confirms it
+
+The next `/evolve-check` shows the skill as patched but not yet proven:
 
 ```
-| Date       | Skill        | Step   | Used For                          | Correction Needed | Severity | What Failed                             | Code Fixed | Skill Patched |
-|------------|--------------|--------|-----------------------------------|-------------------|----------|-----------------------------------------|------------|---------------|
-| 2024-11-21 | new-endpoint | step 4 | Add appAdminSendReminder endpoint | Y                 | major    | Step 4: produced SELECT *... Fixed by:… | manual     | 2024-12-10    |
-| 2024-12-03 | new-endpoint | step 4 | Add appAdminGetMessages endpoint  | Y                 | major    | Step 4: produced SELECT *... Fixed by:… | manual     | 2024-12-10    |
+🔵 PATCHED - awaiting confirmation
+  new-endpoint - all Y entries patched on 2024-12-10, 0 uses since patch
+  Next N score -> promote to STABLE
 ```
 
----
+Weeks later you use the skill again and Claude gets step 4 right. `/learn` logs an N row, and the next `/evolve-check` shows the skill as STABLE.
 
-## Verifying the patch held — the full cycle
+## Habits that keep it working
 
-After /evolve patches the skill, the next /evolve-check shows:
-
-```
-🔵 PATCHED — awaiting confirmation
-  new-endpoint — all Y entries patched on 2024-12-10, 0 uses since patch
-  Next N score → promote to 🟢 STABLE
-```
-
-The skill isn't 🟢 STABLE yet — it's patched but unverified. It needs a real use that goes clean.
-
-**Session 7 weeks later.** Adding a new endpoint. The skill fires.
-
-Step 4 now shows the explicit column example and the warning. Claude writes the correct query first time. No correction needed. /learn logs an N entry:
-
-```
-| 2025-01-28 | new-endpoint | all | Add appCourseGetReminders endpoint | N | minor | - | - | - |
-```
-
-Next /evolve-check:
-
-```
-🟢 STABLE — new-endpoint
-  5 uses, 1 clean use since patch on 2024-12-10. Failure has not repeated.
-```
-
-**That's the complete cycle.** Failure → structured log → /evolve patches the skill → /evolve-check shows 🔵 PATCHED → real use confirms fix → 🟢 STABLE.
-
----
-
-## The compound effect by session 30
-
-After 30 sessions on the same codebase:
-
-- `new-endpoint` patched 2 times — Step 4 (identity column) and Step 6 (noCheckSessionFunc array)
-- `fix-bug` patched 1 time — Step 3 (hypothesis before grep, not after)
-- `learn` patched 0 times — still stable
-- `smoke-test` patched 1 time — Step 2 (check Resin log before testing endpoint)
-
-A generic skill becomes a skill that knows your stack's specific failure modes.
-
----
-
-## The three habits that make it compound
-
-1. **End Session every time** — `/learn` gathers the data. Skip it and the loop breaks.
-2. **Run `/evolve-check` when you want to know what needs attention** — takes 5 seconds, read-only.
-3. **Run `/evolve` when skills are flagged** — patches the specific steps with real failure data behind every change.
-
-That's the whole system.
+1. **Run End Session every time.** `/learn` fills `skill_scores.md`. Skip it and there is nothing to learn from.
+2. **Run `/evolve-check` when you want to see what needs attention.** It is read-only.
+3. **Run `/evolve` when skills are flagged.**

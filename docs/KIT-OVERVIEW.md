@@ -1,107 +1,101 @@
-# Clankbrain — Kit Overview
+# Clankbrain: Kit Overview
 
-Quick reference for what ships, what each file does, and how the pieces connect.
+A quick map of the files in the kit and what each one does. It is for anyone who wants the big picture before digging in. Version 2.12.1.
 
----
+Three terms used below:
 
-## What Ships
-
-| File | Purpose |
-|------|---------|
-| `setup.py` | First-time setup — asks about your stack, creates all files, configures hooks |
-| `upgrade.py` | Upgrades Lite → Full (adds `tools/memory.py` + 3 hooks) |
-| `update.py` | Pulls latest kit version safely — never touches your memory or skills |
-| `install.py` | Minimal bootstrapper — fetched remotely on very first install |
-| `tools/memory.py` | All lifecycle behaviors in one script (Full mode only) |
-| `sync.py` | Personal + team memory sync in one tool — `push`/`pull` for personal, `setup-team`/`join`/`team-push`/`team-pull` for teams |
-| `CLAUDE.md` | Template — kit commands + project-specific sections |
-| `KIT-OVERVIEW.md` | This file |
+- **Memory files**: plain text files where Claude keeps notes about your project.
+- **Hook**: a small script Claude Code runs automatically at certain moments, such as when a session starts.
+- **Skill**: saved instructions Claude follows when you type a short command like `/learn`.
 
 ---
 
-## Two Modes
+## Files in the kit
+
+| File | What it is for |
+|------|----------------|
+| `setup.py` | First-time setup. Asks about your project, creates the files, writes the hooks. |
+| `tools/memory.py` | The script the hooks call. Checks notes, writes the journal, searches memory. |
+| `update.py` | Updates the kit without touching your memory or skills. |
+| `upgrade.py` | Upgrades a Lite install to Full. |
+| `install.py` | Small bootstrapper that downloads the kit on the first install. |
+| `sync.py` | Optional memory sync to your own private repo, and optional team sharing. |
+| `CLAUDE.md` | Instructions Claude reads every session, including `Start Session` and `End Session`. |
+
+---
+
+## Full and Lite
 
 | | Full | Lite |
 |---|---|---|
-| Memory files | js_functions, html_css, backend, project_status, user_preferences + lessons + decisions + tasks/ + plans/ | 3 files (notes.md, lessons.md, decisions.md) |
-| Drift detection | Automated — `memory.py --check-drift` after every edit | None |
-| Session journal | Auto-captured on every Stop | Not included |
-| Python required | Yes | No |
-| Upgrade path | — | `python upgrade.py` or type `Upgrade to Full` in Claude Code |
+| Memory files | Many (see below), plus tasks and plans | Three: `notes.md`, `lessons.md`, `decisions.md` |
+| Hooks and `tools/memory.py` | Yes | No |
+| Skills the installer copies | 19 core skills | 7 skills |
+| Upgrade later | | `python upgrade.py` |
+
+Not sure which to pick? Start with Lite.
 
 ---
 
-## tools/memory.py Subcommands (Full mode)
+## What `tools/memory.py` does
 
-| Subcommand | When | What |
-|------------|------|------|
-| `--check-drift` | PostToolUse hook | Finds undocumented JS functions and CSS classes |
-| `--journal` | Stop hook | Auto-captures session summary |
-| `--stop-check` | Stop hook | Reminds to save memory; surfaces open plans; warns when context is getting long |
-| `--session-start` | Start Session | Memory health check |
-| `--bootstrap` | Once on new projects | Scans codebase, generates quick_index.md |
-| `--complexity-scan` | First Start Session | Detects stack, scores complexity, recommends skills |
-| `--precompact` | Before /compact | Reinjects memory into compacted context |
+The hooks run it for you. The main options:
 
----
+| Option | Runs | What it does |
+|--------|------|--------------|
+| `--session-start` | Session opens | Checks that memory is healthy |
+| `--check-drift` | After an edit | Finds code your notes do not mention yet |
+| `--journal` | Claude finishes a turn | Writes a short session summary |
+| `--stop-check` | Claude finishes a turn | Reminds you to save memory, shows open plans |
+| `--precompact` / `--postcompact` | Around a conversation shrink | Saves and restores memory |
+| `--bootstrap` | Once, by hand | Scans a new project and builds a quick index |
+| `--complexity-scan` | First session | Detects your stack and suggests skills |
 
-## Skills That Ship
-
-| Skill | Trigger |
-|-------|---------|
-| `plan` | "plan [feature]", "I want to build X" |
-| `learn` | `/learn`, End Session |
-| `evolve` | `/evolve` |
-| `evolve-check` | "evolve check", "skill health" |
-| `verification-loop` | "verify this works", "before I ship" |
-| `search-first` | "add new endpoint/feature/function" |
-| `strategic-compact` | "should I compact?" |
-| `java-reviewer` | "review this java" |
-| `powershell-safe` | any .ps1 editing task |
-
-`Generate Skills` creates additional skills tailored to your stack (fix-bug, code-review, security-check, new-endpoint, etc.).
+The full list is at the top of `tools/memory.py`.
 
 ---
 
-## Memory Files (Full mode)
+## Memory files (Full install)
 
-All live in `.claude/memory/`:
+Most live in `.claude/memory/`:
 
 | File | What it holds |
-|------|--------------|
-| `MEMORY.md` | Index — auto-loaded every session |
-| `lessons.md` | Patterns extracted by /learn — applied each Start Session |
-| `decisions.md` | Settled architectural choices — never re-debated |
-| `project_status.md` | What's built, what's in progress |
-| `js_functions.md` | Every JS function with description |
-| `html_css_reference.md` | Every HTML section and CSS class |
-| `backend_reference.md` | Every API endpoint and DB pattern |
+|------|---------------|
+| `MEMORY.md` | Index of all memory files, loaded every session |
+| `lessons.md` | Lessons saved by `/learn` |
+| `decisions.md` | Settled choices, so they are not argued again |
+| `project_status.md` | What is built and in progress |
+| `js_functions.md`, `html_css_reference.md`, `backend_reference.md` | Your functions, page parts, and endpoints |
 | `user_preferences.md` | How you like Claude to work |
-| `tasks/skill_scores.md` | Step-level failure log per skill (Step N / produced X / needed Y / Severity) — /evolve-check surfaces patterns, /evolve patches them |
-| `tasks/regret.md` | Rejected approaches — never re-proposed |
-| `tasks/velocity.md` | Estimated vs actual session count per task |
-| `plans/_template.md` | Plan template — one file per feature |
+| `tasks/skill_scores.md` | Log of when each skill worked or failed |
+| `tasks/regret.md` | Rejected approaches, so they are not suggested again |
+| `tasks/velocity.md` | Estimated versus actual time per task |
+| `plans/_template.md` | Plan template, one file per feature |
+
+Task files may sit in a top-level `tasks/` folder instead. The tool finds whichever exists.
 
 ---
 
-## Hooks (settings.json)
+## Hooks
 
-Three hooks, all calling `tools/memory.py`:
-
-```json
-PostToolUse (Edit/Write) → memory.py --check-drift --silent
-Stop                     → memory.py --journal
-Stop                     → memory.py --stop-check
-```
+The installer writes six hooks into `.claude/settings.json`: `SessionStart` (a session opens), `UserPromptSubmit` (you send a message), `PostToolUse` (after an edit), `PreCompact` and `PostCompact` (around a conversation shrink), and `Stop` (Claude finishes a turn). See [hooks.md](hooks.md).
 
 ---
 
-## Daily Flow
+## Skills
+
+The kit holds 36 skills. Examples: `plan`, `learn`, `evolve`, `evolve-check`, `search-first`, `fix-bug`, `verification-loop`, `strategic-compact`. See [skills.md](skills.md).
+
+---
+
+## A normal day
 
 ```
-Start Session     →  memory health check, lessons loaded, open plans surfaced
+Start Session   ->  memory is loaded; Claude reports the last change
 [work]
-/evolve-check     →  see which skills need patching (optional, fast)
-End Session       →  /learn, STATUS.md updated, memory synced, plans scanned
-/evolve           →  patch flagged skills (run when /evolve-check shows 🔴 or 🟡)
+/evolve-check   ->  optional: see which skills need fixing
+End Session     ->  lessons saved, STATUS.md updated
+/evolve         ->  only if /evolve-check flagged a skill
 ```
+
+Type `Start Session` and `End Session` as normal messages in Claude Code.

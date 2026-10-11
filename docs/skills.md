@@ -1,95 +1,136 @@
 # Skills and the Learning Loop
 
-Skills are auto-triggered workflows. Describe what you need in plain English — the right skill fires automatically.
+A **skill** is a saved set of instructions that Claude follows when you ask for a certain task. Each skill is one folder in `.claude/skills/` with a `SKILL.md` file inside. You do not run skills by hand. You describe what you want in plain English, or type a slash command like `/learn`, and Claude picks the matching skill.
+
+Example:
+
+```
+You:    review this file before I ship
+Claude: (uses the code-reviewer skill, then lists problems and waits for your OK)
+```
+
+This page lists every skill in the repo and explains the learning loop, which is how skills improve over time.
 
 ---
 
-## Built-in skills
+## Which skills get installed
 
-| Skill | What triggers it | What it does |
-|-------|-----------------|-------------|
-| `plan` | "plan [feature]", "I want to build X" | Structured planning — options with ratings, decision logged live |
-| `verification-loop` | "verify this works", "before I ship" | Compile + smoke test + self-check after every change |
-| `search-first` | "add new endpoint/feature" | Research before coding — finds existing implementations |
-| `strategic-compact` | "should I compact?" | Safe context compaction without losing memory |
-| `learn` | `/learn`, "End Session" | Extracts lessons, scores skills with step-level failure data, logs velocity |
-| `evolve` | `/evolve` | Patches failing skills (2+ failures required), clusters patterns into new reusable skills |
-| `evolve-check` | "evolve check", "skill health" | Read-only analysis — surfaces which skills are 🔴 urgent / 🟡 ready / 🟢 stable. No patching. |
-| `code-reviewer` | "review this", "check this code" | Reviews against your project's past lessons and locked decisions — gets smarter every session |
+Setup does not copy every skill. Names below are the real `name:` values in each `SKILL.md`.
 
-Type `Generate Skills` and Claude creates additional skills tailored to your exact stack and file names.
+| Install | Skills copied |
+|---------|---------------|
+| Full (default) | 19 skills, listed first below |
+| Lite | 7 skills: `learn`, `smart-resume`, `recall`, `fix-bug`, `scan-codebase`, `start-session`, `end-session`. Lite also writes a basic `code-review` skill. |
+
+A Full install also writes five short template skills for your project: `security-check`, `new-feature`, `environment-check`, `run-verification` and `refactor`.
+
+The repo holds 36 skills. The 17 that Full does not copy are listed under "Only in the repo". You can use one by copying its folder from this repo's `.claude/skills/` into your project's `.claude/skills/`. Older skills are kept in folders starting with `_archived_`. They are not installed.
 
 ---
 
-## Optional skills
+## Skills installed by default (Full)
 
-Skills that ship in the kit but aren't wired up by default. Add any with a single command.
+| Skill | Say this to use it | What it does |
+|-------|--------------------|-------------|
+| `start-session` | "Start Session" | Loads memory and reports where you left off. |
+| `end-session` | "End Session" | Saves lessons, updates memory and status, and pushes to GitHub if sync is set up. |
+| `learn` | `/learn` | Saves patterns, lessons and decisions from the session. |
+| `smart-resume` | "smart resume", "what were we working on" | Reads `STATUS.md`, `todo.md` and recent memory, then proposes the next step. |
+| `recall` | `/recall [topic]`, "what did we decide about X" | Quick search of your memory for a topic. |
+| `forget` | `/forget`, "that memory is wrong" | Marks a memory as invalid. |
+| `plan` | "plan [feature]", "I want to build X" | Writes a plan file with options and logs your decision. |
+| `search-first` | before adding new code | Looks for existing code to reuse before writing new code. |
+| `debug-session` | "Debug Session" | Reproduce, isolate, guess, fix, verify, log. |
+| `fix-bug` | "it's broken", "wrong result" | Fixes a logic bug, then verifies and runs `guard`. |
+| `guard` | "guard check", "scan my changes" | Checks changed files against known error patterns. After a fix, saves the cause as a new pattern. |
+| `verification-loop` | "verify this works", "before I ship" | Checks the build and key behavior after a change. |
+| `skill-creator` | "create a skill called X" | Writes a new skill for you. |
+| `mode` | "Mode review" | Limits which tools Claude may use for the session. |
+| `tour` | "tour", "show me how this works" | A 5-minute walkthrough of Clankbrain. |
+| `kit-health` | "kit health" | Confirms the install is complete and working. |
+| `evolve-check` | "evolve check", "skill health" | Read-only report on which skills need fixing. |
+| `evolve` | `/evolve` | Fixes failing skills and builds new ones from repeated lessons. |
+| `scan-codebase` | "scan the codebase" | Reads your code and writes project-specific rules. Runs on the first Start Session if no code map exists. |
 
-| Skill | Install command | What it does |
-|-------|----------------|-------------|
-| `map-codebase` | `Install the map-codebase skill` | Builds a `code-map.md` organized by feature flow — entry point -> logic -> DB. Run once to bootstrap navigation; re-run after major structural changes. |
-| `debug-session` | `Install the debug-session skill` | Structured diagnosis: reproduce -> isolate -> hypothesize -> fix -> verify -> log to regret.md |
+## Only in the repo (not installed by default)
+
+| Skill | What it does |
+|-------|-------------|
+| `act` | Looks at recent work and proposes the next action. |
+| `check-anthropic` | Reads Claude Code release notes and docs and reports features you could use. |
+| `code-review` | Reviews a file for bugs and bad patterns. |
+| `code-reviewer` | Language-neutral review that also checks your lessons and decisions. |
+| `frontend-design` | Picks a design direction (colors, fonts, style) before writing CSS. |
+| `map-codebase` | Builds `code-map.md`: for each feature, the path from entry point to database. |
+| `parallel-prototypes` | Builds 2 or 3 versions of a design choice to compare. |
+| `powershell-safe` | Safe string patterns for PowerShell scripts. |
+| `product-risk` | Scores a product idea for risk, or helps you validate a new one. |
+| `progress-report` | Shows numbers from your history: sessions, lessons, skill results. |
+| `prototype-hypothesis` | Asks for a one-line hypothesis before each prototype change. |
+| `refactoring-ui` | Practical fixes for interfaces that look off. |
+| `scan-conventions` | Writes `coding-conventions.md` from what your code actually does. |
+| `search-memory` | Broad memory search using helper agents. |
+| `shadow-code` | You write the code first, then Claude compares. Keeps your own skills sharp. |
+| `strategic-compact` | Decides if it is safe to compact a long chat. Say "should I compact?". |
+| `ux-heuristics` | Checks usability using Nielsen's 10 heuristics. |
 
 ---
 
 ## The learning loop
 
-When a skill gets something wrong and you correct it, that correction gets logged. Run `/evolve` every few sessions:
+When a skill gets something wrong and you correct it, that correction is logged. Every few sessions you ask Claude to fix the skills that keep failing.
 
 ```
 session work
      |
-/learn  ->  lessons.md        (patterns this session)
-        ->  skill_scores.md   (Step N: produced X, needed Y — structured failure data)
-        ->  velocity.md       (estimated vs actual)
-             |
-      /evolve-check  ->  groups failures by skill
-                     ->  flags 2+ Y entries as ready to patch
-                     ->  flags vague entries as data-missing (cannot patch)
-                     ->  "Run /evolve on flagged skills now? [y/N]"
-             |
-      /evolve  ->  skips skills with only 1 failure (noise)
-               ->  skips skills with vague "What Failed" (insufficient data)
-               ->  reads step number + failure description -> patches exact step
-               ->  clusters repeated lessons into new skills
-               ->  logs every change to skill_improvements.md
-             |
-        better skills next session
+/learn  ->  lessons.md        (patterns from this session)
+        ->  skill_scores.md   (which step failed, what it made, what was needed)
+        ->  velocity.md       (estimated vs actual time)
+     |
+/evolve-check  ->  groups failures by skill
+               ->  marks skills with 2+ logged failures as ready
+               ->  marks vague entries as missing data
+     |
+/evolve  ->  skips skills with only 1 failure
+         ->  skips entries with no step number or detail
+         ->  edits the exact failing step in the skill
+         ->  builds new skills from repeated lessons
+         ->  logs every change to skill_improvements.md
+     |
+better skills next session
 ```
 
-Run `/learn` before End Session. Run `/evolve-check` to see what needs patching. Run `/evolve` when skills are flagged 🔴 or 🟡. The same skill failure at the same step is architecturally impossible after `/evolve` runs.
+How to use it:
+
+1. Run `/learn` before `End Session` (End Session does this for you).
+2. Every few sessions, run `/evolve-check`. It shows each skill as urgent, ready, stable or missing data.
+3. When skills are flagged urgent or ready, run `/evolve`.
 
 ---
 
-## What gets smarter over time
+## Files that grow over time
 
-| File | What it tracks | Effect |
-|------|---------------|--------|
-| `lessons.md` | Patterns and fixes extracted by /learn | Applied before any code is touched each session |
-| `decisions.md` | Settled architectural choices | Claude never re-debates what's already decided |
-| `skill_scores.md` | Step-level failure log per skill: Step N / produced X / needed Y / Severity | /evolve-check surfaces patterns; /evolve patches the specific failing step |
-| `regret.md` | Approaches tried and rejected | Never re-proposed — saves re-litigating bad ideas |
-| `error-lookup.md` | Known errors -> cause -> fix | Surfaced automatically before you start investigating |
-| `velocity.md` | Estimated vs actual sessions per task | Estimates reflect real track record after 20+ entries |
-| `global-lessons.md` | Lessons that apply across all projects | Loaded at Start Session on every project you work on |
-
----
-
-## Skill chaining
-
-Add `## Auto-Chain` to any skill and it triggers the next step automatically:
-
-```
-fix-bug -> verification-loop -> smoke-test
-                |
-           if fail:
-           debug-session -> smoke-test
-```
-
-No human steps between. Build your own chains by adding one section to any skill file.
+| File | What it holds | Effect |
+|------|--------------|--------|
+| `lessons.md` | Patterns and fixes from `/learn` | Read at the start of each session. |
+| `decisions.md` | Choices you have settled | Claude does not re-debate them. |
+| `skill_scores.md` | Per-skill failure log | Used by `/evolve-check` and `/evolve`. |
+| `regret.md` | Approaches you tried and rejected | Claude does not suggest them again. |
+| `error-lookup.md` | Known error, cause and fix | Shown when you start debugging. |
+| `velocity.md` | Estimated vs actual time per task | Makes estimates more realistic as it fills up. |
+| `global-lessons.md` | Lessons that apply to every project | Loaded at Start Session. |
 
 ---
 
-## Self-healing
+## Chaining skills
 
-When a verify step fails, Claude attempts the minimal fix and retries once before escalating. Add a `## Recovery` section to a skill file to define what "minimal fix" means for that skill.
+A skill can hand off to the next one by ending with an `## Auto-Chain` section. In this repo, `fix-bug` and `plan` have one. For example, `fix-bug` runs verification and then `guard` on its own.
+
+To add a chain, add a section like this to the end of a skill:
+
+```markdown
+## Auto-Chain
+After step 8, run the `guard` skill on the changed files.
+```
+
+To write your own skill, see [extending.md](extending.md).

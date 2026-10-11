@@ -1,100 +1,60 @@
 # Your First 5 Sessions
 
-The system compounds with use — but only after you've given it something to compound. These 5 sessions build the foundation. After session 5, the system starts pulling its own weight.
+This is a short plan for your first five work sessions with Clankbrain. It is for new users who want to build the habits that make the memory useful. One session means one real block of work in Claude Code, not five in one day.
 
-Don't skip sessions. Don't do 5 in one day. One session = one real work block.
-
----
-
-## Session 1 — Prove it works
-
-**Goal:** Confirm the kit installed correctly and understand the two commands.
-
-1. Type `kit-health` — should show all green checks
-2. Type `tour` — 5-minute walkthrough, do it interactively
-3. Do real work for 20-30 minutes (any task in your project)
-4. Type `End Session`
-
-**What to notice:** The End Session output. It extracted at least one lesson. That lesson will load next session automatically — without you doing anything.
-
-**Don't worry about:** Doing everything perfectly. The system learns from imperfect sessions too.
+Two terms used below: **memory files** are plain text files where Claude keeps notes about your project, and a **skill** is a saved set of steps Claude follows for a task (for example `/plan` or `/fix-bug`).
 
 ---
 
-## Session 2 — Make your first plan
+## Session 1: Check the install
 
-**Goal:** Use `/plan` before touching code. See what a structured plan feels like.
+1. Type `kit-health`. It checks that the kit's parts are in place and shows what passed.
+2. Type `tour`. This is a short guided walkthrough. Follow the prompts.
+3. Do 20-30 minutes of real work.
+4. Type `End Session`.
 
-1. Type `Start Session` — notice it loads yesterday's lesson
-2. Pick one task you were going to do anyway
-3. Before writing any code, type `/plan [task name]`
-4. Read the plan. Notice the Challenge section — it argues against your own approach
-5. Say "yes" and let it execute
-6. Type `End Session`
+Look at what End Session saved. At least one lesson should be written to a memory file, and Claude will read it next time on its own.
 
-**What to notice:** The plan caught something you hadn't considered, OR confirmed your approach was right. Either outcome is valuable.
+## Session 2: Plan before you build
 
-**The habit being built:** Plan before edit. This is the highest-leverage habit in the kit.
+1. Type `Start Session`. Claude reports what changed last time.
+2. Pick a task you were going to do anyway.
+3. Type `/plan` followed by the task name, for example `/plan add a login page`.
+4. Read the plan. It includes a section that argues against your approach, which is meant to catch problems early.
+5. If it looks right, say "yes" and let Claude do the work.
+6. Type `End Session`.
 
----
+## Session 3: Log a rejected idea
 
-## Session 3 — Let the regret guard fire
+`tasks/regret.md` is a list of approaches you tried and dropped, with the reason. Claude is told to check it before making plans, so it does not suggest the same idea again.
 
-**Goal:** See the system block a bad approach before it happens.
+1. Type `Start Session`.
+2. Work as usual. When something you try fails, tell Claude to add it to `tasks/regret.md`, with the reason it failed.
+3. Type `End Session`.
 
-1. Type `Start Session`
-2. Do real work — fix a bug or build a feature
-3. At some point, propose an approach you've tried before that didn't work
-4. Watch Claude check `regret.md` and flag it silently
-5. If it doesn't fire naturally: add one rejected approach to `tasks/regret.md` manually ("tried X, broke Y because Z")
-6. Type `End Session`
+(If your project was set up with `python tools/memory.py --init`, this file is at `.claude/memory/tasks/regret.md`.)
 
-**What to notice:** The regret guard is permanent. That approach is blocked in every future session, forever.
+## Session 4: Check your skills
 
-**The habit being built:** When something fails, log it immediately. Future you will thank you.
+1. Type `Start Session`.
+2. Use at least two skills, such as `/fix-bug`, `/code-review`, or `/plan`.
+3. Type `End Session`. When Claude asks how each skill went, answer honestly. Specific answers ("it skipped the test step") lead to better fixes than vague ones.
 
----
+Your answers are saved in `tasks/skill_scores.md`. Later, `/evolve-check` reads it, and `/evolve` improves skills that keep failing.
 
-## Session 4 — Check your skills
+## Session 5: Look at the results
 
-**Goal:** See the skill scoring system in action.
-
-1. Type `Start Session`
-2. Do real work — use at least 2 different skills (`/fix-bug`, `/code-review`, `/plan`, etc.)
-3. Type `End Session`
-4. When `/learn` asks about skill scores, answer honestly — did it work or need correction?
-
-**What to notice:** `tasks/skill_scores.md` now has entries. `/evolve-check` reads these. Skills that fail twice get patched by `/evolve`.
-
-**The habit being built:** Honest skill scoring. Vague feedback produces vague improvements.
-
----
-
-## Session 5 — See the compounding
-
-**Goal:** Verify the system is working.
-
-1. Type `Start Session` — notice it loads multiple lessons now
-2. Do real work
-3. Before `End Session`, type `progress report`
-4. Read the numbers — lessons, rejected approaches, known errors, skill accuracy
-5. Type `End Session`
-
-**What to notice:** The system has accumulated real signal. Rejected approaches are blocked. Lessons load automatically. Skills have scores.
-
-**What happens next:** The compounding continues on its own as long as you run `Start Session` and `End Session`. You've done the hard part.
+1. Type `Start Session`. Claude now loads several lessons.
+2. Work as usual.
+3. Before ending, type `progress report`. It shows counts of sessions, lessons, known errors, and skill results.
+4. Type `End Session`.
 
 ---
 
 ## After session 5
 
-The system is running. From here:
+- Every session: `Start Session`, work, `End Session`.
+- Every few sessions: `/evolve-check`, then `/evolve` for any skill it flags.
+- Any time: `progress report`.
 
-- **Every session:** `Start Session` → work → `End Session` (or `Fast Close` when short on time)
-- **Every 5 sessions:** `evolve-check` → patch any 🔴/🟡 skills
-- **Any time:** `progress report` to see the numbers
-
-The gap between session 5 and session 50 is just consistency. The system does the rest.
-
-→ [Full command reference](commands.md)
-→ [What to do when something breaks](faq.md)
+See also: [all commands](commands.md) and [the FAQ](faq.md).

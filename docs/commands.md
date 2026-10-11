@@ -1,22 +1,39 @@
 # Every Command
 
-Type these in Claude Code + Codex chat. All commands are plain English.
+This page lists the commands you can use with Clankbrain. Most are short phrases you type into the Claude Code chat. A few are terminal commands you run yourself.
+
+**Claude Code** is Anthropic's coding assistant that runs in your terminal or editor. **Clankbrain** adds a memory to it, stored as plain text files in your project. These commands are how you use that memory.
+
+## Two ways to run a command
+
+| Kind | Where you type it | Example |
+|------|-------------------|---------|
+| Chat phrase | The Claude Code chat box | `Start Session` |
+| Terminal command | A normal terminal in your project folder | `python tools/memory.py --kit-health` |
+
+Chat phrases starting with `/` (like `/learn`) are called slash commands. Each one runs a **skill**, which is a saved set of instructions Claude follows when you ask for a task. See [skills.md](skills.md).
+
+If you only remember two commands, remember `Start Session` and `End Session`.
 
 ---
 
-## Daily
+## Every day
 
 | Command | What it does |
 |---------|-------------|
-| `Start Session` | Reads memory, applies lessons, surfaces open plans, picks up where you left off |
-| `End Session` | Runs /learn, updates STATUS.md, saves everything to memory locally |
-| `/learn` | Extracts lessons, scores skills with step-level failure data (Step N / produced X / needed Y), logs velocity — auto-runs at End Session |
-| `/evolve-check` | Read-only skill health check — shows 🔴 urgent / 🟡 ready / 🟢 stable / ⚠️ data-missing. Run before /evolve. |
-| `/evolve` | Patches failing skills (requires 2+ Y entries with structured failure data), clusters repeated patterns into new reusable skills |
-| `Quick Learn` | Fast lesson capture — writes a stub immediately, then prompts for 1-3 lessons |
-| `Plan [feature]` | Structured planning — options with ratings, decision logged live |
-| `Show Plan` | Display the full current plan file — always the complete document, never a summary |
-| `Should I compact?` | Guides safe context compaction without losing memory |
+| `Start Session` | Claude reads your memory files, reminds you of open plans, and says where you left off. |
+| `End Session` | Claude runs `/learn`, updates `STATUS.md` (a short log of where the project stands), and saves memory. |
+| `/learn` | Claude writes down what it learned this session. `End Session` runs it for you. |
+| `/evolve-check` | Read-only report on which skills have been failing. It changes nothing. |
+| `/evolve` | Fixes skills that failed 2 or more times, and turns repeated lessons into new skills. |
+| `Plan [feature]` | Claude writes a plan with options and logs your decision. Example: `Plan add a login page`. |
+
+Example:
+
+```
+You:    Start Session
+Claude: Session 12 ready. Last change: added the invoice export. What are we working on?
+```
 
 ---
 
@@ -24,138 +41,140 @@ Type these in Claude Code + Codex chat. All commands are plain English.
 
 | Command | What it does |
 |---------|-------------|
-| `/recall [topic]` | Semantic search across all memory files — finds related memories even if the wording is different. Falls back to keyword search automatically if the index isn't built. |
-| `/forget [topic]` | Invalidate a stale or wrong memory — marks it as removed, keeps history intact |
-| `Memory Audit` | Scan all memory files for missing `## Source` blocks, missing `valid_until` on state/project types, missing frontmatter. Run every few weeks or after a major batch of new memories. |
-| `Check Memory Expiry` | Surface memories past their `valid_until` date (stale) or not yet active (`valid_from` in the future). Prompts to update or archive each one. |
+| `/recall [topic]` | Searches all memory files for a topic, such as `/recall why we chose SQLite`. |
+| `/forget [topic]` | Marks a wrong or old memory as removed. The history is kept. |
+| `Search Memory: [topic]` | Same search from the terminal: `python tools/memory.py --search "topic"` (add `--top 10` for more results). |
 
-### Memory file format
+Quick checks, run in a terminal:
 
-Every memory file follows the MemPalace-inspired template:
+| Terminal command | What it does |
+|------------------|-------------|
+| `python tools/memory.py --quick-learn` | Saves a placeholder right away, then asks for 1 to 3 short lessons. |
+| `python tools/memory.py --mempalace-audit` | Lists memory files that are missing a `## Source` block, a `valid_until` date, or the header block at the top. |
+| `python tools/memory.py --check-expiry` | Lists memories past their `valid_until` date. Runs on its own at session start. |
+
+### What a memory file looks like
+
+Each memory is a short text file (markdown) with a header on top:
 
 ```markdown
 ---
 name: short-id
-description: one-line hook for MEMORY.md index
-type: rule | correction | decision | state | reference | user
-valid_from: YYYY-MM-DD        # optional — memory not active before this date
-valid_until: YYYY-MM-DD       # required for type: state — flags when memory may go stale
-related: [other-memory.md]    # optional — followed by --pre-edit hook (Tunnels)
+description: one-line summary for the MEMORY.md index
+type: rule
+valid_from: 2026-01-01        # optional: not active before this date
+valid_until: 2026-12-31       # needed for type: state
+related: [other-memory.md]    # optional: linked memories
 ---
 
-[Rule / fact / decision in plain English]
+Use plain hyphens in text sent to the API.
 
-**Why:** [reason this matters]
-**How to apply:** [when to use it]
+**Why:** Fancy dashes showed up garbled.
+**How to apply:** Check any string that goes to the API.
 
 ## Source
-> [Verbatim snippet from the conversation]
-— Session N
+> The exact words from the chat that led to this memory.
+— Session 12
 ```
 
-**`## Source`** is the single highest-impact addition — storing the raw exchange alongside the summary raises recall accuracy from ~84% to ~97%.
+- `## Source` keeps the original words next to the summary, so you can check why a memory exists later.
+- `related:` links are followed one level deep before Claude edits a file. If `auth.js` is about to change and a memory about it links to another, Claude sees both.
+- `valid_until` marks a fact that may go stale. Expired memories are left out of the pre-edit check.
 
-**Tunnels**: `related:` links are followed one level deep by the `--pre-edit` hook before any code change. If `auth.js` is about to be edited and `session_bug_auth.md` links to `auth_decision.md`, both are surfaced automatically.
+| `type` | Use it for | Needs `valid_until`? |
+|--------|-----------|----------------------|
+| `rule` | A permanent coding or workflow rule | No |
+| `correction` | A one-time fix so a mistake is not repeated | No |
+| `decision` | A choice you have settled | No |
+| `state` | Current phase or temporary facts | Yes |
+| `reference` | A pointer to something outside, like a URL | Optional |
+| `user` | Who you are and how you like to work | No |
 
-**Temporal validity**: `valid_until` marks state memories with an expiry date. `valid_from` prevents a memory from activating before it applies. Run `Memory Audit` or `Check Memory Expiry` to surface stale entries.
+### Smarter search (optional)
 
-**Types:**
+By default, `/recall` matches keywords. You can add search by meaning, which finds related notes even when the words differ. Everything runs on your computer and needs no account or API key.
 
-| Type | When to use | Expiry needed? |
-|------|------------|---------------|
-| `rule` | Permanent coding or workflow rule | No |
-| `correction` | One-time fix — prevents repeat mistake | No |
-| `decision` | Locked architectural choice | No |
-| `state` | Current phase, active work, temporary facts | Yes — `valid_until` required |
-| `reference` | Pointer to external system (Jira, Slack, URL) | Optional |
-| `user` | Who the user is, preferences, expertise | No |
+1. Install the search library: `pip install sentence-transformers`
+2. Build the index: `python tools/memory.py --build-index`
+3. Try it: `python tools/memory.py --search-semantic "auth error on admin pages"`
 
-### Semantic search setup (one-time)
+The first run downloads a model of about 90 MB. It saves the index as `memory_embeddings.pkl` in your memory folder. Run `--build-index` again after you add many new memories. Add `--top 10` to see more results.
 
-`/recall` uses embedding-based search when enabled. To set it up:
+If something goes wrong, keyword search still works:
 
-```bash
-pip install sentence-transformers
-python tools/memory.py --build-index
-```
-
-This downloads `all-MiniLM-L6-v2` (~90MB, runs fully locally, no API key) and builds `memory_embeddings.pkl` in your memory directory. Rebuild whenever you add significant new memory files:
-
-```bash
-python tools/memory.py --build-index   # rebuild index
-```
-
-You can also run it directly:
-
-```bash
-python tools/memory.py --search-semantic "why did we move files to mobile"
-python tools/memory.py --search-semantic "auth error on admin endpoints" --top 10
-```
-
-Without the index, `/recall` falls back to keyword scoring (the original behavior) — no setup needed to get started.
-
-**What if it fails?**
-
-| Scenario | What happens | How to fix |
-|----------|-------------|------------|
-| `sentence-transformers` not installed | `/recall` falls back to keyword search automatically — no error shown | Run `pip install sentence-transformers` when ready to enable semantic mode |
-| Model download interrupted (network drop mid-download) | `--build-index` fails with an import or file error on next run | Delete `~/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2` and re-run `--build-index` |
-| `memory_embeddings.pkl` corrupted or from a different model version | `--search-semantic` prints a load error and exits; keyword search still works | Delete `.claude/memory/memory_embeddings.pkl` and re-run `--build-index` |
-
-In all three cases, keyword search continues to work. `/recall` will never silently return wrong results.
+| Problem | What happens | Fix |
+|---------|-------------|-----|
+| Library not installed | `/recall` uses keyword search and shows no error. | Run `pip install sentence-transformers`. |
+| Model download was cut off | `--build-index` fails. | Delete `~/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2` and run it again. |
+| `memory_embeddings.pkl` is damaged | `--search-semantic` prints an error. | Delete `.claude/memory/memory_embeddings.pkl` and run `--build-index` again. |
 
 ---
 
-## Analysis
+## Check and analyze
 
 | Command | What it does |
 |---------|-------------|
-| `Progress Report` | Dashboard of sessions, lessons, errors, skill accuracy — built from your actual history |
-| `Check Drift` | Manually run drift detector — find undocumented functions and stale memory entries |
-| `Analyze Codebase` | Full scan of all JS, CSS, and backend — documents every function, class, and endpoint |
-| `Code Health` | Finds leftover console.log, hardcoded values, dead code, missing error handling — reports file + line |
-| `Kit Health` | Check all kit components are wired and healthy |
-| `Context Score` | Score every CLAUDE.md section by session journal usage — find dead weight bloating your context |
-| `Mine Patterns` | Cluster lessons.md across all sessions — surface recurring mistakes you haven't noticed |
-| `Guard Check` | Run all named guards from `guard-patterns.md` against the codebase, report violations |
-| `Estimate: [task]` | Match task to past velocity history — reports what similar tasks actually took, not what felt right |
-| `/check-anthropic` | Fetch Claude Code + Codex releases and docs, cross-reference hooks and features in use, report gaps |
+| `Check Drift` | Finds code that your memory notes do not mention yet, and notes that are out of date. Runs `python tools/memory.py --check-drift`. |
+| `Guard Check` | Runs your saved "guards" (named checks for known mistakes, in `guard-patterns.md`) against the code. Prints PASS or FAIL for each. |
+| `Pre-Ship Check` | Guard check, drift check, a count of files edited this session, and `git diff --stat`. |
+| `Code Health` | Looks for leftover `console.log`, hard-coded values, dead code, missing error handling, and files over 500 lines. |
+| `Kit Health` | Checks that Clankbrain is installed correctly: hooks, memory files, skills. Fix any FAIL right away. |
+| `Progress Report` | Shows sessions, lessons, known errors and skill results from your real history. |
+| `Estimate: [task]` | Claude reads the files and estimates how big and risky a task is. |
+| `Analyze Codebase` | Scans your code files and updates memory with what it finds. |
+| `/check-anthropic` | Reads the Claude Code release notes and docs and reports features you could use. |
+
+More terminal-only reports:
+
+| Terminal command | What it does |
+|------------------|-------------|
+| `python tools/memory.py --context-score` | Scores each section of `CLAUDE.md` by how often your session journals use it. Low scores are dead weight. |
+| `python tools/memory.py --mine-patterns` | Groups your `lessons.md` entries to show mistakes that keep coming back. |
+| `python tools/memory.py --velocity-estimate "task"` | Finds similar past tasks in `velocity.md` and shows how long they took. |
+| `python tools/memory.py --memory-diff` | Shows which memory files changed this session. |
 
 ---
 
-## Planning
+## Debugging and handoff
 
 | Command | What it does |
 |---------|-------------|
-| `Debug Session` | Structured diagnosis: reproduce -> isolate -> hypothesize -> fix -> verify -> log to regret.md |
-| `Handoff` | Generates HANDOFF.md — current state, next 3 tasks, key decisions, known bugs, how to start |
+| `Debug Session` | Step-by-step bug hunt: reproduce, isolate, guess, fix, verify, log. Add a description: `Debug Session: login fails after timeout`. |
+| `Mode [develop\|review\|safe\|deploy]` | Limits which tools Claude may use for the session. `review` is handy when you only want it to read code. |
+| `Handoff` | Writes `HANDOFF.md`: current state, next tasks, decisions, known bugs, how to start. |
 
 ---
 
-## Setup and recovery
+## Setup and updates
 
 | Command | What it does |
 |---------|-------------|
-| `Setup Memory` | First-time setup — creates all memory files for your project |
-| `Install Memory` | New machine — copies memory files to Claude's system path |
-| `Generate Skills` | Auto-creates skills tailored to your actual stack, file names, and patterns |
-| `Upgrade to Full` | Upgrade from Lite to Full mode — downloads memory.py and wires lifecycle hooks |
-| `Update Kit` | Pulls latest kit version — shows what will change, asks for confirmation. Never touches your memory, skills, or code. |
+| `Setup Memory` | First-time setup. Runs `setup.py` if it is in your project. |
+| `Install Memory` | For a new machine: scans the project, fills the memory files, and copies them to Claude's memory folder. |
+| `Generate Skills` | Creates extra skills that fit your stack and file names. |
+| `Generate Guards` | Proposes guards based on your error history. |
+| `Upgrade to Full` | Moves a Lite install to the full install (runs `upgrade.py`). |
+| `Update Kit` | Updates Clankbrain. Runs `update.py`. Asks first and does not touch your memory. |
 
 ---
 
-## Sync (opt-in)
+## Sync and teams (optional)
+
+Sync copies your memory to a private GitHub repository you own. It is off until you set it up. Details are in [sync.md](sync.md).
 
 | Command | What it does |
 |---------|-------------|
-| `Setup Sync: [repo URL]` | One-time setup — points memory at your private GitHub repo |
-| `Sync Memory` | Push memory to your repo after a session |
-| `Pull Memory` | Pull memory on a new machine |
-| `Sync Status` | Check if anything is unpushed |
-| `Setup Team: [repo URL]` | Manager runs once — creates the shared repo and seeds it with your memory |
-| `Join Team: [repo URL]` | New member runs once — loads the team's knowledge into your local memory |
-| `Team Push` | Share what you learned with the team. Run at End Session. |
-| `Team Status` | Check last sync times and recent commits |
+| `python sync.py setup [repo-url]` | One-time setup that points memory at your private repo. |
+| `Sync Memory` | Pushes memory to your repo (`python sync.py push`). |
+| `Pull Memory` | Pulls memory on a new machine (`python sync.py pull`). |
+| `python sync.py status` | Shows what is waiting to sync. |
+| `Setup Team [url]` | A manager runs this once to create the shared repo. |
+| `Join Team [url]` | A new teammate runs this once with the manager's URL. |
+| `Team Push` | Shares your lessons with the team. Run it at End Session. |
+| `Team Status` | Shows last sync times and recent commits. |
 
-Team Pull runs automatically at Start Session — no command needed.
+Team Pull runs on its own at Start Session.
 
+## Privacy note
+
+Your memory files and code stay on your machine unless you turn on sync. Clankbrain does send one anonymous usage ping (a random ID, the install mode, your platform and Python version, with no project data) when setup finishes and at each session start. To turn it off, set the environment variable `CLANKBRAIN_NO_TELEMETRY=1`.

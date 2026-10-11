@@ -1974,7 +1974,7 @@ description: All JS functions across all JS files with one-line descriptions
 type: reference
 ---
 
-<!-- Format: | `functionName` | Purpose | -->
+<!-- Format: | function name | Purpose | -->
 <!-- Claude will flag functions missing from this file on session start. -->
 
 {js_section}

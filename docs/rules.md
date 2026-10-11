@@ -1,92 +1,118 @@
-# Rules — Path Scoping and Always-Load
+# Rules: Standing Instructions for Claude
 
-Rules are markdown files in `.claude/rules/` that Claude reads as standing instructions. Two loading modes: always-load and path-scoped.
+**Rules** are short text files in `.claude/rules/` that Claude reads as standing instructions, so you do not have to repeat them. Examples are "make a plan before editing code" or "never use string joins to build SQL."
+
+Use this page when you want Claude to always follow a habit, or when your `CLAUDE.md` file (the main instruction file Claude reads every session) is getting too long.
+
+There are two ways a rule can load: always, or only when it is relevant.
 
 ---
 
-## Always-load rules
+## Always-loaded rules
 
-Rules that apply regardless of what file you're editing. Declared with `alwaysApply: true` and imported in CLAUDE.md via `@rules/`:
+A rule loads on every session when `CLAUDE.md` imports it with a line starting with `@`:
 
-```yaml
----
-description: Require a written plan before any code edit
-alwaysApply: true
----
+```
+@rules/plan-before-edit.md
+@rules/work-rules.md
 ```
 
-Keep this list short — every always-load rule consumes context on every turn. Good candidates:
-- `plan-before-edit` — plan + approval before any edit
-- `work-rules` — core behavioral rules
-- `token-rules` — context management
+Each always-loaded rule uses space on every turn, so keep this list short. This repo's own `CLAUDE.md` imports these four:
+
+| Rule | What it says |
+|------|-------------|
+| `build-mode` | Say whether the session is for learning (prototype) or shipping (production). |
+| `plan-before-edit` | Show a plan and wait for approval before changing code. |
+| `work-rules` | Search first, check your work, stop when something unexpected happens. |
+| `token-rules` | Manage context: when to compact, run `/learn` first. |
 
 ---
 
-## Path-scoped rules
+## Rules that load only when relevant
 
-Rules that only load when you're editing a matching file type. Declared with `globs` and `alwaysApply: false`:
-
-```yaml
----
-description: SQL injection patterns and quoting rules for Java + SQL files
-globs:
-  - "**/*.java"
-  - "**/*.sql"
-alwaysApply: false
----
-```
-
-Claude Code auto-discovers these when you open a matching file. They do not consume context on unrelated turns (e.g. editing CSS won't load your Java quoting rules).
-
-**To activate path-scoping:** remove the rule from the `@rules/` imports in CLAUDE.md. If it stays in `@rules/`, it always loads regardless of frontmatter.
-
----
-
-## Common glob patterns
-
-| Files | Glob |
-|-------|------|
-| All Java | `**/*.java` |
-| Java + SQL | `**/*.java`, `**/*.sql` |
-| All JS/TS | `**/*.js`, `**/*.ts`, `**/*.jsx`, `**/*.tsx` |
-| HTML + CSS + JS | `**/*.html`, `**/*.css`, `**/*.js` |
-| Python | `**/*.py` |
-| All code files | `**/*.{js,ts,java,py,go,rb,sql}` |
-
----
-
-## Recommended split for a new project
-
-| Rule | Mode | Why |
-|------|------|-----|
-| `plan-before-edit` | always-load | Applies to every file type — must include WAIT for approval |
-| `work-rules` | always-load | Behavioral — not file-specific |
-| `token-rules` | always-load | Context management — not file-specific |
-| `karpathy-principles` | always-load | 4 universal coding principles: think first, simplicity, surgical changes, goal-driven |
-| `coding-conventions` | path-scoped (`*.java`, `*.js`) | Only relevant when writing code |
-| `database` | path-scoped (`*.java`, `*.sql`) | Only relevant near DB code |
-| `design-system` | path-scoped (`*.html`, `*.css`, `*.js`) | Only relevant in frontend files |
-| `error-lookup` | path-scoped (`*.java`, `*.js`) | Only relevant when debugging code |
-
-CLAUDE.md stays under 150 lines. Context stays focused.
-
----
-
-## Writing a new rule
+A rule with a `paths:` list in its header loads only when you work on matching files. Editing CSS will not load your Java rules.
 
 ```markdown
 ---
-description: One-line summary — shown in Claude Code's rule picker, so be specific
-globs:
+description: SQL quoting rules for Java and SQL files
+paths:
+  - "**/*.java"
+  - "**/*.sql"
+---
+
+Always escape user text before putting it in a SQL string.
+```
+
+Two things to know:
+
+- Do not also import the rule with `@rules/` in `CLAUDE.md`. An imported rule always loads, whatever its header says.
+- The kit's own `guard-patterns.md` and `update-code-map.md` use `paths:`. Some files use `alwaysApply: true` (for example `regret.md`) and some older examples use `globs:` with `alwaysApply: false`. Those two names are Cursor-style fields. Use `paths:` for new rules.
+
+### Common patterns for `paths:`
+
+A pattern like `**/*.java` means "any `.java` file in any folder."
+
+| Files | Pattern |
+|-------|---------|
+| All Java | `**/*.java` |
+| Java and SQL | `**/*.java`, `**/*.sql` |
+| JavaScript and TypeScript | `**/*.js`, `**/*.ts`, `**/*.jsx`, `**/*.tsx` |
+| HTML, CSS and JS | `**/*.html`, `**/*.css`, `**/*.js` |
+| Python | `**/*.py` |
+| Many code types | `**/*.{js,ts,java,py,go,rb,sql}` |
+
+---
+
+## Which rules should always load?
+
+A good split for a new project:
+
+| Rule | Mode | Why |
+|------|------|-----|
+| `plan-before-edit` | always | Applies to every file type. It must say to wait for approval. |
+| `work-rules` | always | About behavior, not one kind of file. |
+| `token-rules` | always | Context management applies everywhere. |
+| `karpathy-principles` | always | Four general habits: think first, keep it simple, change only what you must, check your result. |
+| `coding-conventions` | by path (code files) | Only needed while writing code. |
+| `database` | by path (`*.java`, `*.sql`) | Only needed near database code. |
+| `design-system` | by path (`*.html`, `*.css`, `*.js`) | Only needed in front-end files. |
+| `error-lookup` | by path (code files) | Only needed when debugging. |
+
+Keep `CLAUDE.md` short (the kit's own file says under 200 lines) and put the rest in rules.
+
+---
+
+## Write a new rule
+
+1. Create a file in `.claude/rules/`, for example `typescript.md`.
+2. Paste this and edit it:
+
+```markdown
+---
+description: One-line summary. Be specific.
+paths:
   - "**/*.ts"
   - "**/*.tsx"
-alwaysApply: false
 ---
 
 ## Rule title
 
-Your instructions here. Be direct — Claude reads this verbatim before each turn
-where a matching file is open.
+Your instructions here. Be direct. Claude reads this text as written.
 ```
 
-Add it to `.claude/rules/`. If it should always load, also add `@rules/your-rule.md` to CLAUDE.md.
+3. If it should load every session, delete the `paths:` lines and add `@rules/typescript.md` to `CLAUDE.md`.
+
+Check that it worked: start a session, then ask Claude "what rules do you have loaded for this project?"
+
+---
+
+## What setup creates
+
+A full install writes these starter rule files. Some are placeholders that `/scan-codebase` fills in on the first Start Session:
+
+- `coding-conventions.md`, `file-paths.md`, `protected-files.md`
+- `plan-before-edit.md`
+- `common-traps.md`, `post-edit-checks.md`
+- `stack.md`, `conventions.md`, `decisions.md` (written in the Lite install)
+
+Next: [extending.md](extending.md) shows how to add skills, agents and rules.

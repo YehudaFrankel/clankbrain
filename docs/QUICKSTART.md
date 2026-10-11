@@ -1,133 +1,80 @@
-# Quickstart — Your First 3 Sessions
+# Quickstart: Your First 3 Sessions
 
-You've installed Clankbrain. Here's what to do in your first three sessions to get the compounding effect working.
+This page walks you through your first three work sessions after installing Clankbrain. It is for anyone who has just run the installer and wants to know what to do next. No coding-tool experience beyond Claude Code is needed.
 
----
-
-## Session 1 will feel like a normal Claude session. That's expected.
-
-Memory is empty. There are no saved lessons, no rejected approaches, no known bugs. Claude has nothing to load yet — so it behaves exactly like Claude without Clankbrain.
-
-**Don't judge it on session 1.** The gap opens by session 5. By session 10 it's obvious.
+A "session" here means one sitting of work in Claude Code, from opening it to closing it.
 
 ---
 
-## Session 1 — Establish baseline
+## How it works in one minute
 
-**At the start:**
-```
-Start Session
-```
-Claude reads memory (empty so far) and asks what you're working on. Describe your project once. Claude will remember it from now on.
+Claude Code forgets everything when you close it. Clankbrain fixes that with plain text files, called **memory files**, that Claude reads at the start of each session and updates at the end. You control this with two phrases you type into Claude Code:
 
-**During the session:** Work normally. Fix a bug, add a feature, whatever.
+- `Start Session` - Claude reads its notes and tells you where you left off.
+- `End Session` - Claude saves what it learned.
 
-**At the end:**
-```
-End Session
-```
-Claude will ask: **"What are three things about this codebase I should never forget?"**
-
-Answer with anything that trips up AI assistants — constraints, gotchas, patterns unique to your stack. Each answer gets written to `lessons.md` and loaded from session 2 onward. If you have nothing yet, say "nothing yet" and Claude moves on.
-
-**What gets saved:** `lessons.md` (with your answers), `decisions.md`, `STATUS.md`. The memory files exist now.
+Session 1 will feel like normal Claude, because the notes are empty. That is expected. The benefit grows as the notes fill up.
 
 ---
 
-## Session 2 — First real memory use
+## Session 1: Fill the notes for the first time
 
-**At the start:**
-```
-Start Session
-```
-Claude reads the lessons from session 1 and arrives with context. You don't re-explain anything.
+1. Open Claude Code in your project and type:
+   ```
+   Start Session
+   ```
+   Claude looks over your project and sets up its notes. It then asks what you are working on.
+2. Describe your project in a few sentences, then do some normal work.
+3. When you are done, type:
+   ```
+   End Session
+   ```
+4. Claude asks: "What are three things about this codebase I should never forget?" Answer with anything that tends to trip up an AI assistant, such as rules, quirks, or patterns specific to your project. If you have nothing yet, type "nothing yet."
 
-**When something breaks:** Ask Claude to diagnose it. It already knows your stack from session 1.
+Your answers go into `lessons.md`, a file of short tips that Claude reads at every later `Start Session`. `STATUS.md` (a one-line log per session) is also updated.
 
-**At the end:**
-```
-End Session
-```
-More lessons accumulate. Patterns start forming.
+## Session 2: See it remember
 
----
+1. Type `Start Session`. Claude reports what changed last time and applies your lessons. You do not need to re-explain your project.
+2. Work normally. If something breaks, ask Claude to diagnose it.
+3. Type `End Session`.
 
-## Session 3 — Learning loop activates
+## Session 3: Check how your skills are doing
 
-**At the end of session 3:**
-```
-End Session
-```
+A **skill** is a saved set of step-by-step instructions that Claude follows for a task, such as fixing a bug. Skills live in `.claude/skills/`.
 
-This time, /evolve-check runs automatically and reports skill health. You might see:
-
-```
-🟢 STABLE — learn: 3 clean sessions
-🟢 STABLE — plan: 2 uses, 0 corrections
-```
-
-If any skill needed a correction during any of the 3 sessions, it will show:
-
-```
-🟡 WATCH — [skill]: 1 correction logged
-```
-
-At 2 corrections on the same skill → run `/evolve` to patch it.
+1. Work normally, then type `End Session`.
+2. At the end, Claude may run `/evolve-check`, which reports which skills have needed corrections. You might see lines like:
+   ```
+   🟢 STABLE - learn: 3 clean sessions
+   🟡 WATCH - plan: 1 correction logged
+   ```
+   Green means no problems. Yellow means a skill has needed a correction. If one skill is corrected twice, type `/evolve` to have Claude improve its steps.
 
 ---
 
-## The skill decision tree
+## Which command do I use?
 
-Not sure which skill to use? Match your intent:
-
-| I want to... | Use |
+| I want to... | Type |
 |---|---|
-| Start working (new session) | `Start Session` |
-| Plan a feature or change | `/plan` |
-| Find where something lives in code | `/find-it` or `/search-first` |
+| Begin work | `Start Session` |
+| Plan a change before making it | `/plan` |
+| Look up what we already decided | `/recall topic` |
 | Fix a bug | `/fix-bug` |
-| Check nothing broke after changes | `/smoke-test` |
-| Extract lessons from this session | `/learn` |
-| See which skills need improvement | `/evolve-check` |
-| Patch a skill based on failure data | `/evolve` |
-| Search past decisions and lessons | `/recall [topic]` |
-| End the session and save memory | `End Session` |
+| Save lessons mid-session | `/learn` |
+| See which skills need fixing | `/evolve-check` |
+| Improve a skill that keeps failing | `/evolve` |
+| Finish and save | `End Session` |
+
+## The two habits that matter
+
+1. **Always run `End Session`.** Without it, nothing is saved.
+2. **Run `/evolve` when `/evolve-check` flags a skill.** Otherwise the same mistakes repeat.
 
 ---
 
-## When does the compounding start?
+## Keep reading
 
-- **Session 1:** Claude knows your project description and first lessons
-- **Session 5:** Claude has seen your common bugs and knows your patterns
-- **Session 10:** You stop re-explaining. Claude knows what broke last time
-- **Session 20+:** Skills have been patched by real failure data. Claude produces fewer mistakes on your codebase specifically
-
-The system gets measurably better. The skills literally improve — not just remember, but get better at the same tasks.
-
----
-
-## The two things that break the loop
-
-1. **Skipping End Session** — lessons don't get saved, skill scores don't accumulate, /evolve has no data to work with
-2. **Skipping /evolve when skills are 🔴/🟡** — the feedback loop stalls; the same mistakes keep happening
-
-Everything else is optional. These two are the minimum viable habit.
-
----
-
-## What good skill scores look like after 20 sessions
-
-```
-=== Evolve Check ===
-
-🟢 STABLE — learn: 18 clean sessions
-🟢 STABLE — plan: 12 uses, 0 corrections
-🔵 PATCHED — smoke-test: patched 2024-12-10, 3 uses since patch
-🟢 STABLE — fix-bug: 8 clean sessions
-```
-
-`smoke-test` was patched once and is now being verified. Everything else is stable. That's a healthy project memory at session 20.
-
-→ [Full learning loop explained with real examples](docs/loop-proof.md)
-→ [Every command](docs/commands.md)
-→ [How skills self-improve](docs/skills.md)
+- [How the learning loop works, with examples](loop-proof.md)
+- [Every command](commands.md)
+- [How skills improve](skills.md)

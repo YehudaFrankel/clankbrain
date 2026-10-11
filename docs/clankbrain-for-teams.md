@@ -1,125 +1,87 @@
 # Clankbrain for Teams
 
-## The Team Problem
+**What this is:** A guide to using Clankbrain with a group. It shows how teammates can share what they learn, such as bug fixes, settled decisions and rejected ideas, so nobody repeats the same work.
 
-The stateless problem is worse on a team.
+**Do you need it?** Only if two or more people work on the same codebase with Claude Code. If you work alone, read the [README](../README.md) instead.
 
-One developer spends three hours debugging an obscure error, finds the root cause, fixes it, and moves on. Next week a teammate hits the same error. Same three hours. Zero information transferred.
-
-One developer settles a difficult architectural debate and moves on. A new developer joins two months later, doesn't know the debate happened, and reopens it.
-
-One developer learns that a particular approach fails in your stack. Nobody else knows. The next developer learns it the same way — by trying it.
-
-The knowledge lives in individual heads, individual sessions, and individual conversations. It doesn't compound. It evaporates.
-
-Clankbrain makes the team's collective knowledge load automatically for every developer, every session.
+**Terms used here:**
+- **Memory files** are plain text files (markdown) that Clankbrain keeps in `.claude/memory/`. Claude reads them at the start of each session.
+- **Start Session** and **End Session** are commands you type in Claude Code. The first loads memory. The second saves what you learned.
+- **Shared memory** means a few of those files, copied through a private GitHub repository (an online folder only your team can see) that everyone connects to.
 
 ---
 
-## How It Works at Team Scale
+## The problem
 
-Every developer has their own Clankbrain setup. Personal memory — their own lessons, their own session journal, their own velocity data — stays local.
+Knowledge stays in one person's head or one chat. Three examples:
 
-Shared memory syncs across the team. When one developer settles an architectural decision, it goes into shared memory. When one developer logs the root cause of a hard error, every developer has that fix on their next Start Session. When one developer marks an approach as rejected, nobody on the team proposes it again.
+- One developer spends hours on an odd error and fixes it. A teammate hits the same error next week and spends the same hours.
+- The team settles a design debate. A new person joins later and reopens it.
+- Someone learns that an approach fails in your setup. Everyone else learns it by trying it.
 
-The team lead runs `Setup Team` once. Every developer runs `Join Team` once. After that, every Start Session silently pulls the latest shared memory before anyone types a word.
-
----
-
-## What One Developer's Work Buys the Whole Team
-
-### One debug session. Zero reruns.
-
-**Before:** Developer A spends two hours on an error nobody has seen before. Finds the fix. Closes the session. Developer B hits the same error three weeks later. Same two hours.
-
-**After:** Developer A's session ends with the root cause logged to the shared error-lookup file. Developer B's Start Session pulls it automatically. When the error appears, the fix surfaces before Claude starts investigating. Five minutes instead of two hours.
-
-### One rejected approach. Blocked for everyone.
-
-**Before:** Your team decides approach X doesn't work in your stack. Each developer learns this eventually, usually by trying it. The learning cost gets paid once per developer.
-
-**After:** The approach gets logged to shared `regret.md` once. The regret-guard hook scans every prompt for every developer against this file. Nobody on the team goes down that path again — including developers who join six months from now.
-
-### One architectural debate. Settled permanently.
-
-**Before:** The senior developer settles a difficult design question. The reasoning lives in a Slack thread nobody will find, or in a comment nobody reads, or nowhere. The same debate resurfaces every time a new developer touches that part of the codebase.
-
-**After:** The decision goes into shared `decisions.md` with the context, the rationale, and when it applies. Every developer reads it automatically at Start Session. The debate does not reopen.
+With shared memory, the fix, the decision and the failed approach are written down once. Every teammate's Claude reads them at the start of each session.
 
 ---
 
-## What Onboarding Looks Like
+## What is shared and what is not
 
-**Before:** A new developer joins. They spend the first two weeks asking questions that have already been answered, making mistakes that have already been made, and learning the codebase's failure modes one by one. Tribal knowledge lives in other people's heads. It transfers slowly, incompletely, and only when someone has time to explain it.
+Each person has their own Clankbrain setup. Personal files stay on that person's computer. A set of team files is shared. The full list of files, and how merging works, is in [sync.md](sync.md#team-sync).
 
-**After:** A new developer joins. They run two commands and type `Handoff`. Claude produces a complete document: current state of the project, the next three tasks, every settled architectural decision and why, known bugs and their status, and the gotchas that aren't obvious from the code.
+Shared files include `decisions.md` (settled choices), `regret.md` (rejected approaches), `error-lookup.md` (errors and fixes), `lessons.md` and `critical-notes.md`.
 
-The shared memory is the onboarding document. It's built automatically from every session of accumulated decisions, lessons, and patterns across the whole team. It's always current. Nobody had to write it.
+Not shared: `velocity.md`, `skill_scores.md`, `user_preferences.md`, `session_journal.md` and `todo.md`.
 
-The new developer is fully context-aware before writing a line of code.
-
----
-
-## What the Team Lead Sees
-
-Every developer's End Session updates the shared memory. What compounds is not just individual knowledge — it's the team's collective knowledge, growing automatically every session.
-
-Over time:
-
-- Architectural decisions stick across the whole team, not just in the head of whoever made them
-- Errors get debugged once and never again, by anyone
-- Onboarding takes two minutes instead of two weeks
-- When a developer leaves, the knowledge stays
-
-The developers who leave take their personal memory with them. The shared knowledge doesn't go anywhere.
+Sharing only adds new table rows. It never edits or deletes rows you already have.
 
 ---
 
-## Rolling It Out
+## What this looks like in practice
 
-### Week 1 — One developer, one project
+### A bug is fixed once
 
-Start with your most active developer on your most active project. Run `npx clankbrain` and choose Full. Run Start Session and End Session for one week.
+Developer A fixes an error and logs the cause in `error-lookup.md` during End Session. A runs `Team Push`. Developer B's next Start Session pulls the new entry. When B sees that error, the fix is already in memory.
 
-This isn't a pilot. This is building the foundation the rest of the team will pull from.
+### A rejected idea stays rejected
 
-### Week 2 — Connect the team
+The team logs a failed approach in `regret.md`. A hook (a script Claude Code runs for you) checks each prompt against that file and warns when a prompt matches an entry. This works for new teammates too, once they have joined.
 
-That developer runs `Setup Team` once. This creates the shared memory repo and configures sync.
+### A decision is written down
 
-Every other developer runs `Join Team` once. From this point, every Start Session silently pulls the shared memory before anyone types a word.
+The reason for a design choice goes into `decisions.md`. Claude reads it at Start Session and warns when a plan seems to contradict it.
 
-### Week 3 and beyond — Let it compound
+### A new person gets up to speed
 
-No new habits required beyond two commands. Start Session. End Session. The shared memory grows automatically. Every debug session, every settled decision, every rejected approach adds to what every developer loads the next morning.
+1. They install Clankbrain and run `Join Team`.
+2. They type `Handoff`. Claude writes `HANDOFF.md`, a summary of the current state, the next tasks, key decisions, known bugs and how to start.
 
-After 10 team sessions, the shared error-lookup file has real entries. After 20, `decisions.md` covers the major architectural questions. After 50, a new developer can onboard from the accumulated memory alone.
-
----
-
-## The Honest Part
-
-This only works if every developer runs End Session. One developer skipping it doesn't just cost them their own compounding — it costs the team the knowledge they would have contributed.
-
-The team lead's job in the first two weeks is to make the habit stick. After that, the system runs itself.
-
-Three rules: **Always run End Session. Run `/evolve-check` to see which skills need patching. Run `/evolve` when skills are flagged.** Everything else is automatic.
-
-`/evolve-check` takes 5 seconds and shows exactly which skills are urgent, which are ready to patch, and which need better failure data before they can be improved. It never changes anything — it just surfaces what needs attention.
+This is only as good as what the team has recorded. A shared memory with few entries gives a short summary.
 
 ---
 
-## Getting Started
+## Rolling it out
+
+1. **Week 1: one person, one project.** Pick one active developer. They run `npx clankbrain` and choose Full. They use Start Session and End Session all week, so there is real content to share.
+2. **Week 2: connect the team.** That person creates a private repo, then runs `Setup Team: <repo URL>`. Each teammate runs `Join Team: <repo URL>` once and answers `y` when asked to merge. Steps are in [sync.md](sync.md#team-sync).
+3. **After that, two habits.**
+   - Start Session pulls shared memory by itself.
+   - End Session, then `Team Push`, shares your updates.
+
+---
+
+## The catch
+
+Sharing only works if people run End Session and `Team Push`. If someone skips them, the team loses what that person learned. The team lead should help the habit take hold in the first weeks.
+
+To keep skills sharp, you can also run `/evolve-check` now and then. It only reads your skill records and shows which skills keep failing. It changes nothing. When it flags a skill, run `/evolve` to patch it. See [loop-proof.md](loop-proof.md) for an example.
+
+---
+
+## Get started
 
 ```
 npx clankbrain
 ```
 
-Choose Full. One developer, one project, one week to build the foundation. Then `Setup Team`. Then `Join Team` for every developer.
+Needs Python 3.7 or newer and Node.js. Choose Full. Then follow [sync.md](sync.md#team-sync) to connect your team.
 
-That's the whole rollout.
-
----
-
-*Built by Yehuda Frankel. Tested across 275+ real sessions on a production codebase.*
-*[github.com/YehudaFrankel/clankbrain](https://github.com/YehudaFrankel/clankbrain)*
+Source: [github.com/YehudaFrankel/clankbrain](https://github.com/YehudaFrankel/clankbrain)

@@ -1,232 +1,167 @@
-# The Clankbrain Kit — Plain English Guide
+# Clankbrain: Plain English Guide
+
+Clankbrain gives Claude Code a memory. This guide is for anyone, including people who have never used Claude Code, and explains what each part of the kit does and why.
+
+(Claude Code is Anthropic's coding assistant that runs in your terminal or editor. Normally it forgets everything when a session ends.)
 
 ---
 
-## What is this kit?
+## The problem it solves
 
-It's a memory and automation system for Claude Code. Without it, Claude starts fresh every session — no memory of your codebase, your preferences, your past decisions, or your mistakes. With the kit, Claude remembers everything and gets better over time automatically.
+Without Clankbrain, every Claude Code session starts from zero. Claude does not remember your project, your preferences, or the mistakes you already corrected. You explain the same things again.
 
-Think of it like hiring a contractor vs a full-time employee. A contractor needs to be briefed every visit. A full-time employee builds up context, learns your preferences, and stops making the same mistakes. The kit turns Claude from a contractor into something closer to a full-time employee.
+With Clankbrain, Claude writes notes as it works and reads them at the start of the next session. Think of a contractor who must be briefed on every visit, compared with a team member who keeps a notebook. The kit gives Claude the notebook.
+
+Your memory files and code stay on your computer, and no API keys are needed. Syncing memory to a private repo is optional and off by default.
+
+The kit does send one anonymous usage ping (a random ID, the install mode, your platform, and your Python version, with no project data) when setup finishes and at each session start. To turn it off, set the environment variable `CLANKBRAIN_NO_TELEMETRY=1`.
 
 ---
 
-## The 7 pieces of the kit
+## The 7 pieces
 
----
+### 1. Memory files
 
-### 1. Memory Files
+Memory files are plain text files where Claude keeps notes about your project. They live in the `.claude/memory/` folder. You can open and edit them like any text file.
 
-**What they are:** Plain text files that Claude reads at the start of every session.
+There is an index file called `MEMORY.md`. It lists the other files with a one-line description each. Claude reads the index first, then opens only the files that matter for the task.
 
-**Four types:**
+Typical files:
 
-| Type | What it stores | Example |
-|------|----------------|---------|
-| `user` | Who you are, your role, your expertise | "Senior Java dev, new to React" |
-| `feedback` | How you want Claude to behave | "Never summarize at the end of a response" |
-| `project` | What's happening right now | "Freeze on merges after Thursday, mobile release" |
-| `reference` | Where to find things | "Bugs tracked in Linear project INGEST" |
+| File | What it holds |
+|------|---------------|
+| `lessons.md` | Lessons learned from past sessions |
+| `decisions.md` | Choices you settled, so they are not argued again |
+| `project_status.md` | What is built and what is in progress |
+| `user_preferences.md` | How you like Claude to work |
 
-**How it works:** There's an index file called `MEMORY.md` that lists all memory files with one-line descriptions. Claude reads the index first, then decides which files to open. It doesn't read everything — just what's relevant to the current task.
-
-**One practical tip — give Claude a date anchor:** Add a `currentDate` line to your `MEMORY.md` index and update it at every End Session:
+Tip: keep a `currentDate` line in `MEMORY.md`, like this:
 
 ```
 # currentDate
 Today's date is 2026-06-17. (Session 275)
 ```
 
-`MEMORY.md` is loaded into every session automatically. This one line gives Claude persistent time-sense across cold starts — it can tell you how long ago a session was, flag stale plans, and reason about session cadence. Without it, Claude has no idea what day it is or how many sessions have passed.
-
-**Why it matters:** Without this, you repeat yourself every session. With it, Claude already knows your team's rules, your codebase quirks, and your preferences before you type a word.
-
----
+Claude cannot tell what day it is on its own. This line lets it notice stale plans and how long ago things happened. The kit updates it for you when a session ends.
 
 ### 2. Hooks
 
-**What they are:** Automatic scripts that run when certain things happen — before Claude edits a file, at the start of a session, when Claude stops, etc.
+A hook is a small script that Claude Code runs automatically at a certain moment. For example: when a session opens, or after Claude edits a file. You never run hooks yourself. They are how the kit does its work without you remembering to.
 
-**Think of hooks like:** A checklist that runs itself. You don't have to remember to do it — the system does it automatically.
+The installer sets up these six hooks:
 
-**The hooks in this kit:**
+| Hook | When it runs | What the kit does |
+|------|--------------|-------------------|
+| `SessionStart` | A session opens | Loads your memory and checks it is healthy |
+| `UserPromptSubmit` | You send a message | Notices when you correct Claude and saves the correction |
+| `PostToolUse` | After Claude edits or writes a file | Logs the file and checks that your notes still match your code |
+| `PreCompact` | Before Claude shrinks a long conversation | Saves memory so it survives |
+| `PostCompact` | After that shrinking | Puts memory back into the conversation |
+| `Stop` | Claude finishes its turn | Updates the date, writes a journal entry, and reminds you to save memory |
 
-| Hook | When it fires | What it does |
-|------|---------------|--------------|
-| `SessionStart` | When you open Claude | Pulls latest memory from GitHub, loads context, shows status |
-| `PreToolUse` (Edit) | Before Claude edits any file | Finds relevant memory for that file, injects it |
-| `PostToolUse` (Edit) | After Claude edits a file | Updates indexes, logs what changed, rebuilds docs |
-| `PostToolUse` (Read) | After Claude reads a file | Logs if it was a memory file (tracks self-consultation) |
-| `Stop` | When Claude finishes a session | Pushes memory to GitHub so next session picks it up |
-| `StopFailure` | If Claude crashes mid-session | Saves what was happening so you don't lose context |
-| `PreCompact` / `PostCompact` | Around context compression | Preserves memory through the compression |
-
-**Why it matters:** All the good behavior happens automatically. Claude doesn't have to remember to save its memory — the Stop hook does it. Claude doesn't have to know your codebase context — the PreToolUse hook injects it right before each edit.
-
----
+(Shrinking a long conversation is called "compacting". Claude Code does it when the conversation gets too long.)
 
 ### 3. Skills
 
-**What they are:** Custom slash commands that trigger specific workflows.
+A skill is a saved set of instructions that Claude follows when you type a short command or say a trigger phrase. Instead of explaining a 10-step process each time, you type `/learn`.
 
-**Think of them like:** Macros. Instead of explaining a 10-step process every time, you type `/learn` and it runs.
-
-**The key skills in this kit:**
+Some of the skills that come with the kit:
 
 | Skill | What it does |
 |-------|-------------|
-| `/learn` | Extracts lessons from the current session into permanent memory |
-| `/evolve` | Rewrites weak skills based on their failure history |
-| `/evolve-check` | Reports which skills are working and which need fixing |
-| `/guard` | Checks code for known dangerous patterns before you commit |
-| `/search-first` | Forces a codebase search before writing any new code |
-| `/plan` | Creates a structured implementation plan |
-| `/smoke-test` | Runs end-to-end tests on what you just built |
-| `/act` | Reads open plans and proposes the single best next action |
+| `/learn` | Saves the lessons from the current session into memory |
+| `/plan` | Writes a plan before any code is changed |
+| `/search-first` | Makes Claude search your code for existing solutions before writing new code |
+| `/guard` | Checks changed code against your list of known mistakes |
+| `/evolve-check` | Reports which skills keep failing |
+| `/evolve` | Rewrites the step of a skill that keeps failing |
+| `/act` | Reads your open plans and suggests the best next step |
 
-**How the self-improving loop actually works:**
+The kit holds 36 skills. The installer copies 19 core skills by default, or 7 on the Lite install. See [skills.md](skills.md) for the full list.
 
-Each time a skill fires, `/learn` asks: "Did it work, or did it need a correction?" The answer goes into `skill_scores.md` as a binary log:
+**How skills improve.** After a skill runs, `/learn` records whether it worked or needed a correction. Each result is one row in `skill_scores.md`. `/evolve-check` reads that log:
 
-```
-| date     | skill         | step     | what it was used for       | Y/N | severity | what failed (if Y)                         |
-|----------|---------------|----------|---------------------------|-----|----------|--------------------------------------------|
-| 2026-06-17 | plan-before-edit | step 2 | HFmtListLines revert plan | N   | -        | -                                          |
-| 2026-06-03 | plan-before-edit | step 2 | 3 plan cycles             | Y   | major    | Step 2: user had to restate the full plan  |
-```
+- URGENT: 3 or more unfixed failures, or 2 in a row on the same step.
+- WATCH: 2 unfixed failures. Ready to fix.
+- STABLE: 0 or 1 unfixed failures.
 
-`/evolve-check` reads this log and classifies each skill:
-- **RED (URGENT)** — 3+ unpatched failures, or 2 in a row on the same step
-- **YELLOW (WATCH)** — 2 unpatched failures — ready to fix
-- **GREEN (STABLE)** — 0–1 unpatched failures
-
-When a skill hits RED or YELLOW, `/evolve` opens the SKILL.md, finds the step that failed, rewrites exactly that step, and marks the `skill_scores.md` rows as patched. The next run starts fresh from that fix.
-
-After ~275 sessions, this keeps the system converging rather than drifting. A skill that keeps failing on step 3 gets a better step 3 — not a rewrite from scratch.
-
-**Why it matters:** Skills turn Claude's best behaviors into one-word commands. The system improves itself — `/evolve` rewrites skills that keep failing, automatically.
-
----
+`/evolve` then opens the skill, rewrites only the step that failed, and marks those rows as fixed.
 
 ### 4. Agents
 
-**What they are:** Multi-step orchestration flows that run an entire workflow from start to finish, with human checkpoints.
+An agent here is a longer workflow that runs several steps in order and pauses to ask you at key points.
 
-**Think of them like:** A project manager who knows exactly what order to do things in and stops to check with you at the right moments.
-
-**The agents in this kit:**
-
-| Agent | What it does |
-|-------|-------------|
-| `feature-build` | search → plan → implement → review → test → learn. Won't start coding until you've approved the plan. |
-| `bug-fix` | reproduce → isolate → fix → verify → log. Won't apply the fix until you've confirmed it reproduces. |
-| `end-session` | learn → update memory → check guards → push to GitHub. |
-
-**Why it matters:** Without agents, you have to orchestrate the sequence yourself and remember all the steps. With agents, the entire workflow runs in the right order.
-
----
+| Agent | Steps |
+|-------|-------|
+| `feature-build` | search, plan, implement, review, test, learn. It waits for your approval before coding. |
+| `bug-fix` | reproduce, find the cause, fix, verify, log. |
+| `end-session` | learn, update memory, check guards, sync. |
 
 ### 5. Plans
 
-**What they are:** Structured documents that describe what you're about to build, stored in a `plans/` folder.
+A plan is a short document written before any code changes. It says what will change, which files are touched, why it should work, and how to undo it. You read it and approve it first. Plans live in `.claude/memory/plans/`, one file per feature.
 
-**Think of them like:** A contract between you and Claude. Before any code gets written, Claude writes out exactly what it's going to do, which files it'll touch, and what the rollback is if it goes wrong. You approve it, then it executes.
+This stops Claude from quietly making the wrong change. The plan forces it to check its assumptions first.
 
-**The plan format:**
-- **Problem/Feature** — one sentence
-- **All related functions** — with exact file and line numbers, verified against the codebase
-- **Before code / After code** — exactly what changes
-- **Why this will work** — the mechanism, not just "this fixes it"
-- **Scope and blast radius** — what breaks if this goes wrong
-- **Rollback steps** — exactly how to undo it
+### 6. Guard patterns
 
-**Why it matters:** This is what prevents Claude from quietly making the wrong change. The plan forces it to verify its assumptions before touching code.
+A guard is a named check for a mistake that already happened once. Each guard has a description and a way to search for the mistake. The kit's own list is `.claude/rules/guard-patterns.md`.
 
----
+1. Something goes wrong in a session.
+2. You or Claude add it to the guard list.
+3. On later edits, Claude checks new code against the list.
+4. If it finds a match, it flags it before the mistake happens again.
 
-### 6. Guard Patterns
+### 7. The Python tool
 
-**What they are:** A file of named checks that Claude runs against code to catch known dangerous patterns.
-
-**Think of them like:** Lint rules — but for business logic and architectural mistakes, not just syntax.
-
-**How a guard works:**
-1. Something goes wrong in a session
-2. The mistake gets documented in the guard file with a name and a grep strategy
-3. On every future edit, Claude checks new code against the guard list
-4. If a match is found, it stops and flags it before the mistake happens again
-
-**Why it matters:** Guards catch the same mistake from happening twice. Once a mistake is documented, Claude checks for it automatically on every future edit. The guard list grows over time and the system gets safer.
-
----
-
-### 7. The Python Tools
-
-**What they are:** Two Python scripts that run behind the scenes, called automatically by the hooks.
-
-**`tools/memory.py`** — The single kit tool. All lifecycle behaviors in one script:
-
-| Feature | What it does |
-|---------|-------------|
-| Drift detection | Checks if your documentation matches your actual code — catches stale line numbers, missing functions |
-| Session journal | Auto-captures a summary at the end of every session |
-| Stop check | Reminds you to save memory; surfaces open plans; warns when context is getting long |
-| Session start | Memory health check at the beginning of each session |
-| Bootstrap | Scans codebase, generates quick_index.md for new projects |
-| Complexity scan | Detects stack, scores complexity, recommends skills |
-| Pre-compact | Reinjects memory into context before /compact |
-
-**Why it matters:** These run automatically through hooks. You never call them directly — they fire and keep everything in sync without any manual steps.
-
----
-
-## How it all connects
+`tools/memory.py` is the script behind the hooks. It does the work: checking notes against code, writing the session journal, searching memory, and more. You rarely call it directly, but you can. For example:
 
 ```
-Session opens
-  → SessionStart hook fires
-  → Pulls memory from GitHub
-  → Loads MEMORY.md + STATUS.md into context
-  → Claude knows what happened last session
-
-You ask Claude to edit a file
-  → PreToolUse hook fires
-  → Finds relevant memory for that specific file
-  → Claude sees lessons, decisions, guard patterns for that exact context
-  → Claude writes a plan and waits for approval
-
-You approve the plan
-  → Claude edits the file
-  → PostToolUse hook fires
-  → Indexes rebuild automatically
-  → Draft lessons get logged
-  → Regret match runs against the change
-
-Session ends
-  → Stop hook fires
-  → /learn extracts patterns into permanent memory
-  → Memory pushed to GitHub
-  → Next session starts with everything intact
+python tools/memory.py --search "login bug"
 ```
+
+You should see the memory files that best match the words you typed.
 
 ---
 
-## What makes this different from just using Claude normally
+## What a session looks like
+
+```
+You open Claude Code and type: Start Session
+  The SessionStart hook loads memory.
+  Claude says what changed last time and asks what to work on.
+
+You ask for a change
+  Claude writes a plan and waits for your approval.
+  You approve, and Claude edits the files.
+  The PostToolUse hook logs the edit and checks your notes.
+
+You type: End Session
+  Claude saves lessons, updates STATUS.md, and finishes.
+  The next session starts with all of it intact.
+```
+
+The two commands you need are `Start Session` and `End Session`. Type them as normal messages in Claude Code.
+
+---
+
+## With and without the kit
 
 | Without the kit | With the kit |
 |-----------------|--------------|
-| Claude starts fresh every session | Claude has full project history |
-| You repeat the same instructions every time | Rules are in memory, auto-loaded |
-| Claude makes the same mistakes twice | Guard patterns catch repeated mistakes |
-| No record of past decisions | `decisions.md` and `regret.md` capture everything |
-| You have to remember to save | Stop hook pushes to GitHub automatically |
-| Skill quality is random | `/evolve` rewrites weak skills automatically |
-| Plans happen in Claude's head | Plans are written, approved, then executed |
-| Context is lost if Claude crashes | StopFailure hook saves the state |
+| Claude starts fresh every session | Claude reads your project notes first |
+| You repeat the same instructions | Your rules are in memory and load on their own |
+| The same mistake can happen twice | Guards flag known mistakes |
+| Past decisions are forgotten | `decisions.md` and `regret.md` record them |
+| Plans live only in the chat | Plans are written down and approved first |
+
+The kit does not make Claude smarter. It makes your project's knowledge last from one session to the next. The value builds up over time as the notes grow.
 
 ---
 
-## The compound effect
+## Where to go next
 
-The first session with the kit feels about the same as without it. By week 4, Claude stops making mistakes specific to your project. By month 3, you've stopped explaining the same things twice entirely. By month 6, the memory system has absorbed enough of your project's patterns that Claude's output fits your codebase on the first try most of the time.
-
-The kit doesn't make Claude smarter. It makes your project's knowledge persistent — so every session builds on the last instead of starting over.
+- [QUICKSTART.md](QUICKSTART.md): install and first session
+- [hooks.md](hooks.md): hook details
+- [skills.md](skills.md): all skills
+- [architecture.md](architecture.md): how the pieces fit together

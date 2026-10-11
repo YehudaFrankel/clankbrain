@@ -1,143 +1,115 @@
-# Cross-Machine Sync and Team Sync
+# Sync: Moving Memory Between Computers and Teammates
 
-Memory lives in `.claude/memory/` on your machine by default. Nothing leaves unless you explicitly set this up.
+**What this is:** Clankbrain keeps your memory files in `.claude/memory/` on your own computer. "Sync" means copying them to a private GitHub repository (an online folder only you or your team can see) so another computer or a teammate can get them.
+
+**Do you need it?** Only if you use more than one computer, want a backup, or work with a team. Otherwise skip this page. Sync is off until you turn it on.
+
+**You need:** Python 3.7 or newer, `git`, and a GitHub account (or another git host). If git cannot log in, run `gh auth login`.
 
 ---
 
-## Cross-machine sync
+## Personal sync (your own computers)
 
-If you work across multiple machines — or want a backup — sync memory to your own private GitHub repo.
+### Set up once
 
-### Setup (once)
-
-Create a private repo at github.com/new, then in Claude Code:
+1. Create a **private** repository at github.com/new. Leave it empty.
+2. In Claude Code, type (with your own URL):
 
 ```
 Setup Sync: https://github.com/you/my-memory
 ```
 
-Or from terminal:
+Or in a terminal: `python sync.py setup https://github.com/you/my-memory`
+
+You should see `Personal sync set up.` If you see `Push failed`, the repo does not exist or git is not logged in.
+
+### Every day
+
+| In Claude Code | Terminal | What it does |
+|---|---|---|
+| `Sync Memory` | `python sync.py push` | Sends memory to your repo. Do it after End Session. |
+| `Pull Memory` | `python sync.py pull` | Gets the latest memory. |
+| `Sync Status` | `python sync.py status` | Shows what is not sent yet. |
+
+Only `.claude/memory/` is synced. Your code is not.
+
+### On a second computer
+
+1. Get your project onto the machine (for example `git clone https://github.com/you/your-project`).
+2. Run `python sync.py pull`.
+3. Open Claude Code and type `Start Session`.
+
+`pull` finds your memory repo's address in `.claude/.sync-config.json`, which `setup` created. That file must be in your project on the new machine.
+
+### Avoid merge conflicts
+
+A merge conflict is when two computers changed the same file and git cannot combine them. It is common here, because each computer adds its own lessons. To keep both sides' additions, run this once:
 
 ```bash
-python sync.py setup https://github.com/you/my-memory
-```
-
-### Day to day
-
-```
-Sync Memory    <-  push memory after End Session
-Pull Memory    <-  pull on a new machine
-Sync Status    <-  check if anything is unpushed
-```
-
-Or from terminal: `python sync.py push` / `python sync.py pull`
-
-### Preventing merge conflicts across machines
-
-If you edit memory files on two different machines before syncing, git will report merge conflicts in your markdown files. This happens more than you'd expect — one machine has a session's lessons, another has a different session's lessons.
-
-**Permanent fix — add this to your memory repo once:**
-
-```
-# .gitattributes in your memory repo root
-*.md merge=union
-```
-
-Then change your pull command from `git pull --rebase` to `git pull --no-rebase` (or `git pull --no-rebase origin main`).
-
-**Why this works:** The `union` merge driver keeps ALL additions from both sides without conflicts. It's exactly right for append-only memory files — you never lose entries from either machine. The `--no-rebase` flag is required because rebase ignores `.gitattributes` merge drivers entirely.
-
-**What this prevents:** Without it, a session on Machine A that added 3 lessons + a session on Machine B that added 2 different lessons = merge conflict on both files. With it, the pull automatically keeps all 5 entries, no conflict.
-
-**One-time setup:**
-```bash
-cd /path/to/your-memory-repo
+cd .claude/memory
 echo "*.md merge=union" > .gitattributes
+git config pull.rebase false
 git add .gitattributes
-git commit -m "Prevent merge conflicts on memory files"
+git commit -m "Keep both sides when merging memory files"
 git push
 ```
 
-Then update your sync script to use `pull --no-rebase` instead of `pull --rebase` or `pull`.
-
-### On a new machine
-
-```bash
-git clone https://github.com/you/your-project
-python sync.py pull
-```
-
-Open Claude Code and type `Start Session` — fully up to speed.
+`merge=union` keeps every added line from both sides. `pull.rebase false` makes `python sync.py pull` merge, so that rule applies.
 
 ---
 
 ## Team sync
 
-One person's `error-lookup.md` entry benefits the whole team. One person's `decisions.md` means nobody re-debates the same thing. One person's session learnings in `lessons.md` — yours, automatically, next Start Session.
+Team sync shares some memory files through one shared private repo. One person records a fix, and everyone gets it at their next Start Session.
 
-Team Sync shares memory files across your team via a single private git repo. Personal memory (velocity, journal, skill scores) stays local.
+### What is shared
 
-### What gets shared
+`decisions.md`, `lessons.md`, `regret.md`, `error-lookup.md`, `critical-notes.md`, `agreed-flow.md`, `guard-patterns.md` and `complexity_profile.md`.
 
-| File | Why |
-|------|-----|
-| `decisions.md` | The team can't re-debate what the team already settled |
-| `lessons.md` | Every session's learnings benefit everyone — not just the person who had the session |
-| `regret.md` | Rejected approaches are codebase-wide, not per-person |
-| `error-lookup.md` | One person debugs it once — zero cost for everyone else |
-| `critical-notes.md` | Gotchas cost time regardless of who hits them |
-| `agreed-flow.md` | User journeys are team agreements |
-| `guard-patterns.md` | Guards protect the whole codebase |
-| `complexity_profile.md` | Shared codebase profile — no need for each person to scan |
+Not shared: `velocity.md`, `skill_scores.md`, `user_preferences.md`, `session_journal.md`, `todo.md`.
 
-Personal files that never leave your machine: `velocity.md`, `skill_scores.md`, `user_preferences.md`, `session_journal.md`, `todo.md`.
+### How merging works
 
-### Setup — manager does this once
+Merging only adds. For each shared file, a table row counts as new if its first column is not already in your copy. New rows go at the bottom. Existing rows are never changed or deleted, so a teammate's edit to an old row will not reach you.
 
-Create a **private** repo at github.com/new. Then in Claude Code:
+### Manager: once
+
+1. Create a **private** repo at github.com/new and make sure git is logged in.
+2. In Claude Code, type:
 
 ```
 Setup Team: https://github.com/team/shared-memory
 ```
 
-This seeds the shared repo with your current memory files and prints the join URL to share with teammates.
+Terminal: `python sync.py setup-team https://github.com/team/shared-memory`
 
-**Prerequisite:** `gh auth status` — git must be authenticated. If not: `gh auth login`.
+This copies your shared files into the repo and prints a `python sync.py join ...` line. Send that line to your teammates.
 
-### Joining — each new member does this once
-
-Paste the URL your manager sent you:
+### Teammates: once
 
 ```
 Join Team: https://github.com/team/shared-memory
 ```
 
-This clones the shared repo, shows you what's in it (file names + line counts), and asks before merging anything into your local memory. Nothing overwrites without your confirmation.
+Terminal: `python sync.py join https://github.com/team/shared-memory`
 
-### Day to day
+It lists the files in the repo with line counts, then asks `Merge these into your local memory? (y/n)`. Nothing is added unless you answer `y`.
 
-```
-Start Session  ->  team memory pulls automatically (nothing to type)
-End Session    ->  Team Push   (share what you found with the team)
-Team Status    ->  check last sync times and recent commits
-```
+### Every day
 
-Merge is append-only, keyed by first column — no git conflicts possible.
+| Command | What it does |
+|---|---|
+| Start Session | Runs `team-pull` for you. It prints anything new, or nothing if all is current. |
+| `Team Push` (at End Session) | Shares your updates. Terminal: `python sync.py team-push` |
+| `Team Status` | Shows last pull and push times. Terminal: `python sync.py team-status` |
+
+To see the last 20 sync actions and any errors, run `python sync.py diagnose`.
 
 ---
 
-## Why sync is safe
+## Privacy
 
-**Your repo, your rules.** Memory goes to a private GitHub repo you create and own. Clankbrain never sees it, never touches it, has no access to it. Delete the repo at any time.
-
-**Kit code flows one way.** Updates are pulled from Clankbrain to your machine — nothing ever goes the other direction.
-
-**Plain text, fully auditable.** Memory files are markdown. Read them, diff them, review them in a PR, restore any version from git history. Nothing is encoded or opaque.
-
-**What's in memory files:** lessons from past sessions, architectural decisions, rejected approaches, function names, project status. No passwords. No customer data. No credentials. If something sensitive accidentally ends up in a memory file, you own that file and can delete or edit it — it's a text file.
-
-**Self-hosted option.** Replace GitHub with GitLab, Bitbucket, or any on-prem git server. `sync.py` works with any git remote — just swap the URL.
-
-**Anthropic's role.** Clankbrain memory is local. Claude Code sends your prompts to Anthropic — that's separate from this kit. For regulated industries, use an Anthropic enterprise plan with a signed BAA. Clankbrain adds nothing to that data surface.
-
-**GDPR.** Clankbrain processes no personal data. Memory files are stored locally and contain code patterns and decisions — not personal data. For stricter requirements, keep memory local and off git entirely.
+- **Your repo.** Memory goes only to a private repo you create. You can delete it any time. Any git host works (GitLab, Bitbucket, a company server): use its URL.
+- **Plain text.** Memory files are markdown. You can read them and restore old versions from git history. Keep passwords and customer data out of them.
+- **Usage ping.** Separate from sync, Clankbrain sends one anonymous message to PostHog (an analytics service) when setup finishes and at each session start. It holds a random ID, the Clankbrain version, platform, Python version and install mode. It holds no project data or memory. To turn it off, set the environment variable `CLANKBRAIN_NO_TELEMETRY=1`.
+- **Claude itself.** Claude Code sends your prompts to Anthropic. That is separate from this kit.

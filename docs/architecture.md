@@ -1,123 +1,95 @@
 # Architecture, Modes, and File Tree
 
----
-
-## Three tiers
-
-Most memory tools ship only the first.
-
-**Tier 1 — Memory**
-Persistent context across sessions. Codebase knowledge, decisions, known bugs, rejected approaches. Syncs to git. Travels with the code. Applied at every `Start Session` before any code is touched.
-
-**Tier 2 — Skills**
-Auto-triggered workflows from plain English. Each skill scores itself on every use (`skill_scores.md`). `/evolve` reads the scores and patches failing steps. Skills chain into multi-step workflows via `## Auto-Chain`. See [skills.md](skills.md) for the full learning loop.
-
-**Tier 3 — Autonomous**
-Skill chaining, self-healing, drift detection, and session journaling run without prompting. Claude works through multi-step tasks without human checkpoints between steps.
+This page explains how Clankbrain is built and what it installs. It is for people who want to understand or customize the kit. You do not need it to use the kit.
 
 ---
 
-## Full vs Lite
+## In one paragraph
 
-Setup asks which mode fits your project.
+Clankbrain adds three things to a project. Memory files are plain text notes in `.claude/memory/` that Claude reads at the start of a session. Skills are saved instructions Claude follows when you type a command like `/learn`. Hooks are small scripts that Claude Code runs automatically at set moments (a session starting, a file being edited, a turn ending); they call `tools/memory.py` to keep the notes current. Claude Code reads `CLAUDE.md` and the memory index every session, so what was learned last time is there next time.
+
+---
+
+## The three layers
+
+1. **Memory.** Notes that last across sessions: how the code is organized, decisions made, known bugs, rejected approaches. They live in your project, so git can carry them with the code.
+2. **Skills.** Saved workflows. Each run is logged in `skill_scores.md` as worked or needed correction. `/evolve` rewrites the step that keeps failing. See [skills.md](skills.md).
+3. **Automation.** Hooks and `tools/memory.py` check that notes match code, write a session journal, and save memory before a long conversation is shrunk.
+
+---
+
+## How the flow works
+
+```
+You type "Start Session"
+   v
+SessionStart hook --> memory.py --session-start (loads memory, checks health)
+   v
+Claude edits a file
+   v
+PostToolUse hook ---> memory.py --log-edit, --check-drift
+   v
+Claude finishes its turn
+   v
+Stop hook ----------> memory.py --process-corrections, --update-date,
+                      --journal, --stop-check
+```
+
+When you correct Claude, the `UserPromptSubmit` hook saves the correction, and the `Stop` hook later turns it into a lesson. When a long conversation is shrunk ("compacted"), `PreCompact` and `PostCompact` save and restore memory.
+
+---
+
+## Full and Lite
 
 | | Full | Lite |
 |---|---|---|
-| Memory files | 5 typed memory files (lessons, decisions, error-lookup, critical-notes, project_status) | 3 typed memory files (notes, lessons, decisions) |
-| Static conventions | `@rules/` files (stack.md, conventions.md, decisions.md) | Inline in CLAUDE.md |
-| Drift detection | Automated — runs after every edit via `memory.py` | None |
-| Session journal | Auto-captured on every Stop | Manual (End Session) |
-| Python required | Yes (3.7+) | Yes (3.7+) |
-| Best for | Complex, long-running codebases, teams | Any project |
-| Upgrade later? | — | Yes — `Upgrade to Full` |
+| Memory files | Many: lessons, decisions, error lookup, critical notes, status, code references, preferences | Three: notes, lessons, decisions |
+| Hooks and `tools/memory.py` | Yes (six hooks) | No |
+| Drift checks and session journal | Automatic | No |
+| Skills the installer copies | 19 core skills | 7 skills |
+| Best for | Larger or long-running projects, teams | Small projects, quick start |
 
-**Not sure?** Start with Lite. `Upgrade to Full` adds everything any time.
+(Drift means your notes no longer match your code, for example after a function is renamed.)
 
-### Upgrading from Lite to Full
-
-```
-Upgrade to Full
-```
-
-Or from terminal: `python upgrade.py`
-
-The upgrade downloads `tools/memory.py`, wires lifecycle hooks into `.claude/settings.json`, and keeps your existing `@rules/` files. Restart Claude Code after running.
+Not sure? Start with Lite. To upgrade, run `python upgrade.py`. It downloads `tools/memory.py` and adds the hooks to `.claude/settings.json`. Your rules files stay. Restart Claude Code afterward.
 
 ---
 
-## File tree
+## File tree (Full install)
 
 ```
 your-project/
-+-- CLAUDE.md                         <- Claude's instructions (loads @rules/ every session)
-+-- STATUS.md                         <- Full session log — date + what changed
-+-- update.py                         <- Safe kit updater
-+-- upgrade.py                        <- Upgrade Lite to Full
-+-- tools/
-|   +-- memory.py                     <- All lifecycle behaviors in one script
++-- CLAUDE.md               <- Instructions Claude reads every session
++-- STATUS.md               <- Session log: date and what changed
++-- update.py, upgrade.py   <- Kit updater and Lite-to-Full upgrade
++-- tools/memory.py         <- Everything the hooks run
 +-- .claude/
-    +-- settings.json                 <- 8 hooks wired
+    +-- settings.json       <- Hooks are written here
     +-- memory/
-    |   +-- MEMORY.md                 <- Index — auto-loaded every session
-    |   +-- memory_embeddings.pkl     <- Semantic search index (optional — built by --build-index)
-    |   +-- lessons.md                <- Lessons from /learn — applied each session
-    |   +-- decisions.md              <- Settled decisions — never re-debated
-    |   +-- error-lookup.md           <- Known errors -> cause -> fix
-    |   +-- critical-notes.md         <- Non-obvious gotchas that will cost time
-    |   +-- agreed-flow.md            <- User journeys locked by agreement
-    |   +-- project_status.md         <- What's built, what's in progress
-    |   +-- js_functions.md           <- Every JS function with description
-    |   +-- html_css_reference.md     <- Every HTML section and CSS class
-    |   +-- backend_reference.md      <- Every API endpoint and DB pattern
-    |   +-- user_preferences.md       <- How you like Claude to work
-    |   +-- tasks/
-    |       +-- skill_scores.md       <- Step-level failure log (Step N / produced X / needed Y / Severity) — /evolve-check + /evolve read this
-    |       +-- skill_improvements.md <- What /evolve patched and why
-    |       +-- regret.md             <- Rejected approaches — never re-proposed
-    |       +-- velocity.md           <- Estimated vs actual — self-calibrating
-    |       +-- todo.md               <- Current tasks in priority order
-    +-- rules/
-    |   +-- plan-before-edit.md       <- Required plan format before any code change
-    |   +-- guard-patterns.md         <- Named guards with grep strategies
-    |   +-- update-code-map.md        <- Update memory after every code change
-    |   +-- work-rules.md             <- Behavioral guardrails
-    |   +-- token-rules.md            <- Context management rules
-    +-- memory/
-    |   +-- plans/
-    |       +-- _template.md          <- Plan template — one file per feature
-    |       +-- archive/              <- Completed plans
-    +-- skills/
-        +-- plan/
-        +-- learn/
-        +-- evolve/
-        +-- evolve-check/             <- Read-only skill health analysis — no patching
-        +-- verification-loop/
-        +-- strategic-compact/
-        +-- search-first/
-        +-- code-reviewer/
+    |   +-- MEMORY.md       <- Index, loaded every session
+    |   +-- lessons.md, decisions.md, error-lookup.md,
+    |   |   critical-notes.md, agreed-flow.md, project_status.md
+    |   +-- js_functions.md, html_css_reference.md, backend_reference.md
+    |   +-- user_preferences.md
+    |   +-- tasks/          <- skill_scores, skill_improvements, regret,
+    |   |                      velocity, todo
+    |   +-- plans/          <- _template.md and archive/
+    +-- rules/              <- Fixed project rules, such as plan-before-edit
+    +-- skills/             <- plan, learn, evolve, evolve-check, ...
 ```
 
-Commit `.claude/memory/` and `.claude/skills/` to your repo — memory and skills travel with the code.
+An optional search index, `memory_embeddings.pkl`, is built by `memory.py --build-index`. Task files may sit in a top-level `tasks/` folder instead of `.claude/memory/tasks/`; the tool finds whichever exists. Commit `.claude/memory/` and `.claude/skills/` so they travel with the code.
 
 ---
 
-## Update Kit
+## Updating the kit
 
-`Update Kit` pulls the latest version safely. It shows exactly what will change and asks for confirmation before applying anything.
+Type `Update Kit` in Claude Code, or run `python update.py`. It shows what will change and asks first.
 
-**What it never touches:**
-- Your memory files (`.claude/memory/`)
-- Your skills (`.claude/skills/`)
-- Your code
-- Everything below `## What This Project Is` in CLAUDE.md — your project-specific content
+It never touches your memory files, your skills, your code, or anything below `## What This Project Is` in `CLAUDE.md`. It does update the commands block in `CLAUDE.md`, `setup.py`, and `tools/memory.py`.
 
-**What it updates:**
-- The kit commands block in CLAUDE.md
-- The `tools/` scripts (bug fixes, new subcommands)
-- Kit-level settings in `settings.json`
+To update from a fork:
 
-```bash
-Update Kit                                    <-  pull from GitHub
-Update Kit from https://github.com/user/repo  <-  pull from a fork or branch
-python update.py                              <-  same thing, from terminal
+```
+python update.py https://github.com/user/repo
 ```
