@@ -920,7 +920,30 @@ footer {
   color: var(--dim);
   letter-spacing: .04em;
 }
+
+/* Accessible navigation, responsive comparisons, and motion preferences. */
+section { scroll-margin-top: 5rem; }
+.hero > *, .wrap-sm > *, .wrap > * { min-width: 0; }
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--amber2); outline-offset: 4px;
+}
+.feature-comparison { overflow-wrap: anywhere; }
+#pg-term, .stats-body { overflow-wrap: anywhere; }
+#sync .reveal > div > div { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .nav-tag { display: none; }
+  .feature-comparison > div { padding: .7rem !important; }
+  .term-body { padding: 1rem; overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  canvas { display: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
 </style>
+<noscript><style>.reveal { opacity:1; transform:none; } #pg-btn { display:none; }</style></noscript>
 </head>
 <body>
 
@@ -941,7 +964,7 @@ footer {
     <a class="nav-a" href="#skills">skills</a>
     <span class="nav-div">·</span>
     <a class="nav-a" href="#faq">faq</a>
-    <a class="nav-gh" href="https://github.com/YehudaFrankel/clankbrain" target="_blank">
+    <a class="nav-gh" href="https://github.com/YehudaFrankel/clankbrain" target="_blank" rel="noopener noreferrer">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       GitHub
     </a>
@@ -955,7 +978,7 @@ footer {
 <canvas id="particleBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.85;"></canvas>
 <div class="hero">
   <div>
-    <div class="hero-eyebrow"><span class="dot"></span>memory + structured workflows for Claude Code · open source · MIT · built on official Claude Code APIs · data stays on your machine</div>
+    <div class="hero-eyebrow"><span class="dot"></span>memory + structured workflows for Claude Code · open source · MIT · built on official Claude Code APIs · memory files stored locally</div>
     <h1>
       Claude Code gives you memory,<br>
       hooks and skills.<br>
@@ -964,16 +987,16 @@ footer {
     <p class="hero-sub">
       Claude Code already has CLAUDE.md, auto memory, hooks and skills, but it ships the mechanism, not the finished setup. Clankbrain adds hooks that are already wired, organized memory files for lessons, decisions and rejected approaches, a Start/End Session routine, and <em>19 core workflows installed by default (36 in the repo)</em>. Built from 335 sessions on one production project.
     </p>
-    <p style="font-size:.85rem; color:var(--amber); margin-bottom:1.25rem; letter-spacing:.02em;">Two commands: <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">Start Session</code> → work → <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">End Session</code>. That's the whole interface.</p>
+    <p style="font-size:.85rem; color:var(--amber); margin-bottom:1.25rem; letter-spacing:.02em;">Two commands: <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">Start Session</code> → work → <code style="background:rgba(212,137,10,.12); padding:.1em .4em; border-radius:3px;">End Session</code>. That’s the daily routine.</p>
     <div class="hero-btns">
       <a class="btn btn-primary" href="#install">Get started →</a>
       <a class="btn btn-primary" href="/wizard.html" style="background:var(--amber2)">Try the Wizard →</a>
-      <a class="btn btn-ghost" href="https://github.com/YehudaFrankel/clankbrain" target="_blank">View on GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/YehudaFrankel/clankbrain" target="_blank" rel="noopener noreferrer">View on GitHub</a>
     </div>
     <div style="display:flex; gap:1.5rem; margin-top:1.25rem; flex-wrap:wrap;">
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Sessions compound, not reset</span>
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> 19 core workflow skills installed</span>
-      <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Skills self-improve from failure</span>
+      <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Refine skills with /learn and /evolve</span>
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> Live dashboard included</span>
       <span style="font-size:.7rem; color:var(--muted); display:flex; align-items:center; gap:.4rem;"><span style="color:var(--green);">●</span> No external dependencies</span>
     </div>
@@ -1000,7 +1023,7 @@ footer {
   <div class="wrap-sm">
     <div class="sec-label">see it in action</div>
     <h2>Two commands. <span class="h2-amber">Everything compounds.</span></h2>
-    <p class="sec-desc">Click through a real session — the same workflow that runs on production codebases.</p>
+    <p class="sec-desc">Click through an illustrative session. GitHub sync is optional; memory stays local unless you configure it.</p>
 
     <div style="margin-top:2rem;">
       <!-- Step indicators -->
@@ -1071,8 +1094,8 @@ footer {
       btn: 'Plan a change →',
       hint: 'Session loaded — Claude knows your codebase',
       lines: [
-        '<span style="color:var(--muted)"># pulling memory from GitHub...</span>',
-        '<span style="color:var(--green)">✓ 3 lessons loaded · 7 rejected approaches blocked · session 45</span>',
+        '<span style="color:var(--muted)"># loading local memory (optional sync configured separately)...</span>',
+        '<span style="color:var(--green)">✓ 3 lessons loaded · 7 rejected approaches available for review · session 45</span>',
         '',
         '<span style="color:var(--amber)">Ready.</span> Last change: Session 44 — fixed pagination bug (page state',
         '        lost on filter change, debounce added to search handler).',
@@ -1143,7 +1166,7 @@ footer {
         '',
         '  <span style="color:var(--green)">2.</span> auth.js touched 3 sessions in a row — add to next review cycle.',
         '',
-        '<span style="color:var(--green)">✓ memory pushed to GitHub</span>',
+        '<span style="color:var(--green)">✓ memory saved locally</span>',
         '<span style="color:var(--green)">✓ session 45 complete</span>',
         '',
         '<span style="color:var(--amber)">Session 46 will start where this one ended.</span>',
@@ -1152,7 +1175,7 @@ footer {
   ];
 
   function pgNext() {
-    if (typing) return;
+    if (typing || step >= steps.length - 1) return;
     step++;
     updateStepIndicators();
     var s = steps[step];
@@ -1179,6 +1202,9 @@ footer {
   }
 
   function typeLines(term, lines, idx, done) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      term.innerHTML += lines.slice(idx).join('\n'); done(); return;
+    }
     if (idx >= lines.length) { done(); return; }
     term.innerHTML += lines[idx] + '\n';
     term.scrollTop = term.scrollHeight;
@@ -1204,7 +1230,7 @@ footer {
     <div class="sec-label">get started</div>
     <h2>Five minutes to a <span class="h2-amber">living environment</span></h2>
     <p class="sec-desc">
-      Claude Code is the only requirement. Run one command from your project root.
+      You need Claude Code, Python 3.7 or newer, and Node.js for the npx installer. Run from your project root. Codex can use the shared memory through AGENTS.md; Clankbrain’s automatic hooks remain specific to Claude Code.
     </p>
 
     <div style="margin-top:1.5rem; margin-bottom:2rem; padding:1rem 1.4rem; border:1px solid var(--border2); background:var(--s2); font-size:.78rem; line-height:1.8;" class="reveal">
@@ -1225,7 +1251,7 @@ footer {
       <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:.5rem 1.5rem; font-size:.78rem; color:var(--muted);">
         <div><span style="color:var(--green);">→</span> <code style="color:var(--amber);">scan-conventions</code> reads your real code, writes coding-conventions.md</div>
         <div><span style="color:var(--green);">→</span> <code style="color:var(--amber);">map-codebase</code> maps all endpoints + methods + tables</div>
-        <div><span style="color:var(--green);">→</span> Universal regret entries seed from day one — never repeat the same mistake</div>
+        <div><span style="color:var(--green);">→</span> Starter regret entries help flag familiar mistakes from day one</div>
       </div>
     </div>
 
@@ -1254,12 +1280,12 @@ footer {
       <div class="istep">
         <div class="istep-n">// 02</div>
         <div class="istep-title">Open Claude Code</div>
-        <div class="istep-desc">Navigate to your project. Type <span style="color:var(--amber)">Setup Memory</span> — Claude runs the Python setup for you.</div>
+        <div class="istep-desc">Open the project where you ran the installer. Type <span style="color:var(--amber)">kit-health</span> to check the installation.</div>
       </div>
       <div class="istep">
         <div class="istep-n">// 03</div>
         <div class="istep-title">Type: Start Session</div>
-        <div class="istep-desc">Memory loads from disk, drift check runs, Claude picks up exactly where you left off. First run auto-scans your project and recommends which skills apply to your stack.</div>
+        <div class="istep-desc">Memory loads from disk, drift check runs, Claude resumes from the last saved project state. First run auto-scans your project and recommends which skills apply to your stack.</div>
       </div>
       <div class="istep">
         <div class="istep-n">// 04</div>
@@ -1272,22 +1298,22 @@ footer {
       <span style="color:var(--text)">New machine?</span> Run <span style="color:var(--amber)">Install Memory</span> — Claude scans the codebase and rebuilds all knowledge files from scratch.
     </div>
 
-    <div style="margin-top:2.5rem; display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border2); font-size:.76rem;" class="reveal mob-stack">
-      <div style="padding:1rem 1.4rem; background:var(--s2); border-bottom:1px solid var(--border); grid-column:1; color:var(--muted); letter-spacing:.08em;">OTHER TOOLS</div>
+    <div style="margin-top:2.5rem; display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border2); font-size:.76rem;" class="reveal feature-comparison">
+      <div style="padding:1rem 1.4rem; background:var(--s2); border-bottom:1px solid var(--border); grid-column:1; color:var(--muted); letter-spacing:.08em;">BUILT-IN FEATURES</div>
       <div style="padding:1rem 1.4rem; background:var(--s1); border-bottom:1px solid var(--border); border-left:1px solid var(--border2); grid-column:2; color:var(--amber); letter-spacing:.08em;">CLANKBRAIN</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); color:var(--muted);">skills stay static — no feedback loop</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); color:var(--green);">skills score themselves · /evolve patches failures</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">rejected approaches get re-proposed</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">regret.md keeps them from coming back</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">single notes dump file</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); color:var(--muted);">Skills provide reusable instructions</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); color:var(--green);">/learn records scores · /evolve patches weak steps when run</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">Memory can record project decisions</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">regret.md surfaces rejected approaches before planning</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">Auto memory stores notes across sessions</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">typed files: decisions · errors · lessons · regret</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">no team sync</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">Instructions and rules can be shared through git</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">shared team memory · personal stays local</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">API key or database required</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">Hooks run scripts you configure</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">zero dependencies — stdlib Python only</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">no structured development workflows</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">Skills and plan mode provide building blocks</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">19 core workflows installed (36 in the repo): debug · review · refactor · design · security</div>
-      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">unofficial / proprietary internals</div>
+      <div style="padding:.75rem 1.4rem; background:var(--s2); border-top:1px solid var(--border); color:var(--muted);">Official hooks, rules and skills APIs</div>
       <div style="padding:.75rem 1.4rem; background:var(--s1); border-left:1px solid var(--border2); border-top:1px solid var(--border); color:var(--green);">official Anthropic hooks + skills APIs</div>
     </div>
   </div>
@@ -1302,7 +1328,7 @@ footer {
       <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">/product-risk</code> runs the Four Big Risks — Value, Usability, Feasibility, Viability — before you write a line of code.
     </p>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); margin-top:2.5rem;" class="reveal">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); margin-top:2.5rem;" class="reveal mob-stack">
       <div class="living-cell" style="animation:cell-glow 7s ease-in-out infinite 0s;">
         <div class="lc-num">EVALUATE ─────</div>
         <div class="lc-head">Score what exists</div>
@@ -1348,8 +1374,8 @@ footer {
         <div style="font-size:.7rem; color:var(--muted); margin-top:.25rem;">idea to working prototype</div>
       </div>
       <div style="background:var(--s1); padding:1rem; text-align:center;">
-        <div style="font-size:1.3rem; color:#e05252; font-weight:700;">0</div>
-        <div style="font-size:.7rem; color:var(--muted); margin-top:.25rem;">bad ideas get built</div>
+        <div style="font-size:1.3rem; color:#e05252; font-weight:700;">2+</div>
+        <div style="font-size:.7rem; color:var(--muted); margin-top:.25rem;">red risks trigger a pause</div>
       </div>
     </div>
   </div>
@@ -1373,7 +1399,7 @@ footer {
         <div class="lc-body">
           CLAUDE.md, memory files, and hooks are configured once and loaded
           automatically every session. <em>Crash, close, switch machines —
-          the environment picks up exactly where it left off.</em>
+          saved notes help you resume. Sync your memory first when switching machines.</em>
         </div>
       </div>
       <div class="living-cell">
@@ -1404,9 +1430,7 @@ footer {
     <div class="sec-label">agentic core</div>
     <h2>The compound<br><span class="h2-amber">learning loop</span></h2>
     <p class="sec-desc">
-      The engine behind the loop. Hooks do the quiet bookkeeping —
-      <em>extract lessons, score skills, patch weak steps, repeat</em> —
-      and you run End Session and /evolve to keep it moving.
+      Hooks handle session bookkeeping. <em>End Session runs /learn to extract lessons and score skills.</em> Run /evolve every few sessions to revise weak steps using that feedback.
     </p>
 
     <div class="loop-track reveal">
@@ -1441,7 +1465,7 @@ footer {
         <div style="font-size:.68rem; color:var(--green); margin-bottom:.6rem; letter-spacing:.06em;">GETS SMARTER</div>
         <div style="font-size:.82rem; color:var(--text); line-height:1.8;">lessons.md — grows every session</div>
         <div style="font-size:.78rem; color:var(--muted); line-height:1.8;">decisions.md — stops re-debating</div>
-        <div style="font-size:.78rem; color:var(--muted); line-height:1.8;">regret.md — never re-proposes bad ideas</div>
+        <div style="font-size:.78rem; color:var(--muted); line-height:1.8;">regret.md — records rejected approaches</div>
         <div style="font-size:.78rem; color:var(--muted); line-height:1.8;">velocity.md — self-calibrating estimates</div>
         <div style="font-size:.78rem; color:var(--muted); line-height:1.8;">skill_scores.md — tracks what failed</div>
         <div style="font-size:.78rem; color:var(--muted); line-height:1.8;">error-lookup.md — known errors → exact fix</div>
@@ -1475,7 +1499,7 @@ footer {
 <canvas id="hexBg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.15;"></canvas>
   <div class="wrap-lg">
     <div class="sec-label">agentic toolkit</div>
-    <h2>19 skills install ready.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
+    <h2>19 core skills installed by default.<br><span class="h2-amber">Generate Skills builds the rest.</span></h2>
     <p class="sec-desc">
       Skills live in <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">.claude/skills/</code> as markdown files.
       Chain them with <code style="color:var(--amber); background:var(--s2); padding:.1rem .35rem; font-family:var(--mono); font-size:.76rem;">## Auto-Chain</code>.
@@ -1500,7 +1524,7 @@ footer {
         <tr><td class="td-cmd">strategic-compact</td><td class="td-trig">should I compact, context getting long</td><td class="td-desc">Evaluate whether to compact and guide through safe compaction that preserves all memory</td></tr>
         <tr><td class="td-cmd">fix-bug</td><td class="td-trig">fix the bug, it's broken, not working</td><td class="td-desc">Structured root-cause flow: locate → read → diagnose → show fix → wait for confirmation → update memory. Auto-chains to guard after the fix.</td></tr>
         <tr><td class="td-cmd">mode</td><td class="td-trig">mode develop, mode review, mode safe, mode deploy</td><td class="td-desc">Restrict Claude's tool access to what a task actually needs — develop (full), review (read-only), safe (no writes), deploy (shell only)</td></tr>
-        <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so the same bug never takes time twice. <em>Auto-chains to verification-loop after the fix.</em></td></tr>
+        <tr><td class="td-cmd">debug-session</td><td class="td-trig">debug session, structured debug, debug this error</td><td class="td-desc">7-step structured debugging: reproduce → isolate → hypothesize → fix → verify — then logs cause + fix to error-lookup.md so future sessions can consult the known fix. <em>Auto-chains to verification-loop after the fix.</em></td></tr>
         <tr><td class="td-cmd">guard</td><td class="td-trig">guard check, scan for issues, did I miss anything</td><td class="td-desc">Scans recently changed files against a library of known error patterns, flags violations before they ship. After any bug fix, extracts the root cause as a new permanent rule.</td></tr>
         <tr><td class="td-cmd">product-risk</td><td class="td-trig">/product-risk, validate this idea, is this worth building</td><td class="td-desc">Four Big Risks (Value, Usability, Feasibility, Viability). <strong>Evaluate</strong> mode scores existing products Red/Yellow/Green. <strong>Create</strong> mode validates an idea, then generates working HTML/CSS/JS prototypes + full project scaffolding. Kill gate: refuses to build if 2+ risks are red.</td></tr>
         <tr><td class="td-cmd">scan-conventions</td><td class="td-trig">scan conventions, generate conventions, bootstrap conventions</td><td class="td-desc">Reads 3–5 real methods from your codebase, extracts actual conventions (variable style, SQL patterns, error handling, naming, INSERT strategy), writes coding-conventions.md in ~10 min. Works on any stack. Run once on project start.</td></tr>
@@ -1537,7 +1561,7 @@ footer {
           <span style="color:var(--amber)">--kit-health</span> <span style="color:var(--muted)">— checks hooks wired, MEMORY.md present, skills installed, profile fresh</span>
         </div>
         <div style="font-size:.8rem; line-height:1.8;">
-          <span style="color:var(--amber)">--precompact</span> <span style="color:var(--muted)">— reinjects memory into compacted context — nothing lost through /compact</span>
+          <span style="color:var(--amber)">--precompact</span> <span style="color:var(--muted)">— saves memory before compaction to help recover context</span>
         </div>
         <div style="font-size:.8rem; line-height:1.8;">
           <span style="color:var(--amber)">--bootstrap</span> <span style="color:var(--muted)">— scans codebase, generates quick_index.md for new projects</span>
@@ -1591,7 +1615,7 @@ footer {
     <h2>335 sessions.<br><span class="h2-amber">One living environment.</span></h2>
     <p class="sec-desc">
       Built and validated on a production project — Java backend, vanilla JS, SQL Server.
-      These numbers are from the actual engineering environment this kit grew out of.
+      These are author-reported figures from the environment this kit grew out of, rather than a controlled comparison. The 37 skills include project-specific workflows; the public kit contains 36.
     </p>
 
     <div class="stats-term reveal">
@@ -1611,11 +1635,11 @@ footer {
         <span class="st-key">decisions preserved     </span><span class="st-val">75</span><br>
         <span class="st-key">rejected approaches logged</span><span class="st-val">38</span><br>
         <span class="st-key">dependencies            </span><span class="st-val">zero</span><br>
-        <span class="st-key">context reset cost      </span><span class="st-val">zero — memory persists</span><br>
+        <span class="st-key">context recovery      </span><span class="st-val">saved notes persist</span><br>
         <span class="st-key">setup time              </span><span class="st-val">~5 minutes</span><br>
         <span class="tdim">────────────────────────────────────────</span><br>
-        <span class="tmut">// compare to: rwieruch/the-road-to-claude (no loop), </span><br>
-        <span class="tmut">// anthropics/claude-code-examples (no persistence)</span><br>
+        <span class="tmut">// author’s production-project experience, </span><br>
+        <span class="tmut">// not a controlled benchmark or a recovery guarantee</span><br>
         <span class="tmut">// persistent memory + a skill feedback loop, in plain text files</span><br>
       </div>
     </div>
@@ -1627,7 +1651,7 @@ footer {
   <div class="wrap-sm">
     <div class="sec-label">sync &amp; team</div>
     <h2>Works on any machine — <span class="h2-amber">when you want it to</span></h2>
-    <p class="sec-desc">Memory stays on your machine by default. Nothing leaves unless you set this up. When you're ready to work across machines, three commands get you there.</p>
+    <p class="sec-desc">Memory files are stored locally by default. Optional sync sends them to a repository you choose. The kit also sends anonymous usage telemetry; set CLANKBRAIN_NO_TELEMETRY=1 to disable it. Your coding agent’s own data handling still applies. When you're ready to work across machines, three commands get you there.</p>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); margin-top:2rem;" class="reveal mob-stack">
       <div style="background:var(--bg); padding:1.5rem 1.75rem;">
@@ -1653,12 +1677,12 @@ footer {
     </div>
 
     <p style="margin-top:1.5rem; font-size:.78rem; color:var(--muted); line-height:1.8; padding:.9rem 1.2rem; border-left:2px solid var(--border2); background:var(--s1);">
-      <span style="color:var(--amber);">No merge conflicts — ever.</span> Add <code style="color:var(--text); background:var(--s2); padding:.1em .35em;">*.md merge=union</code> to <code style="color:var(--text); background:var(--s2); padding:.1em .35em;">.gitattributes</code> once. All memory files stay conflict-free across every machine, permanently — the union driver keeps all additions from both sides automatically.
+      <span style="color:var(--amber);">Fewer manual merges for append-only notes.</span> Add <code style="color:var(--text); background:var(--s2); padding:.1em .35em;">*.md merge=union</code> to <code style="color:var(--text); background:var(--s2); padding:.1em .35em;">.gitattributes</code> once. The union driver keeps additions from both sides, but may leave duplicate or contradictory entries. Review merged memory, especially decisions and current status.
     </p>
 
     <div style="margin-top:3rem; padding-top:2.5rem; border-top:1px solid var(--border);">
       <div class="sec-label" style="margin-bottom:1rem;">team mode — opt-in</div>
-      <h3 style="font-size:1.15rem; font-weight:600; color:var(--text); margin-bottom:.75rem;">One person debugs it. <span style="color:var(--amber);">Zero cost for everyone.</span></h3>
+      <h3 style="font-size:1.15rem; font-weight:600; color:var(--text); margin-bottom:.75rem;">One person debugs it. <span style="color:var(--amber);">The team keeps the fix.</span></h3>
       <p style="font-size:.82rem; color:var(--muted); line-height:1.8; margin-bottom:1.5rem;">
         One private git repo. Six shared files. When a teammate logs a bug fix in <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">error-lookup.md</code>, every developer on the project gets it at their next <code style="color:var(--amber);background:var(--s2);padding:.1rem .35rem;font-family:var(--mono);font-size:.76rem;">Team Pull</code>.
       </p>
@@ -1667,11 +1691,11 @@ footer {
         <div style="display:flex; flex-direction:column; gap:.6rem;">
           <div style="display:flex; gap:.75rem; align-items:baseline;">
             <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">error-lookup.md</span>
-            <span style="font-size:.75rem; color:var(--muted);">One person debugs it once — zero cost for everyone</span>
+            <span style="font-size:.75rem; color:var(--muted);">A shared fix gives teammates a starting point</span>
           </div>
           <div style="display:flex; gap:.75rem; align-items:baseline;">
             <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">decisions.md</span>
-            <span style="font-size:.75rem; color:var(--muted);">Team can't re-debate what the team settled</span>
+            <span style="font-size:.75rem; color:var(--muted);">Records settled choices and their rationale</span>
           </div>
           <div style="display:flex; gap:.75rem; align-items:baseline;">
             <span style="color:var(--green); font-family:var(--mono); font-size:.75rem; min-width:160px;">regret.md</span>
@@ -1691,7 +1715,7 @@ footer {
           </div>
         </div>
         <div style="margin-top:1.25rem; padding:.75rem 1rem; background:var(--s2); border:1px solid var(--border); font-size:.72rem; color:var(--dim); line-height:1.7;">
-          Personal files <em>never</em> leave your machine: velocity.md, skill_scores.md, session_journal.md, user_preferences.md, todo.md
+          Team sync excludes these personal files (separate backup or sync settings may still copy them): velocity.md, skill_scores.md, session_journal.md, user_preferences.md, todo.md
         </div>
         <div style="margin-top:1rem; font-family:var(--mono); font-size:.8rem; color:var(--amber);">Setup Team: https://github.com/team/repo</div>
       </div>
@@ -1729,7 +1753,7 @@ footer {
     </div>
 
     <div style="margin-top:2rem; padding:1.5rem 1.75rem; border-left:2px solid var(--amber); font-size:.82rem; color:var(--muted); line-height:1.8;" class="reveal">
-      The compound learning loop only compounds if you close it. A developer who runs <code>Start Session</code> / <code>End Session</code> consistently and <code>/evolve</code> every few weeks will have a Claude that gets measurably better at their specific codebase over time. Someone who uses it sporadically gets marginal gains.<br><br>
+      The compound learning loop only compounds if you close it. A developer who runs <code>Start Session</code> / <code>End Session</code> consistently and <code>/evolve</code> every few weeks can build a useful record of project-specific decisions, fixes, and workflow improvements. The benefit depends on the quality of those notes and how consistently they are used.<br><br>
       <strong style="color:var(--text);">The habit is the product. The kit is what makes the habit stick.</strong>
     </div>
   </div>
@@ -1743,6 +1767,11 @@ footer {
 
     <div class="faq-list reveal">
       <details>
+        <summary>Can I use Clankbrain with Codex?</summary>
+        <div class="faq-body">Yes. The installer writes <code>AGENTS.md</code>, so Codex can read the shared project memory. Ask it to read and update those files at session boundaries. Clankbrain’s Claude Code hooks and skill installation do not automatically run in Codex; shared memory support does not mean full automation parity.</div>
+      </details>
+
+      <details>
         <summary>Does this use official Claude Code features or unofficial workarounds?</summary>
         <div class="faq-body">
           Everything is built on Anthropic's official APIs — no workarounds, no reverse engineering.<br><br>
@@ -1751,30 +1780,30 @@ footer {
           · <code>.claude/rules/</code> directory — now a first-class Anthropic feature with path-scoping support<br>
           · <code>.claude/skills/&lt;name&gt;/SKILL.md</code> — exact official skills path<br>
           · <code>~/.claude/CLAUDE.md</code> for global lessons — Anthropic's documented cross-project use case<br>
-          · <code>settings.json</code> hooks — all 5 hook events used (SessionStart, UserPromptSubmit, PostToolUse, PreCompact, Stop) are official Anthropic event names<br><br>
+          · <code>settings.json</code> hooks — hook events include SessionStart, UserPromptSubmit, PostToolUse, PreCompact and Stop; availability of additional events depends on your Claude Code version<br><br>
           The learning loop (lessons.md, decisions.md, /learn, /evolve) is built on top of those official mechanisms — that layer is what the kit adds.
         </div>
       </details>
       <details>
         <summary>Does a big CLAUDE.md actually help?</summary>
         <div class="faq-body">
-          No. A very long CLAUDE.md costs extra tokens on every request, and extra detail does not always make the answers better. Clankbrain keeps it short and puts the detail in separate memory files.<br><br>
-          clankbrain is built the opposite way: <code>CLAUDE.md</code> stays lean — commands and project-specific gotchas only. Project knowledge lives in separate <code>.claude/memory/</code> files that load selectively based on what's relevant to the current task. That's what the research actually recommends.<br><br>
+          A longer CLAUDE.md uses more context, and extra detail does not always improve results. Clankbrain keeps it short and puts the detail in separate memory files.<br><br>
+          clankbrain is built the opposite way: <code>CLAUDE.md</code> stays lean — commands and project-specific gotchas only. Project knowledge lives in separate <code>.claude/memory/</code> files that load selectively based on what's relevant to the current task. Keep the always-loaded instructions focused and retrieve details when needed.<br><br>
           The template that ships with the kit enforces this. The project-specific section is designed to stay under 50 lines. When you do want universal behavioral guardrails, ship them as a dedicated rule file — like the included <code>karpathy-principles.md</code>, which encodes Andrej Karpathy's 4 LLM coding principles (think before coding, simplicity first, surgical changes, goal-driven execution) as an always-load rule.
         </div>
       </details>
       <details>
         <summary>What Claude plan do I need?</summary>
         <div class="faq-body">
-          Any paid plan that includes Claude Code. The kit itself has no plan requirements — it's plain markdown files and Python scripts that run locally.
-          Longer sessions may benefit from Max due to context limits, but the <em>PreCompact hook</em> and <em>Start Session</em> recovery are specifically designed to handle those limits gracefully on any plan.
+          Use a Claude Code account or API setup supported by Anthropic. The kit itself has no plan requirements — it's plain markdown files and Python scripts that run locally.
+          Plan usage limits still apply. The <em>PreCompact hook</em> and <em>Start Session</em> routine help preserve saved context; Clankbrain does not increase model context windows or plan allowances.
         </div>
       </details>
       <details>
         <summary>What happens if Claude Code crashes mid-session?</summary>
         <div class="faq-body">
-          Memory files live on disk and in git — a crash never touches them.
-          Open a new session, type <em>Start Session</em>, and Claude picks up where you left off.
+          Memory files live on disk, with git history if you have committed them. A crash generally leaves saved files intact; unsaved work may still be lost.
+          Open a new session, type <em>Start Session</em>, and Claude resumes from the last saved project state.
           <code>STATUS.md</code> confirms what was last saved. Run <em>Check Drift</em> to find anything that happened between the last memory update and the crash.
         </div>
       </details>
@@ -1855,7 +1884,7 @@ footer {
         <summary>Why markdown files instead of a database?</summary>
         <div class="faq-body">
           Files you can read, diff, commit, and recover without any tooling.
-          Memory stored in a database is opaque — you can't grep it, review it in a PR, or restore a version from last Tuesday.
+          Database-backed memory can offer useful querying, but plain Markdown makes notes easy to inspect, diff, and version with your code.
           Markdown files travel with your repo, work on any machine with zero setup, and never require an API key or running service.
           <em>The constraint is the feature.</em>
         </div>
@@ -1891,9 +1920,9 @@ footer {
     <span>clankbrain</span>
   </div>
   <div class="footer-links">
-    <a href="https://github.com/YehudaFrankel/clankbrain" target="_blank">GitHub</a>
-    <a href="https://github.com/YehudaFrankel/clankbrain/blob/main/README.md" target="_blank">README</a>
-    <a href="https://github.com/YehudaFrankel/clankbrain/issues" target="_blank">Issues</a>
+    <a href="https://github.com/YehudaFrankel/clankbrain" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="https://github.com/YehudaFrankel/clankbrain/blob/main/README.md" target="_blank" rel="noopener noreferrer">README</a>
+    <a href="https://github.com/YehudaFrankel/clankbrain/issues" target="_blank" rel="noopener noreferrer">Issues</a>
   </div>
   <div class="footer-sig">// built by yf</div>
 </footer>
@@ -1916,7 +1945,7 @@ const outputs = [
   { delay: 1000, html: '<span class="tok">✓ lessons.md — 52 patterns applied</span>' },
   { delay: 1400, html: '<span class="tok">✓ decisions.md — 75 settled decisions</span>' },
   { delay: 1900, html: '<span class="tmut">// last session: skill chaining + autonomous hooks</span>' },
-  { delay: 2500, html: '<span class="twarn">→ 335 sessions · zero re-explanations needed</span>' },
+  { delay: 2500, html: '<span class="twarn">→ saved lessons and decisions ready for the next session</span>' },
   { delay: 3200, html: '<span class="tgap"></span><span class="tp">yf@clankbrain ~ $</span> <span class="cursor"></span>' },
 ];
 
@@ -1926,6 +1955,13 @@ function runTerminal() {
   const body   = document.getElementById('hero-term');
   const cmd    = 'Start Session';
   let i = 0;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    target.textContent = cmd; cursor.style.display = 'none';
+    outputs.forEach(o => {
+      const row = document.createElement('div'); row.innerHTML = o.html; body.appendChild(row);
+    });
+    return;
+  }
 
   function typeNext() {
     if (i < cmd.length) {
@@ -2158,17 +2194,20 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 // ─── COPY BUTTON ───
 function copyCmd(btn, text) {
+  if (!navigator.clipboard || !navigator.clipboard.writeText) {
+    window.prompt('Copy this command:', text); return;
+  }
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = 'copied!';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
-  });
+  }).catch(() => { window.prompt('Copy this command:', text); });
 }
 
 // ─── MATRIX RAIN (#tiers) ───
 (function() {
   var canvas = document.getElementById('matrixBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var CHARS = '01>${}[]|</>return;const var if(){}'.split('');
   var cols, drops, W, H;
@@ -2211,7 +2250,7 @@ function copyCmd(btn, text) {
 // ─── HEX GRID (#skills) ───
 (function() {
   var canvas = document.getElementById('hexBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var W, H, hexes = [], t = 0;
 
@@ -2272,7 +2311,7 @@ function copyCmd(btn, text) {
 // ─── NEURAL PULSE (#living) ───
 (function() {
   var canvas = document.getElementById('neuralBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var W, H, nodes = [], pulses = [], t = 0;
   var N = 18;
@@ -2339,7 +2378,7 @@ function copyCmd(btn, text) {
 // ─── SCAN GRID (#commands) ───
 (function() {
   var canvas = document.getElementById('scanBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var W, H, scanY = 0, t = 0;
   var GRID = 40;
@@ -2402,7 +2441,7 @@ function copyCmd(btn, text) {
 // ─── PLAN MODE DIAGONAL SCAN (#plan-mode-demo) ───
 (function() {
   var canvas = document.getElementById('planScanBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var W, H;
   var CYCLE = 6000; // ms per sweep
@@ -2473,7 +2512,7 @@ function copyCmd(btn, text) {
 // ─── RADAR + GRID ANIMATION (#stats) ───
 function initRadarAnim() {
   var canvas = document.getElementById('radarBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var W, H, cx, cy, cols, rows, cells;
   var CELL = 38;
@@ -2592,12 +2631,12 @@ function initStatsAnim() {
     { key: 'decisions preserved     ', val: '75' },
     { key: 'rejected approaches logged', val: '38' },
     { key: 'dependencies            ', val: 'zero' },
-    { key: 'context reset cost      ', val: 'zero \u2014 memory persists' },
+    { key: 'context recovery      ', val: 'saved notes persist' },
     { key: 'setup time              ', val: '~5 minutes' },
   ];
   var FOOTER = [
-    '// compare to: rwieruch/the-road-to-claude (no loop),\u00a0',
-    '// anthropics/claude-code-examples (no persistence)',
+    '// author’s production-project experience,\u00a0',
+    '// not a controlled benchmark or a recovery guarantee',
     '// persistent memory + a skill feedback loop, in plain text files',
   ];
   var DIV = '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500';
@@ -2613,6 +2652,9 @@ function initStatsAnim() {
   function typeVal(span, text, cb) {
     var i = 0;
     span.textContent = '';
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      span.textContent = text; if (cb) cb(); return;
+    }
     (function tick() {
       if (i < text.length) {
         span.textContent += text[i++];
@@ -2676,7 +2718,7 @@ initStatsAnim();
 // ─── PARTICLE BACKGROUND ───
 (function() {
   var canvas = document.getElementById('particleBg');
-  if (!canvas) return;
+  if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var ctx = canvas.getContext('2d');
   var W, H, particles = [];
   var COUNT = 55;
