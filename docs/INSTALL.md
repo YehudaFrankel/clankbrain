@@ -60,3 +60,12 @@ It usually means the hooks cannot find Python. Typical messages are "python is n
 1. Install Python (step 2) and reopen your terminal and Claude Code.
 2. On Mac or Linux, make sure the hooks say `python3`. In `.claude/settings.json`, replace `python tools/` with `python3 tools/`, or download again from the wizard with "python3" selected.
 3. Run the check above.
+
+## Where skills and settings live: global or project
+
+Claude Code reads two places:
+
+- **Project:** the `.claude/` folder in your project. Things only this project needs go here (for example a deploy routine for this app).
+- **Global:** the `.claude/` folder in your home directory (`~/.claude/`, which on Windows is `C:\Users\<you>\.claude\`). Things you want in every project go here (for example a "make this shorter" skill).
+
+If a skill would clutter other projects, keep it in the project. If you would want it everywhere, put it in your home folder.

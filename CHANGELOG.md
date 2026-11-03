@@ -8,6 +8,7 @@
 - With a GitHub username the download also includes `sync.py`, and SYNC.md explains both routes (`setup.ps1` on Windows with `gh`, `python sync.py setup <url>` anywhere). Without one, memory stays local.
 - vercel.json bundles the files the wizard API reads at runtime.
 - New docs/INSTALL.md: step-by-step install for Python, Git, Node.js and the GitHub CLI with a check after each, plus what to do about a hook error. Linked from the wizard result card, the README and the FAQ. The wizard zip also includes it as `.claude/INSTALL.md` so it is available offline.
+- The wizard now ships the `skill-creator` skill, and the generated CLAUDE.md has a "Turn Repeat Routines Into Skills" section (ask once after a finished routine, create the skill right away). INSTALL.md explains global (`~/.claude`) vs project (`.claude`) placement.
 
 ## v2.12.2 - npx install fix
 

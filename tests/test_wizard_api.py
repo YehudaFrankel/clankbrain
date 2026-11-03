@@ -75,7 +75,8 @@ KIT_FILES = [
     'tools/memory.py', 'agents/plan.md', 'memory/error-lookup.md', 'INSTALL.md',
     'rules/regret-top.md', 'rules/token-rules.md', 'rules/error-lookup.md', 'rules/guard-patterns.md',
 ] + ['skills/' + n + '/SKILL.md' for n in
-     ['kit-health', 'tour', 'search-memory', 'recall', 'forget', 'smart-resume', 'guard', 'verification-loop', 'search-first']]
+     ['kit-health', 'tour', 'search-memory', 'recall', 'forget', 'smart-resume', 'guard', 'verification-loop', 'search-first',
+      'skill-creator']]
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
@@ -88,6 +89,7 @@ def test_wizard_ships_hooks_and_the_files_they_need(language):
         assert name in files and files[name].strip(), name + ' missing'
     assert 'sync.py' not in files, 'sync.py must only ship when a GitHub username is given'
     assert 'STATUS.md' in files and 'memory/STATUS.md' not in files, 'STATUS.md belongs at the project root'
+    assert '## Turn Repeat Routines Into Skills' in files['CLAUDE.md']
 
 
 def test_python3_choice_rewrites_every_hook_command():

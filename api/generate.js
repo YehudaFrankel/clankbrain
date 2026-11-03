@@ -445,7 +445,8 @@ function generateFiles(body) {
     'rules/error-lookup.md': '.claude/rules/error-lookup.md',
     'rules/guard-patterns.md': '.claude/rules/guard-patterns.md',
     'memory/error-lookup.md': '.claude/memory/error-lookup.md',
-    'INSTALL.md': 'docs/INSTALL.md'
+    'INSTALL.md': 'docs/INSTALL.md',
+    'skills/skill-creator/SKILL.md': '.claude/skills/skill-creator/SKILL.md'
   };
   // Memory stays local unless he gave a GitHub username
   if (body.githubUser) { kitFiles['sync.py'] = 'sync.py'; }
@@ -541,6 +542,12 @@ function generateClaudeMd(body, lang, fw, conventions) {
   s += '3. Update `memory/MEMORY.md` currentDate\n';
   s += '4. Commit all changes\n';
   s += '5. Report: "Session complete."\n\n';
+
+  // Turn repeat routines into skills
+  s += '## Turn Repeat Routines Into Skills\n\n';
+  s += 'After finishing a multi-step routine (a build, a release, a review, a data fix), ask once: "Will we do this again? Want a skill for it?" ';
+  s += 'If yes, create it with the `skill-creator` skill right away while the steps are fresh. ';
+  s += 'Keep skills you want in every project in `~/.claude/skills/`; keep project-only skills in this project\'s `.claude/skills/`.\n\n';
 
   // Middle Path
   s += '## Scoped Pushback\n\n';
