@@ -23,7 +23,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 2. **Check for duplicates** — glob existing skills for similar names or trigger phrases:
    ```
-   Glob pattern="**\SKILL.md" path=".claude\skills"
+   Glob pattern="**/SKILL.md" path=".claude/skills"
    ```
    Read any close matches. If a duplicate exists, report it and ask: "Update existing or create new?"
 
