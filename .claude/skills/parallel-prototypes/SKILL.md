@@ -1,6 +1,6 @@
 ---
 name: parallel-prototypes
-description: Run 2-3 prototype variants of a UX decision in parallel instead of iterating sequentially. Cagan calls this the "freshest observation" enabled by AI tooling. Triggers only when asked: "/parallel-prototypes", "parallel prototypes", "try both as prototypes" or "compare designs side by side". It does not start on everyday phrases like "should it be X or Y".
+description: Run 2-3 prototype variants of a UX decision in parallel instead of iterating sequentially. Cagan calls this the "freshest observation" enabled by AI tooling. Triggers only when asked, with "/parallel-prototypes", "parallel prototypes", "try both as prototypes" or "compare designs side by side". It does not start on everyday phrases like "should it be X or Y".
 allowed-tools: Read, Write, Edit, Bash
 ---
 

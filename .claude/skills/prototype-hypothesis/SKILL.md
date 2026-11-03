@@ -1,6 +1,6 @@
 ---
 name: prototype-hypothesis
-description: Force a one-line hypothesis before any prototype iteration. Prevents "learning theater" — building things that demo well but don't reduce risk. Triggers only when asked: "/prototype-hypothesis", "iterate on the prototype" or "prototype iteration". It does not start on everyday phrases like "let me try" or "what if we".
+description: Force a one-line hypothesis before any prototype iteration. Prevents "learning theater" — building things that demo well but don't reduce risk. Triggers only when asked, with "/prototype-hypothesis", "iterate on the prototype" or "prototype iteration". It does not start on everyday phrases like "let me try" or "what if we".
 allowed-tools: Read, Write, Edit
 ---
 

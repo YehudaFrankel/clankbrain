@@ -69,6 +69,9 @@ def test_every_language_generates_valid_skills(language):
         folder = name.split('/')[1]
         assert re.search(r'^name: ' + re.escape(folder) + r'$', match.group(1), re.M), name + ' name != folder'
         assert re.search(r'^description: .+', match.group(1), re.M), name + ' has no description'
+        description = re.search(r'^description: (.+)$', match.group(1), re.M).group(1)
+        if description[0] not in '"\'':
+            assert ': ' not in description and ' #' not in description, name + ' description is not valid YAML (colon+space in an unquoted value)'
 
 
 KIT_FILES = [
