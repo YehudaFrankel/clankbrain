@@ -72,7 +72,7 @@ def test_every_language_generates_valid_skills(language):
 
 
 KIT_FILES = [
-    'tools/memory.py', 'agents/plan.md', 'memory/error-lookup.md',
+    'tools/memory.py', 'agents/plan.md', 'memory/error-lookup.md', 'INSTALL.md',
     'rules/regret-top.md', 'rules/token-rules.md', 'rules/error-lookup.md', 'rules/guard-patterns.md',
 ] + ['skills/' + n + '/SKILL.md' for n in
      ['kit-health', 'tour', 'search-memory', 'recall', 'forget', 'smart-resume', 'guard', 'verification-loop', 'search-first']]

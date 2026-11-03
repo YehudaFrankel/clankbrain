@@ -444,7 +444,8 @@ function generateFiles(body) {
     'rules/token-rules.md': '.claude/rules/token-rules.md',
     'rules/error-lookup.md': '.claude/rules/error-lookup.md',
     'rules/guard-patterns.md': '.claude/rules/guard-patterns.md',
-    'memory/error-lookup.md': '.claude/memory/error-lookup.md'
+    'memory/error-lookup.md': '.claude/memory/error-lookup.md',
+    'INSTALL.md': 'docs/INSTALL.md'
   };
   // Memory stays local unless he gave a GitHub username
   if (body.githubUser) { kitFiles['sync.py'] = 'sync.py'; }

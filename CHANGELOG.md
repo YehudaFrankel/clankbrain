@@ -7,7 +7,7 @@
 - New "Python command" choice (python or python3) rewrites every hook command.
 - With a GitHub username the download also includes `sync.py`, and SYNC.md explains both routes (`setup.ps1` on Windows with `gh`, `python sync.py setup <url>` anywhere). Without one, memory stays local.
 - vercel.json bundles the files the wizard API reads at runtime.
-- New docs/INSTALL.md: step-by-step install for Python, Git, Node.js and the GitHub CLI with a check after each, plus what to do about a hook error. Linked from the wizard result card, the README and the FAQ.
+- New docs/INSTALL.md: step-by-step install for Python, Git, Node.js and the GitHub CLI with a check after each, plus what to do about a hook error. Linked from the wizard result card, the README and the FAQ. The wizard zip also includes it as `.claude/INSTALL.md` so it is available offline.
 
 ## v2.12.2 - npx install fix
 

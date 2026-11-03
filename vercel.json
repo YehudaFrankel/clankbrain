@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/*.js": {
-      "includeFiles": "{tools/memory.py,sync.py,.claude/{settings.json,skills/**,rules/**,agents/plan.md,memory/error-lookup.md}}"
+      "includeFiles": "{tools/memory.py,sync.py,docs/INSTALL.md,.claude/{settings.json,skills/**,rules/**,agents/plan.md,memory/error-lookup.md}}"
     }
   },
   "rewrites": [
