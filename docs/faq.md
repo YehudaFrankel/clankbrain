@@ -10,7 +10,7 @@ Short answers to common questions about Clankbrain, a kit that gives Claude Code
 No. Typing `Start Session` and `End Session` is the whole daily routine. Everything else runs automatically or responds to plain English.
 
 **What Claude plan do I need?**
-Any plan that includes Claude Code. The kit is text files plus Python scripts that run on your computer. You need Python 3.7+ (and Node if you install with `npx clankbrain`).
+Any plan that includes Claude Code. The kit is text files plus Python scripts that run on your computer. You need Python 3.7+ (and Node if you install with `npx clankbrain`). Step-by-step: [INSTALL.md](INSTALL.md).
 
 **Does it work with my programming language?**
 The memory files, skills and session commands work with any language, because they are plain text and instructions. One feature is narrower: automatic drift checking (noticing that your notes no longer match the code) reads only JavaScript and CSS files. For other languages it has nothing to check, and everything else still works.

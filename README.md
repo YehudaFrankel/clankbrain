@@ -34,7 +34,7 @@ Clankbrain was built from the author's own 335 sessions on one production projec
 
 ## Install
 
-You need [Claude Code](https://claude.ai/claude-code) (or Codex), Python 3.7 or newer, and Node.js (only for the `npx` command).
+You need [Claude Code](https://claude.ai/claude-code) (or Codex), Python 3.7 or newer, and Node.js (only for the `npx` command). Step-by-step: [docs/INSTALL.md](docs/INSTALL.md).
 
 ```bash
 npx clankbrain
