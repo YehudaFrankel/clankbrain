@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "{tools/memory.py,sync.py,.claude/{settings.json,skills/**,rules/**,agents/plan.md,memory/error-lookup.md}}"
+    }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" }
   ]

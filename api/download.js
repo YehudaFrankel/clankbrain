@@ -111,7 +111,7 @@ module.exports = async function handler(req, res) {
     }
 
     // Files that belong at the project root, not inside .claude/
-    var rootFiles = { 'memory.ps1': true, 'setup.ps1': true };
+    var rootFiles = { 'memory.ps1': true, 'setup.ps1': true, 'tools/memory.py': true, 'sync.py': true, 'STATUS.md': true };
 
     var entries = [];
     var fileNames = Object.keys(filesJson);

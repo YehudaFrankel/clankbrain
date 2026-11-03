@@ -71,6 +71,41 @@ def test_every_language_generates_valid_skills(language):
         assert re.search(r'^description: .+', match.group(1), re.M), name + ' has no description'
 
 
+KIT_FILES = [
+    'tools/memory.py', 'agents/plan.md', 'memory/error-lookup.md',
+    'rules/regret-top.md', 'rules/token-rules.md', 'rules/error-lookup.md', 'rules/guard-patterns.md',
+] + ['skills/' + n + '/SKILL.md' for n in
+     ['kit-health', 'tour', 'search-memory', 'recall', 'forget', 'smart-resume', 'guard', 'verification-loop', 'search-first']]
+
+
+@pytest.mark.parametrize('language', LANGUAGES)
+def test_wizard_ships_hooks_and_the_files_they_need(language):
+    files = _call(_body(language))['body']['files']
+    settings = json.loads(files['settings.json'])
+    assert 'SessionStart' in settings['hooks']
+    assert 'python tools/memory.py' in files['settings.json']
+    for name in KIT_FILES:
+        assert name in files and files[name].strip(), name + ' missing'
+    assert 'sync.py' not in files, 'sync.py must only ship when a GitHub username is given'
+    assert 'STATUS.md' in files and 'memory/STATUS.md' not in files, 'STATUS.md belongs at the project root'
+
+
+def test_python3_choice_rewrites_every_hook_command():
+    body = _body('python')
+    body['pythonCommand'] = 'python3'
+    text = _call(body)['body']['files']['settings.json']
+    assert 'python3 tools/memory.py' in text
+    assert re.search(r'"python tools/', text) is None
+
+
+def test_github_username_adds_sync_script_and_instructions():
+    body = _body('python')
+    body['githubUser'] = 'someone'
+    files = _call(body)['body']['files']
+    assert 'sync.py' in files
+    assert 'python sync.py setup https://github.com/someone/demo-memory.git' in files['SYNC.md']
+
+
 def test_missing_fields_are_rejected():
     out = _call({'projectName': '', 'language': 'python', 'projectType': 'cli'})
     assert out['status'] == 400
@@ -88,7 +123,7 @@ def test_download_builds_a_valid_zip_without_dependencies(tmp_path):
     script = r"""
 var fs = require('fs');
 var download = require(%s);
-var files = { 'CLAUDE.md': '# caf\u00e9 \u2014 hello', 'memory/lessons.md': 'one\ntwo', 'memory.ps1': 'root file' };
+var files = { 'CLAUDE.md': '# caf\u00e9 \u2014 hello', 'memory/lessons.md': 'one\ntwo', 'memory.ps1': 'root file', 'tools/memory.py': 'py', 'sync.py': 'sync', 'STATUS.md': 'status' };
 var res = {
   status: function (c) { this.code = c; return this; },
   json: function (o) { console.error(JSON.stringify(o)); },
@@ -101,6 +136,6 @@ download({ method: 'POST', body: { files: JSON.stringify(files) } }, res);
     assert result.returncode == 0, result.stderr[-400:]
     with zipfile.ZipFile(out) as z:
         assert z.testzip() is None
-        assert sorted(z.namelist()) == ['.claude/CLAUDE.md', '.claude/memory/lessons.md', 'memory.ps1']
+        assert sorted(z.namelist()) == ['.claude/CLAUDE.md', '.claude/memory/lessons.md', 'STATUS.md', 'memory.ps1', 'sync.py', 'tools/memory.py']
         assert z.read('.claude/CLAUDE.md').decode('utf-8') == '# caf\u00e9 \u2014 hello'
         assert z.read('.claude/memory/lessons.md').decode('utf-8') == 'one\ntwo'

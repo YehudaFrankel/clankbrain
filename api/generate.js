@@ -1,6 +1,9 @@
 // Template-based generator — no AI API needed, instant results
 // Generates a full Clankbrain setup: CLAUDE.md, rules, skills, memory, workflows
 
+var fs = require('fs');
+var path = require('path');
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -381,7 +384,7 @@ function generateFiles(body) {
     if (c === 'security') { files['skills/security-review/SKILL.md'] = generateSecuritySkill(body, lang); }
     if (c === 'memory-system') {
       files['memory/MEMORY.md'] = generateMemoryIndex(body);
-      files['memory/STATUS.md'] = generateStatus(body, lang);
+      files['STATUS.md'] = generateStatus(body, lang); // project root: memory.py hooks and the kit skills read it there
       files['memory/lessons.md'] = generateLessonsFile(lang);
       files['memory/decisions.md'] = generateDecisionsFile(lang);
       files['memory/tasks/regret.md'] = generateRegretFile(lang);
@@ -416,8 +419,39 @@ function generateFiles(body) {
   files['modes/deploy.json'] = JSON.stringify({ name: 'deploy', description: 'Deployment mode - confirms before every action', tools: ['Read', 'Bash', 'Glob', 'Grep'] }, null, 2);
   files['modes/safe.json'] = JSON.stringify({ name: 'safe', description: 'Safe mode - read-only, no file changes, no commands', tools: ['Read', 'Glob', 'Grep'] }, null, 2);
 
-  // Settings — no external dependencies
-  files['settings.json'] = JSON.stringify({ permissions: { allow: [], deny: [] } }, null, 2);
+  // Hooks and the files they need are copied from the kit itself so the wizard cannot drift from the installer.
+  // The hooks run "python tools/memory.py", so memory.py must ship with them.
+  var kitRoot = path.join(__dirname, '..');
+  var pythonCommand = 'python';
+  if (body.pythonCommand === 'python3') { pythonCommand = 'python3'; }
+  var kitSettings = JSON.parse(fs.readFileSync(path.join(kitRoot, '.claude', 'settings.json'), 'utf8'));
+  var hooksJson = JSON.stringify(kitSettings.hooks).split('python tools/').join(pythonCommand + ' tools/');
+  files['settings.json'] = JSON.stringify({ permissions: { allow: [], deny: [] }, hooks: JSON.parse(hooksJson) }, null, 2);
+
+  var kitFiles = {
+    'tools/memory.py': 'tools/memory.py',
+    'skills/kit-health/SKILL.md': '.claude/skills/kit-health/SKILL.md',
+    'skills/tour/SKILL.md': '.claude/skills/tour/SKILL.md',
+    'skills/search-memory/SKILL.md': '.claude/skills/search-memory/SKILL.md',
+    'skills/recall/SKILL.md': '.claude/skills/recall/SKILL.md',
+    'skills/forget/SKILL.md': '.claude/skills/forget/SKILL.md',
+    'skills/smart-resume/SKILL.md': '.claude/skills/smart-resume/SKILL.md',
+    'skills/guard/SKILL.md': '.claude/skills/guard/SKILL.md',
+    'skills/verification-loop/SKILL.md': '.claude/skills/verification-loop/SKILL.md',
+    'skills/search-first/SKILL.md': '.claude/skills/search-first/SKILL.md',
+    'agents/plan.md': '.claude/agents/plan.md',
+    'rules/regret-top.md': '.claude/rules/regret-top.md',
+    'rules/token-rules.md': '.claude/rules/token-rules.md',
+    'rules/error-lookup.md': '.claude/rules/error-lookup.md',
+    'rules/guard-patterns.md': '.claude/rules/guard-patterns.md',
+    'memory/error-lookup.md': '.claude/memory/error-lookup.md'
+  };
+  // Memory stays local unless he gave a GitHub username
+  if (body.githubUser) { kitFiles['sync.py'] = 'sync.py'; }
+  var kitFileNames = Object.keys(kitFiles);
+  for (var k = 0; k < kitFileNames.length; k++) {
+    files[kitFileNames[k]] = fs.readFileSync(path.join(kitRoot, kitFiles[kitFileNames[k]]), 'utf8');
+  }
 
   // Sync instructions
   files['SYNC.md'] = generateSyncGuide(body);
@@ -499,10 +533,10 @@ function generateClaudeMd(body, lang, fw, conventions) {
   // Session Commands
   s += '## Session Workflow\n\n';
   s += '### `Start Session`\n';
-  s += 'Read `memory/STATUS.md` and report: "Ready. Last change: [summary]. What are we working on?"\n\n';
+  s += 'Read `STATUS.md` (project root) and report: "Ready. Last change: [summary]. What are we working on?"\n\n';
   s += '### `End Session`\n';
   s += '1. Run `/learn` - extract patterns from this session\n';
-  s += '2. Update `memory/STATUS.md` - increment session, one-line summary\n';
+  s += '2. Update `STATUS.md` (project root) - increment session, one-line summary\n';
   s += '3. Update `memory/MEMORY.md` currentDate\n';
   s += '4. Commit all changes\n';
   s += '5. Report: "Session complete."\n\n';
@@ -872,7 +906,7 @@ function generateStartSessionSkill(body) {
   s += '**Description:** Initialize a working session with full project context.\n\n';
   s += '**Allowed Tools:** Read, Glob, Grep\n\n---\n\n';
   s += '## Steps\n\n';
-  s += '1. Read `memory/STATUS.md` - get last session summary\n';
+  s += '1. Read `STATUS.md` (project root) - get last session summary\n';
   s += '2. Read `memory/MEMORY.md` - get current context\n';
   s += '3. **First-session auto-scan:** If `rules/code-map.md` does not exist, run `/scan-codebase` automatically to generate project-specific rules from the actual code.\n';
   s += '4. Report: "Ready. Last change: [summary]. What are we working on?"\n';
@@ -892,7 +926,7 @@ function generateEndSessionSkill(body) {
   s += '2. **Update `memory/tasks/skill_usage.md`** - log which skills fired\n';
   s += '3. **Update memory files** for anything changed this session\n';
   s += '4. **Update `memory/MEMORY.md`** - currentDate\n';
-  s += '5. **Update `memory/STATUS.md`** - increment session, one-line summary\n';
+  s += '5. **Update `STATUS.md`** (project root) - increment session, one-line summary\n';
   s += '6. **Commit changes:**\n';
   s += '   ```\n   git add -A\n   git commit -m "Session NNN: [summary]"\n   ```\n';
   s += '7. **Report:** "Session complete."\n';
@@ -904,7 +938,7 @@ function generateEndSessionSkill(body) {
 function generateMemoryIndex(body) {
   var s = '# Memory Index\n\n';
   s += '_Persistent context across sessions._\n\n';
-  s += '- [Project Status](STATUS.md) - Current phase, last session\n';
+  s += '- [Project Status](../../STATUS.md) - Current phase, last session\n';
   s += '- [Lessons Learned](lessons.md) - Patterns and solutions\n';
   s += '- [Settled Decisions](decisions.md) - Locked architectural choices\n';
   s += '- [Regret Log](tasks/regret.md) - Rejected approaches\n';
@@ -1051,6 +1085,13 @@ function generateSyncGuide(body) {
   s += '2. Move `.claude/memory/` to the private repo\n';
   s += '3. Symlink it back: `ln -s ~/claude-memory/' + body.projectName + ' .claude/memory`\n';
   s += '4. Add pull/push to Start/End Session skills\n\n';
+  if (body.githubUser) {
+    s += '## Connect memory to GitHub (' + body.githubUser + ')\n\n';
+    s += 'Windows with the GitHub CLI (`gh`): run `setup.ps1` once. It creates the code repo and the memory repo.\n\n';
+    s += 'Any system (needs git and Python): create a private repo, then run\n\n';
+    s += '```\npython sync.py setup https://github.com/' + body.githubUser + '/' + body.projectName + '-memory.git\n```\n\n';
+    s += 'After that: `python sync.py push` at End Session, and `python sync.py pull` on a new machine.\n\n';
+  }
   s += '## What gets synced\n\n';
   s += '| Folder | Purpose |\n|--------|--------|\n';
   s += '| `CLAUDE.md` | Project context |\n';

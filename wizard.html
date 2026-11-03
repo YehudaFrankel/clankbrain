@@ -498,6 +498,13 @@
           <input type="text" id="githubUser" placeholder="your-username" oninput="updatePreview()">
         </div>
       </div>
+      <div class="form-group" style="margin-top:10px;">
+        <label for="pythonCommand">Python command <span class="help-icon">?<span class="tip">The hooks run Python. Use python on Windows, python3 on Mac or Linux. Python 3.7 or newer is required.</span></span></label>
+        <select id="pythonCommand">
+          <option value="python">python (Windows)</option>
+          <option value="python3">python3 (Mac, Linux)</option>
+        </select>
+      </div>
 
       <div class="form-group">
         <label for="language">Language <span style="color:var(--accent)">*</span></label>
@@ -653,7 +660,7 @@
         <div style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:12px;">Your workflow from now on:</div>
         <div style="display:grid; grid-template-columns:auto 1fr; gap:6px 12px; font-size:0.8rem; color:var(--muted); align-items:start;">
           <div style="background:var(--border); color:var(--muted); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700;">1</div>
-          <div>Extract the zip into your project root</div>
+          <div>Extract the zip into your project root (the hooks need Python 3.7 or newer installed)</div>
           <div style="background:var(--border); color:var(--muted); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700;">2</div>
           <div>Open terminal: <code style="background:rgba(217,119,6,0.1); color:var(--accent); padding:2px 6px; border-radius:3px; font-size:0.75rem;">cd your-project && claude</code></div>
         </div>
@@ -1045,7 +1052,7 @@
         if (cv === 'memory-system') { fileCount += 9; }
       }
       // Always-included files
-      fileCount += 21; // skills(10) + rules(2) + agents(2) + modes(4) + settings + SYNC.md + memory.ps1
+      fileCount += 37; // skills(10) + rules(2) + agents(2) + modes(4) + settings + SYNC.md + memory.ps1 + kit files(16: memory.py, 9 skills, plan agent, 4 rules, error-lookup memory)
 
       s += '<span class="dim">' + fileCount + ' files will be generated:</span>\n\n';
 
@@ -1055,10 +1062,12 @@
       s += '<span class="blue">  CLAUDE.md</span>\n';
       s += '<span class="blue">  SYNC.md</span>\n';
       s += '<span class="blue">  settings.json</span> <span class="dim">(with hooks)</span>\n';
+      s += '<span class="blue">  tools/memory.py</span> <span class="dim">(runs the hooks, needs Python 3.7+)</span>\n';
       s += '<span class="blue">  memory.ps1</span> <span class="dim">(push/pull memory)</span>\n';
       if (githubUser) {
         s += '<span class="blue">  setup.ps1</span> <span class="dim">(one-time bootstrap)</span>\n';
-        fileCount += 1;
+        s += '<span class="blue">  sync.py</span> <span class="dim">(connect memory to GitHub, any system)</span>\n';
+        fileCount += 2;
       }
       s += '\n';
 
@@ -1143,7 +1152,8 @@
         additionalContext: document.getElementById('additionalContext').value.trim(),
         conventions: getChecked(),
         importExisting: document.getElementById('importExisting').value.trim(),
-        githubUser: document.getElementById('githubUser').value.trim()
+        githubUser: document.getElementById('githubUser').value.trim(),
+        pythonCommand: document.getElementById('pythonCommand').value
       };
 
       fetch('/api/generate', {

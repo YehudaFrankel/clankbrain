@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - website wizard matches the installer
+
+### Fixed
+- The wizard preview said "settings.json (with hooks)" but the download had no hooks. It now ships the kit's real hooks plus `tools/memory.py` (the hooks run it), the `kit-health`, `tour`, `search-memory`, `recall`, `forget`, `smart-resume`, `guard`, `verification-loop` and `search-first` skills, the `plan` agent, and the `regret-top`, `token-rules`, `error-lookup` and `guard-patterns` rules. Files are read from the kit itself, so the wizard cannot drift from the installer.
+- New "Python command" choice (python or python3) rewrites every hook command.
+- With a GitHub username the download also includes `sync.py`, and SYNC.md explains both routes (`setup.ps1` on Windows with `gh`, `python sync.py setup <url>` anywhere). Without one, memory stays local.
+- vercel.json bundles the files the wizard API reads at runtime.
+
 ## v2.12.2 - npx install fix
 
 ### Fixed
