@@ -446,7 +446,10 @@ function generateFiles(body) {
     'rules/guard-patterns.md': '.claude/rules/guard-patterns.md',
     'memory/error-lookup.md': '.claude/memory/error-lookup.md',
     'INSTALL.md': 'docs/INSTALL.md',
-    'skills/skill-creator/SKILL.md': '.claude/skills/skill-creator/SKILL.md'
+    'skills/skill-creator/SKILL.md': '.claude/skills/skill-creator/SKILL.md',
+    'skills/product-risk/SKILL.md': '.claude/skills/product-risk/SKILL.md',
+    'skills/prototype-hypothesis/SKILL.md': '.claude/skills/prototype-hypothesis/SKILL.md',
+    'skills/parallel-prototypes/SKILL.md': '.claude/skills/parallel-prototypes/SKILL.md'
   };
   // Memory stays local unless he gave a GitHub username
   if (body.githubUser) { kitFiles['sync.py'] = 'sync.py'; }

@@ -1,6 +1,6 @@
 ---
 name: parallel-prototypes
-description: Run 2-3 prototype variants of a UX decision in parallel instead of iterating sequentially. Cagan calls this the "freshest observation" enabled by AI tooling. Triggers on "should it be X or Y", "two approaches", "I'm torn between", "try both", "parallel prototypes", "compare designs", "A/B this".
+description: Run 2-3 prototype variants of a UX decision in parallel instead of iterating sequentially. Cagan calls this the "freshest observation" enabled by AI tooling. Triggers only when asked: "/parallel-prototypes", "parallel prototypes", "try both as prototypes" or "compare designs side by side". It does not start on everyday phrases like "should it be X or Y".
 allowed-tools: Read, Write, Edit, Bash
 ---
 
@@ -39,7 +39,7 @@ DO NOT use when:
 
 1. **State the hypothesis** — what are all variants testing for?
 2. **Define the variants** — 2 or 3 approaches that genuinely differ on the variable being tested
-3. **Build each as a separate file** — e.g., `KeepAliveNowApp_v1.html`, `_v2.html`, `_v3.html` — same structure, different on the tested variable
+3. **Build each as a separate file** — e.g., `app_v1.html`, `_v2.html`, `_v3.html` — same structure, different on the tested variable
 4. **Test against the same user/narrative** — Carol uses all 3, you watch what happens
 5. **Pick the winner** — log result to `prototype_log.md`, delete the losers
 6. **Iterate sequentially on the winner** — parallel exploration is for the macro decision; refinement is sequential
@@ -61,15 +61,14 @@ DO NOT use when:
 
 ## Why this exists
 
-From Cagan's article (the user's own article saved in memory):
+From Cagan's article:
 > "Today it's not unusual to quickly create several prototypes each exploring several different approaches to solving the problem, that we can then test simultaneously, and then continue to improve the most promising sequentially."
 
-The user iterated KeepAliveNow sequentially through 10 sessions of UX revision. Some of those 10 sessions could have been compressed into 2-3 parallel-prototype sessions if the macro decisions had been tested in parallel. The cost of NOT doing parallel exploration is more discovery sessions than necessary.
+A product iterated sequentially through 10 sessions of UX revision. Some of those 10 sessions could have been compressed into 2-3 parallel-prototype sessions if the macro decisions had been tested in parallel. The cost of NOT doing parallel exploration is more discovery sessions than necessary.
 
 ## Related
 
 - `prototype-hypothesis` — required before any variant gets built
-- `build-mode.md` — only applies in build-to-learn mode
 - `product-risk` — the four-risks evaluation runs at the project level; parallel-prototypes runs at the decision level
 
 ## Cleanup

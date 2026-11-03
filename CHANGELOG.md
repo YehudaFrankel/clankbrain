@@ -9,6 +9,7 @@
 - vercel.json bundles the files the wizard API reads at runtime.
 - New docs/INSTALL.md: step-by-step install for Python, Git, Node.js and the GitHub CLI with a check after each, plus what to do about a hook error. Linked from the wizard result card, the README and the FAQ. The wizard zip also includes it as `.claude/INSTALL.md` so it is available offline.
 - The wizard now ships the `skill-creator` skill, and the generated CLAUDE.md has a "Turn Repeat Routines Into Skills" section (ask once after a finished routine, create the skill right away). INSTALL.md explains global (`~/.claude`) vs project (`.claude`) placement.
+- The wizard now ships `product-risk`, `prototype-hypothesis` and `parallel-prototypes` for validating and prototyping a new product. They start only when asked (everyday phrases such as "new product", "let me try" and "should it be X or Y" were removed from their triggers). Removed leftover KeepAliveNow wording and two references to files the zip does not contain (`build-mode.md`, `combine-plans.md`). skill-creator now uses forward slashes in its glob.
 
 ## v2.12.2 - npx install fix
 

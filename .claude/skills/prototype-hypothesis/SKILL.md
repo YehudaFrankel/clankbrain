@@ -1,13 +1,13 @@
 ---
 name: prototype-hypothesis
-description: Force a one-line hypothesis before any prototype iteration. Prevents "learning theater" — building things that demo well but don't reduce risk. Triggers on "iterate on the prototype", "let me try", "tweak the design", "change the [color/layout/copy]", "what if we", or any prototype edit in build-to-learn mode.
+description: Force a one-line hypothesis before any prototype iteration. Prevents "learning theater" — building things that demo well but don't reduce risk. Triggers only when asked: "/prototype-hypothesis", "iterate on the prototype" or "prototype iteration". It does not start on everyday phrases like "let me try" or "what if we".
 allowed-tools: Read, Write, Edit
 ---
 
 # Skill: prototype-hypothesis
 
 ## Trigger
-Use when about to make any change to a prototype file (HTML, CSS, JS in mobile/Keep* or similar discovery work) without an obvious bug fix.
+Use when about to make any change to a prototype file (HTML, CSS or JS in a prototype or other discovery work) without an obvious bug fix.
 
 Common phrases that trigger:
 - "let me try changing X"
@@ -72,6 +72,4 @@ This skill is the mechanical defense against that failure mode. It forces the qu
 
 ## Related
 
-- `build-mode.md` — defines when this skill applies (build-to-learn mode only)
-- `combine-plans.md` — for delivery work, plans replace hypotheses
 - `product-risk` — runs the four-risks evaluation; hypothesis-skill runs per-iteration

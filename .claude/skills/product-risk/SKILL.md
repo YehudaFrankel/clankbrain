@@ -1,6 +1,6 @@
 ---
 name: product-risk
-description: "Four Big Risks product validation. Two modes: evaluate (score an existing product Red/Yellow/Green) or create (validate idea + generate working prototypes + full project scaffolding). Triggers on: /product-risk, evaluate this product, validate this idea, new product, is this worth building, product risk check, run the four risks, score this product, check the risks, rate this idea, should I build this, what are the risks, risk assessment, check for product-risk, how risky is this."
+description: "Four Big Risks product validation. Two modes: evaluate (score an existing product Red/Yellow/Green) or create (validate idea + generate working prototypes + full project scaffolding). Triggers only when asked: /product-risk, evaluate this product, validate this idea, is this worth building, product risk check, run the four risks, score this product, rate this idea. Does not start on everyday phrases like new product or what are the risks."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, WebFetch
 ---
 

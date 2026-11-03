@@ -76,7 +76,7 @@ KIT_FILES = [
     'rules/regret-top.md', 'rules/token-rules.md', 'rules/error-lookup.md', 'rules/guard-patterns.md',
 ] + ['skills/' + n + '/SKILL.md' for n in
      ['kit-health', 'tour', 'search-memory', 'recall', 'forget', 'smart-resume', 'guard', 'verification-loop', 'search-first',
-      'skill-creator']]
+      'skill-creator', 'product-risk', 'prototype-hypothesis', 'parallel-prototypes']]
 
 
 @pytest.mark.parametrize('language', LANGUAGES)
@@ -90,6 +90,16 @@ def test_wizard_ships_hooks_and_the_files_they_need(language):
     assert 'sync.py' not in files, 'sync.py must only ship when a GitHub username is given'
     assert 'STATUS.md' in files and 'memory/STATUS.md' not in files, 'STATUS.md belongs at the project root'
     assert '## Turn Repeat Routines Into Skills' in files['CLAUDE.md']
+
+
+def test_product_skills_are_opt_in_and_have_no_project_leftovers():
+    files = _call(_body('python'))['body']['files']
+    for name in ['product-risk', 'prototype-hypothesis', 'parallel-prototypes']:
+        text = files['skills/' + name + '/SKILL.md']
+        assert 'KeepAlive' not in text, name + ' mentions the author project'
+        assert 'build-mode.md' not in text and 'combine-plans.md' not in text, name + ' points at a missing file'
+        description = re.search(r'^description: (.+)$', text, re.M).group(1)
+        assert 'Triggers only when asked' in description, name + ' can start on everyday phrases'
 
 
 def test_python3_choice_rewrites_every_hook_command():
